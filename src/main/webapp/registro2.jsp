@@ -7,10 +7,20 @@
 --%>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <html>
-  <head>
-    <title>$Title$</title>
-  </head>
-  <body>
-  $END$
-  </body>
+<head>
+    <title>Registro 2</title>
+</head>
+<body>
+
+<h1>Registro de Juan</h1>
+<ul>
+  <li>Nombre: Juan</li>
+  <li>Apellido: Gomez</li>
+  <li>Años de experiencia: 2 años</li>
+  <li>Curso Favorito: Programador Senior</li>
+  <li>Ciclo:9no Ciclo</li>
+</ul>
+<button type="submit"><a href="index.html">Regresar al inicio</a></button>
+
+</body>
 </html>
