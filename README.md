@@ -64,7 +64,7 @@ El objetivo principal de este primer hito es establecer e implementar la infraes
 
 ### 2. Patrón MVC (Vista y Servlet)
 *Captura de la ruta `/propiedades` cargada dinámicamente con los datos listados.*<br>
-![Vistas dinámicas MVC](https://drive.google.com/uc?export=view&id=1y94NHX8BUn-8_Imy96vGNXfjYqzKjx99)
+![Vistas dinámicas MVC](https://drive.google.com/uc?export=view&id=1Cadbz23AQOzT9BCIyOGUWGPvS_Xrj5N_)
 
 ### 3. Flujo de Envío (POST)
 *Captura guardando una nueva propiedad desde el formulario ruta `/propiedades?accion=nuevo` y su posterior redireccionamiento.*<br>
