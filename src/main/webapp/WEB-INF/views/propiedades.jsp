@@ -4,13 +4,17 @@
 <html lang="es">
 <head>
     <meta charset="UTF-8">
+    <link rel="icon" type="image/png" href="${pageContext.request.contextPath}/assets/img/logo/inmobix_logo.png">
     <title>Propiedades Disponibles</title>
     <link rel="stylesheet" href="${pageContext.request.contextPath}/assets/css/styles.css">
     <script src="${pageContext.request.contextPath}/assets/js/main.js" defer></script>
 </head>
 <body>
     <header>
-        <h1>Catálogo de Propiedades</h1>
+        <div class="header-container">
+            <img src="${pageContext.request.contextPath}/assets/img/logo/inmobix_logo.png" alt="Inmobix Logo" class="header-logo">
+            <h1 class="header-title">Inmobix - Catálogo</h1>
+        </div>
     </header>
     <nav>
         <a href="${pageContext.request.contextPath}/index.jsp">Inicio</a>
