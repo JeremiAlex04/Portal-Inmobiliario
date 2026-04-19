@@ -79,11 +79,11 @@ Este primer hito del proyecto establece la infraestructura base del portal para 
 
 ### 1. Configuración de Entorno
 *Captura del proyecto desplegado exitosamente en Tomcat.*<br>
-![Despliegue Tomcat](https://drive.google.com/file/d/1y94NHX8BUn-8_Imy96vGNXfjYqzKjx99/view?usp=sharing)
+![Despliegue Tomcat](https://drive.google.com/uc?export=view&id=1y94NHX8BUn-8_Imy96vGNXfjYqzKjx99)
 
 ### 2. Patrón MVC (Vista y Servlet)
 *Captura de la ruta `/propiedades` cargada dinámicamente con los datos listados.*<br>
-![Vistas dinámicas MVC](https://drive.google.com/file/d/1y94NHX8BUn-8_Imy96vGNXfjYqzKjx99/view?usp=sharing)
+![Vistas dinámicas MVC](https://drive.google.com/uc?export=view&id=1y94NHX8BUn-8_Imy96vGNXfjYqzKjx99)
 
 ### 3. Flujo de Envío (POST)
 *Captura guardando una nueva propiedad desde el formulario ruta `/propiedades?accion=nuevo` y su posterior redireccionamiento.*<br>
