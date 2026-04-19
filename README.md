@@ -75,10 +75,20 @@ Este primer hito del proyecto establece la infraestructura base del portal para 
 
 ---
 
-## 📸 Evidencia de Resultados (Pautas para el Informe)
-*(Para el estudiante: Toma capturas de los siguientes puntos e inclúyelas en tu informe final de avance).*
+## 📸 Evidencia de Resultados (Capturas)
 
-1. **Configuración de Entorno:** Captura del proyecto desplegado exitosamente en Tomcat.
-2. **Patrón MVC (Vista y Servlet):** Captura de la ruta `/propiedades` cargada dinámicamente con los datos listados.
-3. **Flujo de Envío (POST):** Captura guardando una nueva propiedad desde el formulario ruta `/propiedades?accion=nuevo` y su posterior redireccionamiento.
-4. **Conexión a BD:** Captura en Workbench/DBeaver demostrando que la inserción o consulta se realizó directamente vía código JDBC desde el `PropiedadDAO`.
+### 1. Configuración de Entorno
+*Captura del proyecto desplegado exitosamente en Tomcat.*<br>
+![Despliegue Tomcat](https://drive.google.com/file/d/1y94NHX8BUn-8_Imy96vGNXfjYqzKjx99/view?usp=sharing)
+
+### 2. Patrón MVC (Vista y Servlet)
+*Captura de la ruta `/propiedades` cargada dinámicamente con los datos listados.*<br>
+![Vistas dinámicas MVC](https://drive.google.com/file/d/1y94NHX8BUn-8_Imy96vGNXfjYqzKjx99/view?usp=sharing)
+
+### 3. Flujo de Envío (POST)
+*Captura guardando una nueva propiedad desde el formulario ruta `/propiedades?accion=nuevo` y su posterior redireccionamiento.*<br>
+![Prueba Flujo POST](https://drive.google.com/uc?export=view&id=[TU_ID_AQUI])
+
+### 4. Conexión a BD
+*Captura en Workbench/DBeaver demostrando que la inserción o consulta se realizó directamente vía código JDBC desde el `PropiedadDAO`.*<br>
+![Verificación Base de Datos](https://drive.google.com/uc?export=view&id=[TU_ID_AQUI])
