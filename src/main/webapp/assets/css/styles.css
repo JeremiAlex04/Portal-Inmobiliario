@@ -45,3 +45,14 @@ form label { display: block; margin-bottom: 5px; color: #374151; font-weight: bo
 input[type="text"], input[type="number"], textarea { width: 100%; padding: 10px; border: 1px solid #d1d5db; border-radius: 4px; box-sizing: border-box; background-color: #FFFFFF; color: #374151;}
 form button { background-color: #F97316; color: #FFFFFF; border: none; padding: 12px 20px; cursor: pointer; border-radius: 4px; width: 100%; font-size: 16px; font-weight: bold;}
 form button:hover { background-color: #fb923c; }
+/*=====registroUsuario.jsp====*/
+.form-container { max-width: 600px; margin: 3rem auto; background: #FFFFFF; padding: 2rem; border-radius: 8px; box-shadow: 0 4px 6px rgba(0,0,0,0.1);}
+.form-container h2 { text-align: center; margin-bottom: 20px; color: #374151;}
+.form-group {  margin-bottom: 15px;}
+.form-group label { display: block; margin-bottom: 5px;font-weight: bold;color: #374151;}
+.form-container input[type="text"],
+.form-container input[type="email"],
+.form-container input[type="password"] { width: 100%; padding: 10px; border: 1px solid #d1d5db; border-radius: 4px; box-sizing: border-box; background-color: #FFFFFF;color: #374151;}
+.form-container button { background-color: #22C55E;color: #FFFFFF;border: none;padding: 12px 20px;cursor: pointer;border-radius: 4px;width: 100%;font-size: 16px;font-weight: bold;transition: background 0.3s;
+}
+.form-container button:hover { background-color: #16a34a;}
