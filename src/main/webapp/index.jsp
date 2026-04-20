@@ -19,6 +19,7 @@
         <a href="${pageContext.request.contextPath}/index.jsp">Inicio</a>
         <a href="${pageContext.request.contextPath}/propiedades">Ver Propiedades</a>
         <a href="${pageContext.request.contextPath}/propiedades?accion=nuevo">Publicar Propiedad</a>
+        <a href="${pageContext.request.contextPath}/usuario?accion=registro">Registrarse</a>
     </nav>
     <div class="hero">
         <div class="hero-content">
