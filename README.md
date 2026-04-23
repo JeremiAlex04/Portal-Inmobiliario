@@ -180,11 +180,11 @@ Este primer hito sienta las bases técnicas para los siguientes módulos funcion
 
 | Rol | Nombre |
 |-----|--------|
-| 1 | *(Olivares Chavez Jeremi)* |
-| 2 | *(Miranda Quispe Dharma)* |
-| 3 | *(Inoñan Suarez Antonio)* |
-| 4 | *(Betancur Penadillo Olmer)* |
+| 1 | *Olivares Chavez Jeremi* |
+| 2 | *Miranda Quispe Dharma* |
+| 3 | *Inoñan Suarez Antonio* |
+| 4 | *Betancur Penadillo Olmer* |
 
 ---
 
-*Proyecto académico — Curso de Desarrollo de Software · 2025*
+*Proyecto 2026 — Curso de Desarrollo Web Integrado *
