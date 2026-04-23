@@ -1,6 +1,6 @@
 # 🏢 InmobiX — Portal Inmobiliario Peruano · Avance 01
 
-> **InmobiX** es una plataforma web que transforma la experiencia de búsqueda, publicación y gestión de inmuebles en el Perú. Conecta compradores, arrendatarios, agentes inmobiliarios y constructoras en un ecosistema digital optimizado para la realidad del mercado local: lógica **bimonetaria (Soles / Dólares)**, segmentación por distritos y urbanizaciones, cumplimiento de la **Ley N° 29733** de Protección de Datos Personales, e integración con pasarelas de pago nacionales (Culqi, Yape, Plin).
+> **InmobiX** es una plataforma web que transforma la experiencia de búsqueda, publicación y gestión de inmuebles en el Perú. Conecta compradores, arrendatarios, agentes inmobiliarios y constructoras en un ecosistema digital optimizado para la realidad del mercado local: lógica **bimonetaria (Soles / Dólares)**, segmentación por distritos y urbanizaciones, cumplimiento de la **Ley N° 29733** de Protección de Datos Personales.
 
 ---
 
@@ -25,23 +25,12 @@ Establecer la **infraestructura base del portal** implementando el patrón **MVC
 | **Controlador** | Jakarta Servlet (`doGet` / `doPost`) | Enrutamiento, validación de parámetros y redirección |
 | **Vista** | JSP · JSTL 3.x · HTML5 / CSS3 | Renderización dinámica de datos del servidor |
 | **Modelo / DAO** | JDBC Puro · Patrón DAO | Acceso a datos sin ORM; encapsula sentencias SQL |
-| **Base de Datos** | MySQL 8.x | Persistencia relacional de propiedades y usuarios |
+| **Base de Datos** | MySQL | Persistencia relacional de propiedades y usuarios |
 | **Build / Deploy** | Maven 3.x · Apache Tomcat 10 | Compilación del proyecto y servidor web contenedor |
 
 ---
 
 ## 🏗️ Arquitectura MVC — Flujo de Datos
-
-```
-┌─────────────┐   HTTP Request    ┌──────────────────────┐   DAO Call   ┌─────────────┐
-│  Vista JSP  │ ──────────────► │  Servlet (Controller) │ ──────────► │  Modelo DAO │
-│  (Browser)  │                  │  doGet / doPost       │             │  PropiedadDAO│
-└─────────────┘ ◄────────────── └──────────────────────┘ ◄────────── └─────────────┘
-                  forward/redirect                          ResultSet         │
-                                                                         ┌───▼────┐
-                                                                         │ MySQL  │
-                                                                         └────────┘
-```
 
 ```mermaid
 sequenceDiagram
@@ -74,19 +63,14 @@ proyectoweb/
 ├── src/main/
 │   ├── java/org/example/proyectoweb/
 │   │   ├── controller/          # Servlets (MVC - Controlador)
-│   │   │   └── PropiedadServlet.java
 │   │   ├── model/               # Entidades POJO (MVC - Modelo)
-│   │   │   └── Propiedad.java
 │   │   ├── dao/                 # Patrón DAO - Acceso a BD
-│   │   │   └── PropiedadDAO.java
 │   │   └── util/
 │   │       └── ConexionDB.java  # Pool JDBC
 │   └── webapp/
 │       ├── WEB-INF/
 │       │   ├── web.xml          # Mapeo de Servlets
 │       │   └── views/           # MVC - Vista
-│       │       ├── propiedades.jsp
-│       │       └── registro.jsp
 │       └── index.jsp
 ├── database.sql                 # Script DDL + datos semilla
 └── pom.xml
@@ -158,12 +142,12 @@ Este primer hito sienta las bases técnicas para los siguientes módulos funcion
 
 | Código | Requerimiento | Estado |
 |--------|--------------|--------|
-| **RF-02** | Publicación de fichas de propiedades (campos básicos: título, precio, distrito, área) | ✅ Implementado |
-| **RNF-03** | Arquitectura MVC modular con separación clara de capas | ✅ Implementado |
-| **RNF-02** | Validación de parámetros en el Servlet (prevención de datos nulos) | 🔄 Parcial |
-| RF-01 | Gestión de usuarios y roles | ⏳ Próximo avance |
-| RF-03 | Motor de búsqueda y filtros bimonetarios | ⏳ Próximo avance |
-| RF-07 | Módulo comercial y pasarela de pagos nacionales | ⏳ Próximo avance |
+| **RF-02** | Publicación de fichas de propiedades (campos básicos: título, precio, distrito, área) | Implementado |
+| **RNF-03** | Arquitectura MVC modular con separación clara de capas | Implementado |
+| **RNF-02** | Validación de parámetros en el Servlet (prevención de datos nulos) | Parcial |
+| RF-01 | Gestión de usuarios y roles | Próximo avance |
+| RF-03 | Motor de búsqueda y filtros bimonetarios | Próximo avance |
+| RF-07 | Módulo comercial y pasarela de pagos nacionales | Próximo avance |
 
 ---
 
@@ -196,9 +180,10 @@ Este primer hito sienta las bases técnicas para los siguientes módulos funcion
 
 | Rol | Nombre |
 |-----|--------|
-| Desarrollador Backend | *(completar)* |
-| Diseñador de BD | *(completar)* |
-| Documentación | *(completar)* |
+| 1 | *(Olivares Chavez Jeremi)* |
+| 2 | *(Miranda Quispe Dharma)* |
+| 3 | *(Inoñan Suarez Antonio)* |
+| 4 | *(Betancur Penadillo Olmer)* |
 
 ---
 
