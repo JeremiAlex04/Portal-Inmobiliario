@@ -167,7 +167,7 @@ Este primer hito sienta las bases técnicas para los siguientes módulos funcion
 ### 2 · Listado Dinámico — Flujo GET (Vista / Servlet)
 *El Servlet `doGet` consulta el `PropiedadDAO` y proyecta los registros en `propiedades.jsp` via JSTL.*
 
-<img src="https://drive.google.com/uc?export=view&id=1Cadbz23AQOzT9BCIyOGUWGPvS_Xrj5N_" alt="Vistas dinámicas MVC" width="500">
+<img src="https://drive.google.com/uc?export=view&id=1Cadbz23AQOzT9BCIyOGUWGPvS_Xrj5N_" alt="Vistas dinámicas MVC" width="300">
 
 ### 3 · Alta de Propiedad — Flujo POST (Formulario → Controlador)
 *Envío del formulario y posterior redirección orquestada por el Servlet.*
