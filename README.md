@@ -1,13 +1,12 @@
-<div align="center">
-  <img src="src/main/webapp/assets/img/logo/inmobix_logo.png" alt="InmobiX Logo" width="250">
-</div>
 
 # 🏢 InmobiX — Portal Inmobiliario Peruano · Avance 01
 
 > **InmobiX** es una plataforma web que transforma la experiencia de búsqueda, publicación y gestión de inmuebles en el Perú. Conecta compradores, arrendatarios, agentes inmobiliarios y constructoras en un ecosistema digital optimizado para la realidad del mercado local: lógica **bimonetaria (Soles / Dólares)**, segmentación por distritos y urbanizaciones, cumplimiento de la **Ley N° 29733** de Protección de Datos Personales.
 
 ---
-
+<div align="center">
+  <img src="src/main/webapp/assets/img/logo/inmobix_logo.png" alt="InmobiX Logo" width="50">
+</div>
 ## 🎯 Objetivo del Avance 01
 
 Establecer la **infraestructura base del portal** implementando el patrón **MVC + DAO** sobre Jakarta EE. Los entregables concretos de este hito son:
