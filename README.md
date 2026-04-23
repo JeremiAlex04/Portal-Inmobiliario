@@ -5,7 +5,7 @@
 
 ---
 <div align="center">
-  <img src="src/main/webapp/assets/img/logo/inmobix_logo.png" alt="InmobiX Logo" width="50">
+  <img src="src/main/webapp/assets/img/logo/inmobix_logo.png" alt="InmobiX Logo" width="90">
 </div>
 ## 🎯 Objetivo del Avance 01
 
