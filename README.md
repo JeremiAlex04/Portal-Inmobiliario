@@ -1,7 +1,7 @@
 <table>
   <tr>
     <td>
-      <img src="src/main/webapp/assets/img/logo/inmobix_logo.png" width="120">
+      <img src="src/main/webapp/assets/img/logo/inmobix_logo.png" width="220">
     </td>
     <td>
       <h1>🏢 InmobiX — Portal Inmobiliario Peruano · Avance 01</h1>
