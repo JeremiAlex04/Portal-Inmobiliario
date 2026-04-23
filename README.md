@@ -156,23 +156,23 @@ Este primer hito sienta las bases técnicas para los siguientes módulos funcion
 ### 1 · Despliegue Exitoso en Apache Tomcat
 *El servidor levanta el proyecto sin arrojar excepciones en el log de arranque.*
 
-<img src="https://drive.google.com/uc?export=view&id=1y94NHX8BUn-8_Imy96vGNXfjYqzKjx99" alt="Despliegue Tomcat" width="700">
+<img src="https://drive.google.com/uc?export=view&id=1y94NHX8BUn-8_Imy96vGNXfjYqzKjx99" alt="Despliegue Tomcat" width="500">
 
 ### 2 · Listado Dinámico — Flujo GET (Vista / Servlet)
 *El Servlet `doGet` consulta el `PropiedadDAO` y proyecta los registros en `propiedades.jsp` via JSTL.*
 
-<img src="https://drive.google.com/uc?export=view&id=1Cadbz23AQOzT9BCIyOGUWGPvS_Xrj5N_" alt="Vistas dinámicas MVC" width="700">
+<img src="https://drive.google.com/uc?export=view&id=1Cadbz23AQOzT9BCIyOGUWGPvS_Xrj5N_" alt="Vistas dinámicas MVC" width="500">
 
 ### 3 · Alta de Propiedad — Flujo POST (Formulario → Controlador)
 *Envío del formulario y posterior redirección orquestada por el Servlet.*
 
-<img src="https://drive.google.com/uc?export=view&id=1VbcJyKGq-AxGDtNbcv-m3wNLYTVEmpIj" alt="Prueba Flujo POST — Formulario" width="700"><br>
-<img src="https://drive.google.com/uc?export=view&id=18zXkuNOPaNVOZz5HvQUg7ywWBeVsFzb2" alt="Prueba Flujo POST — Redirección" width="700">
+<img src="https://drive.google.com/uc?export=view&id=1VbcJyKGq-AxGDtNbcv-m3wNLYTVEmpIj" alt="Prueba Flujo POST — Formulario" width="500"><br>
+<img src="https://drive.google.com/uc?export=view&id=18zXkuNOPaNVOZz5HvQUg7ywWBeVsFzb2" alt="Prueba Flujo POST — Redirección" width="500">
 
 ### 4 · Persistencia Verificada en MySQL (JDBC Puro)
 *Comprobación directa en el motor de que `PropiedadDAO.guardar()` insertó la fila correctamente.*
 
-<img src="https://drive.google.com/uc?export=view&id=1cQnmO-VQeq_7k9rD3w397_EpANEYDHSK" alt="Verificación BD" width="700">
+<img src="https://drive.google.com/uc?export=view&id=1cQnmO-VQeq_7k9rD3w397_EpANEYDHSK" alt="Verificación BD" width="500">
 
 ---
 
