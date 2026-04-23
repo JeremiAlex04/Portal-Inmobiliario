@@ -158,12 +158,12 @@ Este primer hito sienta las bases técnicas para los siguientes módulos funcion
 
 | Código | Requerimiento | Estado |
 |--------|--------------|--------|
-| **RF-02** | Publicación de fichas de propiedades (campos básicos: título, precio, distrito, área) | ✅ Implementado |
-| **RNF-03** | Arquitectura MVC modular con separación clara de capas | ✅ Implementado |
-| **RNF-02** | Validación de parámetros en el Servlet (prevención de datos nulos) | 🔄 Parcial |
-| RF-01 | Gestión de usuarios y roles | ⏳ Próximo avance |
-| RF-03 | Motor de búsqueda y filtros bimonetarios | ⏳ Próximo avance |
-| RF-07 | Módulo comercial y pasarela de pagos nacionales | ⏳ Próximo avance |
+| **RF-02** | Publicación de fichas de propiedades (campos básicos: título, precio, distrito, área) | Implementado |
+| **RNF-03** | Arquitectura MVC modular con separación clara de capas | Implementado |
+| **RNF-02** | Validación de parámetros en el Servlet (prevención de datos nulos) | Parcial |
+| RF-01 | Gestión de usuarios y roles | Próximo avance |
+| RF-03 | Motor de búsqueda y filtros bimonetarios | Próximo avance |
+| RF-07 | Módulo comercial y pasarela de pagos nacionales | Próximo avance |
 
 ---
 
