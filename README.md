@@ -1,6 +1,6 @@
 # 🏢 InmobiX — Portal Inmobiliario Peruano · Avance 01
 
-> **InmobiX** es una plataforma web que transforma la experiencia de búsqueda, publicación y gestión de inmuebles en el Perú. Conecta compradores, arrendatarios, agentes inmobiliarios y constructoras en un ecosistema digital optimizado para la realidad del mercado local: lógica **bimonetaria (Soles / Dólares)**, segmentación por distritos y urbanizaciones, cumplimiento de la **Ley N° 29733** de Protección de Datos Personales, e integración con pasarelas de pago nacionales (Culqi, Yape, Plin).
+> **InmobiX** es una plataforma web que transforma la experiencia de búsqueda, publicación y gestión de inmuebles en el Perú. Conecta compradores, arrendatarios, agentes inmobiliarios y constructoras en un ecosistema digital optimizado para la realidad del mercado local: lógica **bimonetaria (Soles / Dólares)**, segmentación por distritos y urbanizaciones, cumplimiento de la **Ley N° 29733** de Protección de Datos Personales.
 
 ---
 
@@ -25,23 +25,12 @@ Establecer la **infraestructura base del portal** implementando el patrón **MVC
 | **Controlador** | Jakarta Servlet (`doGet` / `doPost`) | Enrutamiento, validación de parámetros y redirección |
 | **Vista** | JSP · JSTL 3.x · HTML5 / CSS3 | Renderización dinámica de datos del servidor |
 | **Modelo / DAO** | JDBC Puro · Patrón DAO | Acceso a datos sin ORM; encapsula sentencias SQL |
-| **Base de Datos** | MySQL 8.x | Persistencia relacional de propiedades y usuarios |
+| **Base de Datos** | MySQL | Persistencia relacional de propiedades y usuarios |
 | **Build / Deploy** | Maven 3.x · Apache Tomcat 10 | Compilación del proyecto y servidor web contenedor |
 
 ---
 
 ## 🏗️ Arquitectura MVC — Flujo de Datos
-
-```
-┌─────────────┐   HTTP Request    ┌──────────────────────┐   DAO Call   ┌─────────────┐
-│  Vista JSP  │ ──────────────► │  Servlet (Controller) │ ──────────► │  Modelo DAO │
-│  (Browser)  │                  │  doGet / doPost       │             │  PropiedadDAO│
-└─────────────┘ ◄────────────── └──────────────────────┘ ◄────────── └─────────────┘
-                  forward/redirect                          ResultSet         │
-                                                                         ┌───▼────┐
-                                                                         │ MySQL  │
-                                                                         └────────┘
-```
 
 ```mermaid
 sequenceDiagram
@@ -74,19 +63,14 @@ proyectoweb/
 ├── src/main/
 │   ├── java/org/example/proyectoweb/
 │   │   ├── controller/          # Servlets (MVC - Controlador)
-│   │   │   └── PropiedadServlet.java
 │   │   ├── model/               # Entidades POJO (MVC - Modelo)
-│   │   │   └── Propiedad.java
 │   │   ├── dao/                 # Patrón DAO - Acceso a BD
-│   │   │   └── PropiedadDAO.java
 │   │   └── util/
 │   │       └── ConexionDB.java  # Pool JDBC
 │   └── webapp/
 │       ├── WEB-INF/
 │       │   ├── web.xml          # Mapeo de Servlets
 │       │   └── views/           # MVC - Vista
-│       │       ├── propiedades.jsp
-│       │       └── registro.jsp
 │       └── index.jsp
 ├── database.sql                 # Script DDL + datos semilla
 └── pom.xml
@@ -172,23 +156,23 @@ Este primer hito sienta las bases técnicas para los siguientes módulos funcion
 ### 1 · Despliegue Exitoso en Apache Tomcat
 *El servidor levanta el proyecto sin arrojar excepciones en el log de arranque.*
 
-![Despliegue Tomcat](https://drive.google.com/uc?export=view&id=1y94NHX8BUn-8_Imy96vGNXfjYqzKjx99)
+<img src="https://drive.google.com/uc?export=view&id=1y94NHX8BUn-8_Imy96vGNXfjYqzKjx99" alt="Despliegue Tomcat" width="700">
 
 ### 2 · Listado Dinámico — Flujo GET (Vista / Servlet)
 *El Servlet `doGet` consulta el `PropiedadDAO` y proyecta los registros en `propiedades.jsp` via JSTL.*
 
-![Vistas dinámicas MVC](https://drive.google.com/uc?export=view&id=1Cadbz23AQOzT9BCIyOGUWGPvS_Xrj5N_)
+<img src="https://drive.google.com/uc?export=view&id=1Cadbz23AQOzT9BCIyOGUWGPvS_Xrj5N_" alt="Vistas dinámicas MVC" width="700">
 
 ### 3 · Alta de Propiedad — Flujo POST (Formulario → Controlador)
 *Envío del formulario y posterior redirección orquestada por el Servlet.*
 
-![Prueba Flujo POST — Formulario](https://drive.google.com/uc?export=view&id=1VbcJyKGq-AxGDtNbcv-m3wNLYTVEmpIj)
-![Prueba Flujo POST — Redirección](https://drive.google.com/uc?export=view&id=18zXkuNOPaNVOZz5HvQUg7ywWBeVsFzb2)
+<img src="https://drive.google.com/uc?export=view&id=1VbcJyKGq-AxGDtNbcv-m3wNLYTVEmpIj" alt="Prueba Flujo POST — Formulario" width="700"><br>
+<img src="https://drive.google.com/uc?export=view&id=18zXkuNOPaNVOZz5HvQUg7ywWBeVsFzb2" alt="Prueba Flujo POST — Redirección" width="700">
 
 ### 4 · Persistencia Verificada en MySQL (JDBC Puro)
 *Comprobación directa en el motor de que `PropiedadDAO.guardar()` insertó la fila correctamente.*
 
-![Verificación BD](https://drive.google.com/uc?export=view&id=1cQnmO-VQeq_7k9rD3w397_EpANEYDHSK)
+<img src="https://drive.google.com/uc?export=view&id=1cQnmO-VQeq_7k9rD3w397_EpANEYDHSK" alt="Verificación BD" width="700">
 
 ---
 
@@ -196,9 +180,10 @@ Este primer hito sienta las bases técnicas para los siguientes módulos funcion
 
 | Rol | Nombre |
 |-----|--------|
-| Desarrollador Backend | *(completar)* |
-| Diseñador de BD | *(completar)* |
-| Documentación | *(completar)* |
+| 1 | *(Olivares Chavez Jeremi)* |
+| 2 | *(Miranda Quispe Dharma)* |
+| 3 | *(Inoñan Suarez Antonio)* |
+| 4 | *(Betancur Penadillo Olmer)* |
 
 ---
 
