@@ -5,8 +5,8 @@ import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import org.example.proyectoweb.dao.PropiedadDAO;
-import org.example.proyectoweb.model.Propiedad;
+import org.example.proyectoweb.facade.PropiedadFacade;
+import org.example.proyectoweb.dto.PropiedadDTO;
 
 import java.io.IOException;
 import java.math.BigDecimal;
@@ -15,33 +15,71 @@ import java.util.List;
 @WebServlet(name = "PropiedadServlet", urlPatterns = {"/propiedades"})
 public class PropiedadServlet extends HttpServlet {
 
-    private PropiedadDAO propiedadDAO;
+    private PropiedadFacade propiedadFacade;
 
     @Override
     public void init() throws ServletException {
-        // Inicializa el DAO una sola vez al cargar el Servlet
-        propiedadDAO = new PropiedadDAO();
+        // Inicializa el Facade una sola vez al cargar el Servlet (No se instancia el DAO directamente)
+        propiedadFacade = new PropiedadFacade();
     }
 
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        String action = request.getParameter("accion");
+        String accion = request.getParameter("accion");
+        if (accion == null) {
+            accion = "listar";
+        }
 
-        if ("nuevo".equals(action)) {
-            // Muestra el formulario de registro
-            request.getRequestDispatcher("/WEB-INF/views/registro.jsp").forward(request, response);
-        } else {
-            // Acción por defecto: Listar Propiedades
-            List<Propiedad> listaPropiedades = propiedadDAO.obtenerPropiedades();
-            // Envío de información desde el servlet a la vista (requerido en la rúbrica)
-            request.setAttribute("listaPropiedades", listaPropiedades);
-            request.getRequestDispatcher("/WEB-INF/views/propiedades.jsp").forward(request, response);
+        try {
+            switch (accion) {
+                case "nuevo":
+                    // Muestra el formulario vacío para registrar
+                    request.getRequestDispatcher("/WEB-INF/views/registro.jsp").forward(request, response);
+                    break;
+                case "editar":
+                    // Obtiene la propiedad por ID y la envía al formulario para editar
+                    int idEditar = Integer.parseInt(request.getParameter("id"));
+                    PropiedadDTO pEditar = propiedadFacade.obtenerPropiedad(idEditar);
+                    request.setAttribute("propiedad", pEditar);
+                    request.getRequestDispatcher("/WEB-INF/views/registro.jsp").forward(request, response);
+                    break;
+                case "eliminar":
+                    // Elimina la propiedad y redirige a la lista
+                    int idEliminar = Integer.parseInt(request.getParameter("id"));
+                    propiedadFacade.eliminarPropiedad(idEliminar);
+                    response.sendRedirect(request.getContextPath() + "/propiedades");
+                    break;
+                case "listar":
+                default:
+                    // Capturar parámetros de búsqueda
+                    String keyword = request.getParameter("q");
+                    String operacion = request.getParameter("operacion");
+                    String tipoInmueble = request.getParameter("tipo");
+
+                    List<PropiedadDTO> listaPropiedades;
+                    if (keyword != null || operacion != null || tipoInmueble != null) {
+                        listaPropiedades = propiedadFacade.buscarPropiedades(keyword, operacion, tipoInmueble);
+                    } else {
+                        listaPropiedades = propiedadFacade.listarPropiedades();
+                    }
+                    
+                    request.setAttribute("listaPropiedades", listaPropiedades);
+                    request.setAttribute("paramQ", keyword);
+                    request.setAttribute("paramOperacion", operacion);
+                    request.setAttribute("paramTipo", tipoInmueble);
+                    
+                    request.getRequestDispatcher("/WEB-INF/views/propiedades.jsp").forward(request, response);
+                    break;
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+            response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "Error procesando la solicitud GET");
         }
     }
 
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        // Recepción de parámetros y procesamiento básico de datos (requerido en rúbrica)
+        String idStr = request.getParameter("id");
         String titulo = request.getParameter("titulo");
         String descripcion = request.getParameter("descripcion");
         String precioStr = request.getParameter("precio");
@@ -49,15 +87,25 @@ public class PropiedadServlet extends HttpServlet {
 
         try {
             BigDecimal precio = new BigDecimal(precioStr);
-            Propiedad nuevaPropiedad = new Propiedad(0, titulo, descripcion, precio, ubicacion);
+            PropiedadDTO propiedad = new PropiedadDTO(0, titulo, descripcion, precio, ubicacion);
             
-            boolean insertado = propiedadDAO.registrarPropiedad(nuevaPropiedad);
+            boolean exito;
+            if (idStr != null && !idStr.isEmpty()) {
+                // Actualizar propiedad existente
+                int id = Integer.parseInt(idStr);
+                propiedad.setId(id);
+                exito = propiedadFacade.actualizarPropiedad(propiedad);
+            } else {
+                // Registrar nueva propiedad
+                exito = propiedadFacade.registrarPropiedad(propiedad);
+            }
             
-            if (insertado) {
-                // Redirige al doGet normal para listar con la nueva propiedad
+            if (exito) {
+                // Redirige al listado
                 response.sendRedirect(request.getContextPath() + "/propiedades");
             } else {
-                request.setAttribute("error", "No se pudo registrar la propiedad en la base de datos.");
+                request.setAttribute("error", "No se pudo guardar la propiedad en la base de datos.");
+                request.setAttribute("propiedad", propiedad); // Mantiene los datos en el form
                 request.getRequestDispatcher("/WEB-INF/views/registro.jsp").forward(request, response);
             }
         } catch (Exception e) {

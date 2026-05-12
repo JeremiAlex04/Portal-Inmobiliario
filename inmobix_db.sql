@@ -176,7 +176,6 @@ CREATE TABLE propiedad (
     num_cocheras          TINYINT UNSIGNED NULL,
     num_pisos             TINYINT UNSIGNED NULL,
     anio_construccion     SMALLINT UNSIGNED NULL,
-    antiguedad_anios      SMALLINT UNSIGNED NULL AS (YEAR(CURRENT_DATE) - anio_construccion) VIRTUAL,
 
     -- Precio Bimonetario (RF-03, RNF-07)
     moneda_base           ENUM('PEN','USD') NOT NULL DEFAULT 'USD',
@@ -209,7 +208,7 @@ CREATE TABLE propiedad (
     FULLTEXT INDEX ft_prop_titulo_desc (titulo, descripcion),
 
     CONSTRAINT fk_prop_agente   FOREIGN KEY (id_usuario_agente)
-        REFERENCES usuario(id_propiedad) ON UPDATE CASCADE,
+        REFERENCES usuario(id_usuario) ON UPDATE CASCADE,
     CONSTRAINT fk_prop_tipo     FOREIGN KEY (id_tipo_inmueble)
         REFERENCES tipo_inmueble(id_tipo),
     CONSTRAINT fk_prop_op       FOREIGN KEY (id_operacion)
@@ -219,12 +218,6 @@ CREATE TABLE propiedad (
     CONSTRAINT fk_prop_dist     FOREIGN KEY (id_distrito)
         REFERENCES distrito(id_distrito)
 ) ENGINE=InnoDB COMMENT='Tabla principal de propiedades (RF-02)';
-
--- Corrección de FK auto-referencial (agente → usuario)
-ALTER TABLE propiedad
-    DROP FOREIGN KEY fk_prop_agente,
-    ADD CONSTRAINT fk_prop_agente FOREIGN KEY (id_usuario_agente)
-        REFERENCES usuario(id_usuario) ON UPDATE CASCADE;
 
 CREATE TABLE propiedad_multimedia (
     id_multimedia     BIGINT UNSIGNED  NOT NULL AUTO_INCREMENT,

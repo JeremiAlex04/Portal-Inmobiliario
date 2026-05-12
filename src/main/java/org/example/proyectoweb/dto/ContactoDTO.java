@@ -1,15 +1,15 @@
-package org.example.proyectoweb.model;
+package org.example.proyectoweb.dto;
 
-public class Contacto {
+public class ContactoDTO {
 
     private int id;
     private String nombre;
     private String email;
     private String mensaje;
 
-    public Contacto() {}
+    public ContactoDTO() {}
 
-    public Contacto(int id, String nombre, String email, String mensaje) {
+    public ContactoDTO(int id, String nombre, String email, String mensaje) {
         this.id = id;
         this.nombre = nombre;
         this.email = email;

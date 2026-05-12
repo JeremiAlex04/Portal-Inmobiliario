@@ -6,7 +6,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="icon" type="image/png" href="${pageContext.request.contextPath}/assets/img/logo/inmobix_logo.png">
-    <title>Inmobix - Registro de Usuario</title>
+    <title>Inmobix - Iniciar Sesión</title>
     <link rel="stylesheet" href="${pageContext.request.contextPath}/assets/css/styles.css">
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="${pageContext.request.contextPath}/assets/js/main.js" defer></script>
@@ -33,7 +33,7 @@
 
                 <!-- Actions -->
                 <div class="hidden md:flex items-center gap-4">
-                    <a href="${pageContext.request.contextPath}/usuario?accion=registro" class="text-sm font-semibold text-slate-600 hover:text-blue-600 transition-colors">Iniciar sesión</a>
+                    <a href="${pageContext.request.contextPath}/usuario?accion=login" class="text-sm font-semibold text-blue-600 transition-colors">Iniciar sesión</a>
                     <a href="${pageContext.request.contextPath}/usuario?accion=registro" class="bg-blue-600 hover:bg-blue-700 text-white px-5 py-2.5 rounded-full text-sm font-semibold shadow-md shadow-blue-600/20 transition-all hover:-translate-y-0.5">Regístrate</a>
                 </div>
             </div>
@@ -43,8 +43,8 @@
     <main class="flex-grow pt-28 pb-16 flex items-center justify-center px-4">
         <div class="w-full max-w-md bg-white p-8 md:p-10 rounded-2xl shadow-xl shadow-slate-200/50 border border-slate-100">
             <div class="text-center mb-8">
-                <h2 class="text-3xl font-bold text-slate-900 tracking-tight">Crear Cuenta</h2>
-                <p class="text-slate-500 mt-2">Únete a Inmobix y encuentra tu hogar ideal.</p>
+                <h2 class="text-3xl font-bold text-slate-900 tracking-tight">Bienvenido a Inmobix</h2>
+                <p class="text-slate-500 mt-2">Ingresa tus credenciales para acceder.</p>
             </div>
 
             <!-- MENSAJES -->
@@ -78,19 +78,7 @@
             </c:if>
 
             <form action="${pageContext.request.contextPath}/usuario" method="post" class="space-y-5">
-                <input type="hidden" name="accion" value="registro">
-                
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    <div>
-                        <label class="block text-sm font-semibold text-slate-700 mb-2">Nombres</label>
-                        <input type="text" name="nombres" required placeholder="Juan" class="w-full px-4 py-3 rounded-lg border border-slate-300 focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 outline-none transition-all text-slate-700 bg-slate-50 focus:bg-white placeholder-slate-400">
-                    </div>
-                    <div>
-                        <label class="block text-sm font-semibold text-slate-700 mb-2">Apellidos</label>
-                        <input type="text" name="apellidos" required placeholder="Pérez" class="w-full px-4 py-3 rounded-lg border border-slate-300 focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 outline-none transition-all text-slate-700 bg-slate-50 focus:bg-white placeholder-slate-400">
-                    </div>
-                </div>
-
+                <input type="hidden" name="accion" value="login">
                 <div>
                     <label class="block text-sm font-semibold text-slate-700 mb-2">Correo electrónico</label>
                     <input type="email" name="correo" required placeholder="juan@ejemplo.com" class="w-full px-4 py-3 rounded-lg border border-slate-300 focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 outline-none transition-all text-slate-700 bg-slate-50 focus:bg-white placeholder-slate-400">
@@ -103,16 +91,16 @@
 
                 <div class="pt-2">
                     <button type="submit" class="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-3.5 px-4 rounded-lg shadow-lg shadow-indigo-600/30 transition-all hover:-translate-y-0.5 active:translate-y-0">
-                        Registrarse
+                        Ingresar
                     </button>
                 </div>
             </form>
 
             <div class="mt-8 pt-6 border-t border-slate-100 text-center">
                 <p class="text-slate-600 text-sm">
-                    ¿Ya tienes cuenta?
-                    <a href="${pageContext.request.contextPath}/usuario?accion=login" class="font-bold text-indigo-600 hover:text-indigo-800 transition-colors ml-1">
-                        Iniciar sesión
+                    ¿No tienes cuenta?
+                    <a href="${pageContext.request.contextPath}/usuario?accion=registro" class="font-bold text-indigo-600 hover:text-indigo-800 transition-colors ml-1">
+                        Regístrate aquí
                     </a>
                 </p>
             </div>
@@ -131,4 +119,3 @@
     </footer>
 </body>
 </html>
-

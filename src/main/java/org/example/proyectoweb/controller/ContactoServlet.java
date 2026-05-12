@@ -4,19 +4,25 @@ import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.*;
 
-import org.example.proyectoweb.dao.ContactoDAO;
-import org.example.proyectoweb.model.Contacto;
+import org.example.proyectoweb.facade.ContactoFacade;
+import org.example.proyectoweb.dto.ContactoDTO;
 
 import java.io.IOException;
 
 @WebServlet("/contacto")
 public class ContactoServlet extends HttpServlet {
 
-    private ContactoDAO dao;
+    private ContactoFacade facade;
 
     @Override
     public void init() {
-        dao = new ContactoDAO();
+        facade = new ContactoFacade();
+    }
+
+    @Override
+    protected void doGet(HttpServletRequest request, HttpServletResponse response)
+            throws ServletException, IOException {
+        request.getRequestDispatcher("/WEB-INF/views/contacto.jsp").forward(request, response);
     }
 
     @Override
@@ -27,9 +33,9 @@ public class ContactoServlet extends HttpServlet {
         String email = request.getParameter("email");
         String mensaje = request.getParameter("mensaje");
 
-        Contacto c = new Contacto(0, nombre, email, mensaje);
+        ContactoDTO c = new ContactoDTO(0, nombre, email, mensaje);
 
-        if (dao.guardarMensaje(c)) {
+        if (facade.guardarMensaje(c)) {
             request.setAttribute("msg", "Mensaje enviado correctamente ✔");
         } else {
             request.setAttribute("msg", "Error al enviar mensaje ✘");
