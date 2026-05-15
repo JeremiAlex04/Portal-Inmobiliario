@@ -3,15 +3,68 @@ package org.example.proyectoweb.facade;
 import org.example.proyectoweb.dao.PropiedadDAO;
 import org.example.proyectoweb.dto.PropiedadDTO;
 
+import java.math.BigDecimal;
 import java.util.List;
 
 public class PropiedadFacade {
 
     private PropiedadDAO propiedadDAO;
 
+    // Constantes de validación de negocio
+    private static final BigDecimal PRECIO_MINIMO_VENTA = new BigDecimal("10000");
+    private static final BigDecimal PRECIO_MINIMO_ALQUILER = new BigDecimal("100");
+
     public PropiedadFacade() {
         this.propiedadDAO = new PropiedadDAO();
     }
+
+    // =========================================================
+    // VALIDACIONES DE NEGOCIO (Requisito Sprint 1 - Facade)
+    // =========================================================
+
+    /**
+     * Valida las reglas de negocio para una propiedad antes de persistirla.
+     * @return null si es válido, o un mensaje de error si hay violación.
+     */
+    public String validarPropiedad(PropiedadDTO p) {
+        // RN-01: El título no puede estar vacío
+        if (p.getTitulo() == null || p.getTitulo().trim().isEmpty()) {
+            return "El título de la propiedad es obligatorio.";
+        }
+
+        // RN-02: No permitir precios negativos
+        if (p.getPrecio() != null && p.getPrecio().compareTo(BigDecimal.ZERO) <= 0) {
+            return "El precio debe ser mayor a 0.";
+        }
+
+        // RN-03: El precio mínimo en VENTA debe ser mayor a 10,000
+        if (p.getIdOperacion() == 1 && p.getPrecio() != null
+                && p.getPrecio().compareTo(PRECIO_MINIMO_VENTA) < 0) {
+            return "El precio mínimo para una venta es de 10,000.";
+        }
+
+        // RN-04: El precio mínimo en ALQUILER debe ser mayor a 100
+        if (p.getIdOperacion() == 2 && p.getPrecio() != null
+                && p.getPrecio().compareTo(PRECIO_MINIMO_ALQUILER) < 0) {
+            return "El precio mínimo para un alquiler es de 100.";
+        }
+
+        // RN-05: No permitir publicar propiedades sin ubicación (distrito)
+        if (p.getIdDistrito() <= 0) {
+            return "Debe seleccionar una ubicación (distrito) para la propiedad.";
+        }
+
+        // RN-06: No permitir publicar propiedades sin tipo de inmueble
+        if (p.getIdTipoInmueble() <= 0) {
+            return "Debe seleccionar el tipo de inmueble.";
+        }
+
+        return null; // Todo válido
+    }
+
+    // =========================================================
+    // OPERACIONES CRUD
+    // =========================================================
 
     public List<PropiedadDTO> buscarPropiedades(String keyword, String operacion, String tipoInmueble, int offset, int limit) {
         return propiedadDAO.buscarPropiedades(keyword, operacion, tipoInmueble, offset, limit);
@@ -46,10 +99,20 @@ public class PropiedadFacade {
     }
 
     public boolean registrarPropiedad(PropiedadDTO propiedad) {
+        // Aplicar validaciones de negocio antes de persistir
+        String error = validarPropiedad(propiedad);
+        if (error != null) {
+            return false;
+        }
         return propiedadDAO.registrarPropiedad(propiedad);
     }
 
     public boolean actualizarPropiedad(PropiedadDTO propiedad) {
+        // Aplicar validaciones de negocio antes de actualizar
+        String error = validarPropiedad(propiedad);
+        if (error != null) {
+            return false;
+        }
         return propiedadDAO.actualizarPropiedad(propiedad);
     }
 
@@ -58,6 +121,35 @@ public class PropiedadFacade {
     }
 
     public boolean cambiarEstadoPropiedad(int idPropiedad, String nuevoEstado) {
+        // RN-07: Validar que el estado sea uno de los permitidos
+        if (nuevoEstado == null || (!nuevoEstado.equals("ACTIVO") && !nuevoEstado.equals("INACTIVO")
+                && !nuevoEstado.equals("VENDIDO") && !nuevoEstado.equals("ALQUILADO")
+                && !nuevoEstado.equals("RECHAZADO"))) {
+            return false;
+        }
         return propiedadDAO.cambiarEstadoPropiedad(idPropiedad, nuevoEstado);
+    }
+
+    // =========================================================
+    // Sprint 2: Búsqueda Avanzada + Vistas + Panel Agente
+    // =========================================================
+
+    public List<PropiedadDTO> buscarPropiedadesAvanzado(String keyword, String operacion, String tipoInmueble,
+            java.math.BigDecimal precioMin, java.math.BigDecimal precioMax, Integer dormitorios, Integer banos,
+            int offset, int limit) {
+        return propiedadDAO.buscarPropiedadesAvanzado(keyword, operacion, tipoInmueble, precioMin, precioMax, dormitorios, banos, offset, limit);
+    }
+
+    public int contarPropiedadesAvanzado(String keyword, String operacion, String tipoInmueble,
+            java.math.BigDecimal precioMin, java.math.BigDecimal precioMax, Integer dormitorios, Integer banos) {
+        return propiedadDAO.contarPropiedadesAvanzado(keyword, operacion, tipoInmueble, precioMin, precioMax, dormitorios, banos);
+    }
+
+    public void incrementarVistas(int idPropiedad) {
+        propiedadDAO.incrementarVistas(idPropiedad);
+    }
+
+    public List<PropiedadDTO> obtenerPropiedadesAgenteConFiltros(int idAgente, String estado, String orden) {
+        return propiedadDAO.obtenerPropiedadesAgenteConFiltros(idAgente, estado, orden);
     }
 }

@@ -51,7 +51,10 @@ INSERT INTO departamento (id_departamento, nombre, codigo_ubigeo) VALUES (1, 'Li
 INSERT INTO provincia (id_provincia, id_departamento, nombre, codigo_ubigeo) VALUES (1, 1, 'Lima', '1501');
 INSERT INTO distrito (id_distrito, id_provincia, nombre, codigo_ubigeo) VALUES 
 (1, 1, 'Miraflores', '150122'), (2, 1, 'San Isidro', '150131'), (3, 1, 'Santiago de Surco', '150140'),
-(4, 1, 'La Molina', '150114'), (5, 1, 'Lima Cercado', '150101'), (6, 1, 'San Borja', '150130');
+(4, 1, 'La Molina', '150114'), (5, 1, 'Lima Cercado', '150101'), (6, 1, 'San Borja', '150130'),
+(7, 1, 'Barranco', '150104'), (8, 1, 'Jesús María', '150113'), (9, 1, 'Lince', '150116'),
+(10, 1, 'Magdalena del Mar', '150117'), (11, 1, 'Pueblo Libre', '150121'), (12, 1, 'San Miguel', '150136'),
+(13, 1, 'Chorrillos', '150108'), (14, 1, 'Ate', '150103'), (15, 1, 'Los Olivos', '150115');
 
 
 CREATE TABLE urbanizacion (
@@ -106,10 +109,11 @@ CREATE TABLE usuario (
         REFERENCES rol(id_rol) ON UPDATE CASCADE
 ) ENGINE=InnoDB COMMENT='Tabla central de usuarios - Ley 29733';
 
--- Datos de Prueba: Usuario Agente y Usuario Administrador (Password: 123456)
-INSERT INTO usuario (id_usuario, id_rol, nombres, apellidos, correo, password_hash, activo, verificado) VALUES
-(1, 3, 'Carlos', 'Agente Inmobix', 'agente@inmobix.com', '$2a$12$lO5G/V8N2U2zGvJv1bV3U.eH4F.M.4Q4R4Q4R4Q4R4Q4R4Q4R4Q4q', 1, 1),
-(2, 5, 'Super', 'Administrador', 'admin@inmobix.pe', '$2a$12$lO5G/V8N2U2zGvJv1bV3U.eH4F.M.4Q4R4Q4R4Q4R4Q4R4Q4R4Q4q', 1, 1);
+-- Datos de Prueba: 1 Admin, 2 Agentes (Password para todos: 123456)
+INSERT INTO usuario (id_usuario, id_rol, nombres, apellidos, correo, password_hash, telefono, activo, verificado) VALUES
+(1, 3, 'Carlos', 'Mendoza López', 'agente@inmobix.com', '$2a$10$Gtq9fAQEJWhkZi0fZXnVH.90d09O/L1amhSzPar/OlQsCuAHk9IFO', '987654321', 1, 1),
+(2, 5, 'Super', 'Administrador', 'admin@inmobix.pe', '$2a$10$Gtq9fAQEJWhkZi0fZXnVH.90d09O/L1amhSzPar/OlQsCuAHk9IFO', '999888777', 1, 1),
+(3, 3, 'María', 'Torres Gutiérrez', 'maria.torres@inmobix.com', '$2a$10$Gtq9fAQEJWhkZi0fZXnVH.90d09O/L1amhSzPar/OlQsCuAHk9IFO', '912345678', 1, 1);
 
 
 CREATE TABLE recuperacion_cuenta (
@@ -235,14 +239,21 @@ CREATE TABLE propiedad (
         REFERENCES distrito(id_distrito)
 ) ENGINE=InnoDB COMMENT='Tabla principal de propiedades (RF-02)';
 
--- Datos de Prueba: 3 Propiedades Catálogo
+-- Datos de Prueba: 10 Propiedades de Catálogo (Sprint 1)
 INSERT INTO propiedad (
     id_usuario_agente, id_tipo_inmueble, id_operacion, id_distrito, partida_sunarp, titulo, descripcion, direccion, 
     area_total_m2, area_techada_m2, num_dormitorios, num_banos, num_cocheras, anio_construccion, moneda_base, precio, bono_mi_vivienda, bono_verde, estado
 ) VALUES 
 (1, 1, 1, 1, '11002233', 'Casa Moderna de Estreno cerca al Malecón', 'Hermosa casa de 2 pisos con jardín interno, amplia terraza y finos acabados en zona residencial tranquila, a 3 cuadras de los parques.', 'Av. Pardo 1234', 250.00, 200.00, 4, 4, 2, 2023, 'USD', 450000.00, 0, 0, 'ACTIVO'),
 (1, 2, 2, 2, '11223344', 'Departamento Amoblado Flat con vista panorámica', 'Lujoso departamento completamente amoblado en el piso 8. Cuenta con vista espectacular a la ciudad, gimnasio, piscina y seguridad 24/7.', 'Av. Javier Prado Oeste 789', 110.00, 110.00, 2, 2, 1, 2018, 'PEN', 3500.00, 0, 0, 'ACTIVO'),
-(1, 2, 1, 3, '11445566', 'Departamento Proyecto Ecológico y Familiar', 'Moderno departamento ideal para familias. Excelente iluminación natural, áreas comunes ecológicas y pet friendly. Califica a bonos del estado.', 'Jr. El Cortijo 456', 80.00, 80.00, 3, 2, 1, 2024, 'PEN', 280000.00, 1, 1, 'ACTIVO');
+(1, 2, 1, 3, '11445566', 'Departamento Proyecto Ecológico y Familiar', 'Moderno departamento ideal para familias. Excelente iluminación natural, áreas comunes ecológicas y pet friendly. Califica a bonos del estado.', 'Jr. El Cortijo 456', 80.00, 80.00, 3, 2, 1, 2024, 'PEN', 280000.00, 1, 1, 'ACTIVO'),
+(3, 3, 1, 4, '22001100', 'Terreno Ideal para Proyecto Inmobiliario', 'Terreno plano de 500m2 con habilitación urbana completa. Zonificación RDM. Excelente ubicación para proyecto multifamiliar.', 'Av. La Molina 890', 500.00, 0.00, 0, 0, 0, 0, 'USD', 320000.00, 0, 0, 'ACTIVO'),
+(3, 1, 1, 6, '22112233', 'Casa Amplia con Piscina en San Borja', 'Elegante casa de 3 pisos con piscina, jardín, sala de cine y acabados de lujo. Ubicada en zona exclusiva con seguridad privada.', 'Av. San Borja Sur 567', 350.00, 280.00, 5, 5, 3, 2019, 'USD', 780000.00, 0, 0, 'ACTIVO'),
+(1, 2, 2, 7, '33001122', 'Departamento Bohemio en Barranco', 'Acogedor departamento con balcón y vista al mar. A pocas cuadras del Puente de los Suspiros. Ideal para artistas y creativos.', 'Jr. Cajamarca 234', 75.00, 75.00, 1, 1, 0, 2015, 'PEN', 2800.00, 0, 0, 'ACTIVO'),
+(3, 2, 1, 8, '33112233', 'Departamento Nuevo en Jesús María', 'Departamento de estreno en edificio con ascensor. Cocina equipada, closets empotrados y áreas comunes modernas.', 'Av. Brasil 1567', 90.00, 85.00, 3, 2, 1, 2025, 'PEN', 350000.00, 1, 0, 'ACTIVO'),
+(1, 4, 2, 5, '44001122', 'Local Comercial en el Centro de Lima', 'Amplio local comercial en esquina con alto tránsito peatonal. Ideal para restaurante, tienda o academia. Con licencia de funcionamiento.', 'Jr. de la Unión 800', 120.00, 120.00, 0, 2, 0, 1990, 'PEN', 8500.00, 0, 0, 'ACTIVO'),
+(3, 1, 1, 13, '55001122', 'Casa Económica cerca a la Playa', 'Casa de playa renovada con 3 dormitorios. Terraza con vista al mar, garaje para 2 autos. Perfecta para familia joven.', 'Av. Defensores del Morro 456', 180.00, 140.00, 3, 2, 2, 2010, 'USD', 195000.00, 0, 0, 'ACTIVO'),
+(1, 2, 1, 12, '55112233', 'Departamento en San Miguel con Club House', 'Departamento con vista a parque interior, club house con gimnasio, piscina y zona BBQ. Excelente para inversión o vivienda.', 'Av. La Marina 2345', 70.00, 65.00, 2, 1, 1, 2024, 'PEN', 245000.00, 1, 1, 'ACTIVO');
 
 CREATE TABLE propiedad_multimedia (
     id_multimedia     BIGINT UNSIGNED  NOT NULL AUTO_INCREMENT,
@@ -589,6 +600,30 @@ WHERE u.id_rol IN (
     SELECT id_rol FROM rol WHERE nombre IN ('AGENTE','CONSTRUCTORA')
 )
 GROUP BY u.id_usuario, agente;
+
+-- ============================================================
+-- SPRINT 2: MULTIMEDIA Y BÚSQUEDA AVANZADA
+-- ============================================================
+
+-- Columna foto principal en propiedad
+ALTER TABLE propiedad ADD COLUMN foto_principal VARCHAR(255) NULL COMMENT 'Ruta relativa a la foto principal' AFTER tour_360_url;
+
+-- Contador de visualizaciones
+ALTER TABLE propiedad ADD COLUMN numero_vistas INT UNSIGNED NOT NULL DEFAULT 0 COMMENT 'Contador de vistas en detalle' AFTER foto_principal;
+
+-- Tabla simplificada de favoritos (usuario ↔ propiedad)
+CREATE TABLE IF NOT EXISTS usuario_favorito (
+    id_favorito       BIGINT UNSIGNED  NOT NULL AUTO_INCREMENT,
+    id_usuario        BIGINT UNSIGNED  NOT NULL,
+    id_propiedad      BIGINT UNSIGNED  NOT NULL,
+    fecha_agregado    DATETIME         NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    PRIMARY KEY (id_favorito),
+    UNIQUE KEY uq_usr_fav (id_usuario, id_propiedad),
+    CONSTRAINT fk_ufav_usr FOREIGN KEY (id_usuario)
+        REFERENCES usuario(id_usuario) ON DELETE CASCADE,
+    CONSTRAINT fk_ufav_prop FOREIGN KEY (id_propiedad)
+        REFERENCES propiedad(id_propiedad) ON DELETE CASCADE
+) ENGINE=InnoDB COMMENT='Favoritos del usuario (Sprint 2)';
 
 -- ============================================================
 -- FIN DEL SCRIPT

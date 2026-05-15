@@ -59,24 +59,58 @@
                 <!-- Detalles Principales -->
                 <div class="lg:col-span-2 space-y-8">
                     <!-- Tarjeta Hero -->
-                    <div class="bg-white rounded-2xl p-8 shadow-xl shadow-slate-200/50 border border-slate-100">
-                        <div class="flex flex-wrap gap-2 mb-4">
-                            <span class="px-3 py-1 bg-blue-100 text-blue-700 rounded-full text-sm font-bold tracking-wide">${propiedad.operacion}</span>
-                            <span class="px-3 py-1 bg-slate-100 text-slate-700 rounded-full text-sm font-bold tracking-wide">${propiedad.tipoInmueble}</span>
-                            <c:if test="${propiedad.bonoMiVivienda == 1}">
-                                <span class="px-3 py-1 bg-emerald-100 text-emerald-700 rounded-full text-sm font-bold tracking-wide">Bono MiVivienda</span>
+                    <div class="bg-white rounded-2xl shadow-xl shadow-slate-200/50 border border-slate-100 overflow-hidden">
+                        <!-- Sprint 2: Foto principal -->
+                        <div class="relative h-72 md:h-96 bg-gradient-to-br from-slate-200 to-slate-300 overflow-hidden">
+                            <c:choose>
+                                <c:when test="${not empty propiedad.fotoPrincipal}">
+                                    <img src="${pageContext.request.contextPath}/${propiedad.fotoPrincipal}" alt="${propiedad.titulo}" class="w-full h-full object-cover">
+                                </c:when>
+                                <c:otherwise>
+                                    <div class="w-full h-full flex items-center justify-center text-slate-400 text-8xl">🏠</div>
+                                </c:otherwise>
+                            </c:choose>
+                            <!-- Sprint 2: Botón favorito sobre la foto -->
+                            <c:if test="${not empty sessionScope.usuarioLogueado}">
+                                <c:choose>
+                                    <c:when test="${propiedad.favorito}">
+                                        <a href="${pageContext.request.contextPath}/favorito?accion=remover&id=${propiedad.id}" class="absolute top-4 right-4 w-14 h-14 bg-red-500 text-white rounded-full flex items-center justify-center text-2xl shadow-xl hover:bg-red-600 transition-colors" title="Quitar de favoritos">♥</a>
+                                    </c:when>
+                                    <c:otherwise>
+                                        <a href="${pageContext.request.contextPath}/favorito?accion=agregar&id=${propiedad.id}" class="absolute top-4 right-4 w-14 h-14 bg-white/80 backdrop-blur text-slate-400 rounded-full flex items-center justify-center text-2xl shadow-xl hover:bg-red-50 hover:text-red-500 transition-colors" title="Guardar en favoritos">♡</a>
+                                    </c:otherwise>
+                                </c:choose>
                             </c:if>
-                            <c:if test="${propiedad.bonoVerde == 1}">
-                                <span class="px-3 py-1 bg-teal-100 text-teal-700 rounded-full text-sm font-bold tracking-wide">Bono Verde</span>
-                            </c:if>
+                            <div class="absolute bottom-4 left-4 flex items-center gap-2">
+                                <span class="px-3 py-1 bg-white/90 backdrop-blur text-slate-600 rounded-full text-xs font-bold">👁 ${propiedad.numeroVistas} vistas</span>
+                            </div>
                         </div>
-                        <h1 class="text-4xl font-extrabold text-slate-900 mb-4 leading-tight">${propiedad.titulo}</h1>
-                        <p class="text-slate-500 flex items-center gap-2 text-lg mb-6">
-                            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"></path></svg>
-                            ${propiedad.direccion}, ${propiedad.distrito}, ${propiedad.provincia}
-                        </p>
-                        <div class="text-4xl font-black text-blue-600">
-                            ${propiedad.monedaBase == 'USD' ? 'US$' : 'S/'} ${propiedad.monedaBase == 'USD' ? propiedad.precioUsd : propiedad.precioPen}
+                        <div class="p-8">
+                            <div class="flex flex-wrap gap-2 mb-4">
+                                <span class="px-3 py-1 bg-blue-100 text-blue-700 rounded-full text-sm font-bold tracking-wide">${propiedad.operacion}</span>
+                                <span class="px-3 py-1 bg-slate-100 text-slate-700 rounded-full text-sm font-bold tracking-wide">${propiedad.tipoInmueble}</span>
+                                <c:if test="${propiedad.bonoMiVivienda == 1}">
+                                    <span class="px-3 py-1 bg-emerald-100 text-emerald-700 rounded-full text-sm font-bold tracking-wide">Bono MiVivienda</span>
+                                </c:if>
+                                <c:if test="${propiedad.bonoVerde == 1}">
+                                    <span class="px-3 py-1 bg-teal-100 text-teal-700 rounded-full text-sm font-bold tracking-wide">Bono Verde</span>
+                                </c:if>
+                            </div>
+                            <h1 class="text-4xl font-extrabold text-slate-900 mb-4 leading-tight">${propiedad.titulo}</h1>
+                            <p class="text-slate-500 flex items-center gap-2 text-lg mb-6">
+                                📍 ${propiedad.direccion}, ${propiedad.distrito}, ${propiedad.provincia}
+                            </p>
+                            <!-- Sprint 2: Precio bimonetario con tipo de cambio -->
+                            <div class="bg-gradient-to-r from-blue-50 to-indigo-50 rounded-xl p-6">
+                                <div class="flex items-baseline gap-4 flex-wrap">
+                                    <span class="text-4xl font-black text-blue-600">US$ ${propiedad.precioUsd}</span>
+                                    <span class="text-2xl font-bold text-slate-400">|</span>
+                                    <span class="text-3xl font-bold text-slate-600">S/. ${propiedad.precioPen}</span>
+                                </div>
+                                <c:if test="${propiedad.tipoCambioVenta != null}">
+                                    <p class="text-xs text-slate-400 mt-2 font-semibold">Tipo de cambio referencial: S/. ${propiedad.tipoCambioVenta} por USD (fuente SBS)</p>
+                                </c:if>
+                            </div>
                         </div>
                     </div>
 

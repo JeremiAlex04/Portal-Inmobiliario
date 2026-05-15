@@ -32,6 +32,7 @@
                     <a href="${pageContext.request.contextPath}/admin?accion=dashboard" class="text-sm font-semibold text-slate-300 hover:text-white transition-colors">Dashboard</a>
                     <a href="${pageContext.request.contextPath}/admin?accion=usuarios" class="text-sm font-semibold text-slate-300 hover:text-white transition-colors">Usuarios</a>
                     <a href="${pageContext.request.contextPath}/admin?accion=propiedades" class="text-sm font-bold text-blue-400 border-b-2 border-blue-400 py-1 transition-colors">Propiedades</a>
+                    <a href="${pageContext.request.contextPath}/admin?accion=ubicaciones" class="text-sm font-semibold text-slate-300 hover:text-white transition-colors">Ubicaciones</a>
                 </nav>
 
                 <div class="hidden md:flex items-center gap-4">
@@ -50,6 +51,36 @@
                     <h1 class="text-3xl font-bold text-slate-900 tracking-tight">Moderación de Propiedades</h1>
                     <p class="text-slate-500 mt-2">Gestiona, aprueba, rechaza o elimina cualquier publicación inmobiliaria.</p>
                 </div>
+            </div>
+
+            <!-- Barra de búsqueda -->
+            <div class="bg-white rounded-2xl shadow-md border border-slate-100 p-4 mb-6">
+                <form action="${pageContext.request.contextPath}/admin" method="GET" class="flex flex-col md:flex-row gap-3 items-end">
+                    <input type="hidden" name="accion" value="propiedades">
+                    <div class="flex-[2]">
+                        <label class="block text-xs font-bold text-slate-500 mb-1">Buscar (distrito, título, descripción)</label>
+                        <input type="text" name="busqueda" value="${busquedaActual}" placeholder="Ej: Miraflores, Departamento..." class="w-full bg-slate-50 border border-slate-200 rounded-lg px-3 py-2.5 text-sm">
+                    </div>
+                    <div class="flex-1">
+                        <label class="block text-xs font-bold text-slate-500 mb-1">Operación</label>
+                        <select name="operacion" class="w-full bg-slate-50 border border-slate-200 rounded-lg px-3 py-2.5 text-sm">
+                            <option value="">Todas</option>
+                            <option value="VENTA" ${operacionActual == 'VENTA' ? 'selected' : ''}>Venta</option>
+                            <option value="ALQUILER" ${operacionActual == 'ALQUILER' ? 'selected' : ''}>Alquiler</option>
+                        </select>
+                    </div>
+                    <div class="flex-1">
+                        <label class="block text-xs font-bold text-slate-500 mb-1">Tipo Inmueble</label>
+                        <select name="tipoInmueble" class="w-full bg-slate-50 border border-slate-200 rounded-lg px-3 py-2.5 text-sm">
+                            <option value="">Todos</option>
+                            <option value="Casa" ${tipoActual == 'Casa' ? 'selected' : ''}>Casa</option>
+                            <option value="Departamento" ${tipoActual == 'Departamento' ? 'selected' : ''}>Departamento</option>
+                            <option value="Terreno" ${tipoActual == 'Terreno' ? 'selected' : ''}>Terreno</option>
+                        </select>
+                    </div>
+                    <button type="submit" class="bg-slate-900 text-white px-6 py-2.5 rounded-lg text-sm font-bold hover:bg-slate-800 transition-colors">Buscar</button>
+                    <a href="${pageContext.request.contextPath}/admin?accion=propiedades" class="text-sm text-slate-500 hover:text-slate-700 font-bold px-4 py-2.5">Limpiar</a>
+                </form>
             </div>
 
             <!-- Tabla de Propiedades -->

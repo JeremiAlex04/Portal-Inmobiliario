@@ -32,14 +32,22 @@ public class PanelAgenteServlet extends HttpServlet {
 
         UsuarioDTO usuario = (UsuarioDTO) session.getAttribute("usuarioLogueado");
         
-        // Validación de rol (Solo agentes = 3 o admin = 5)
+        // Validación de rol (Solo agentes = 3, constructoras = 4, o admin = 5)
         if (usuario.getIdRol() != 3 && usuario.getIdRol() != 4 && usuario.getIdRol() != 5) {
             response.sendError(HttpServletResponse.SC_FORBIDDEN, "Acceso denegado. Se requiere rol de Agente.");
             return;
         }
 
-        List<PropiedadDTO> lista = propiedadFacade.obtenerPropiedadesPorAgente(usuario.getIdUsuario());
+        // Sprint 2: Capturar filtros
+        String estado = request.getParameter("estado");  // ACTIVO, BORRADOR, VENDIDO, etc.
+        String orden = request.getParameter("orden");    // "fecha" o "vistas"
+
+        List<PropiedadDTO> lista = propiedadFacade.obtenerPropiedadesAgenteConFiltros(
+                usuario.getIdUsuario(), estado, orden);
+
         request.setAttribute("listaMisPropiedades", lista);
+        request.setAttribute("filtroEstado", estado);
+        request.setAttribute("filtroOrden", orden);
         request.getRequestDispatcher("/WEB-INF/views/panel_agente.jsp").forward(request, response);
     }
 }

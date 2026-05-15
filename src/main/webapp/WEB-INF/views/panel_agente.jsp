@@ -59,17 +59,43 @@
                 </a>
             </div>
 
+            <!-- Sprint 2: Filtros de estado y ordenamiento -->
+            <div class="bg-white rounded-2xl shadow-md border border-slate-100 p-4 mb-6">
+                <form action="${pageContext.request.contextPath}/panel" method="get" class="flex flex-col md:flex-row gap-3 items-end">
+                    <div class="flex-1">
+                        <label class="block text-xs font-bold text-slate-500 mb-1">Estado</label>
+                        <select name="estado" class="w-full bg-slate-50 border border-slate-200 rounded-lg px-3 py-2.5 text-sm">
+                            <option value="">Todas</option>
+                            <option value="ACTIVO" ${filtroEstado == 'ACTIVO' ? 'selected' : ''}>Activas</option>
+                            <option value="BORRADOR" ${filtroEstado == 'BORRADOR' ? 'selected' : ''}>Borrador</option>
+                            <option value="VENDIDO" ${filtroEstado == 'VENDIDO' ? 'selected' : ''}>Vendidas</option>
+                            <option value="PAUSADO" ${filtroEstado == 'PAUSADO' ? 'selected' : ''}>Pausadas</option>
+                        </select>
+                    </div>
+                    <div class="flex-1">
+                        <label class="block text-xs font-bold text-slate-500 mb-1">Ordenar por</label>
+                        <select name="orden" class="w-full bg-slate-50 border border-slate-200 rounded-lg px-3 py-2.5 text-sm">
+                            <option value="fecha" ${filtroOrden != 'vistas' ? 'selected' : ''}>Más recientes</option>
+                            <option value="vistas" ${filtroOrden == 'vistas' ? 'selected' : ''}>Más vistas</option>
+                        </select>
+                    </div>
+                    <button type="submit" class="bg-slate-900 text-white px-6 py-2.5 rounded-lg text-sm font-bold hover:bg-slate-800 transition-colors">Filtrar</button>
+                    <a href="${pageContext.request.contextPath}/panel" class="text-sm text-slate-500 hover:text-slate-700 font-bold px-4 py-2.5">Limpiar</a>
+                </form>
+            </div>
+
             <!-- Tabla de Propiedades -->
             <div class="bg-white rounded-2xl shadow-xl shadow-slate-200/50 border border-slate-100 overflow-hidden">
                 <div class="overflow-x-auto">
                     <table class="w-full text-left text-sm text-slate-600">
-                        <thead class="bg-slate-50 border-b border-slate-100 text-slate-700 uppercase font-semibold">
+                        <thead class="bg-slate-50 border-b border-slate-100 text-slate-700 uppercase font-semibold text-xs tracking-wider">
                             <tr>
-                                <th class="px-6 py-4">ID</th>
-                                <th class="px-6 py-4">Título</th>
+                                <th class="px-6 py-4">Propiedad</th>
                                 <th class="px-6 py-4">Tipo / Operación</th>
                                 <th class="px-6 py-4">Ubicación</th>
                                 <th class="px-6 py-4">Precio</th>
+                                <th class="px-6 py-4 text-center">👁 Vistas</th>
+                                <th class="px-6 py-4">Estado</th>
                                 <th class="px-6 py-4 text-center">Acciones</th>
                             </tr>
                         </thead>
@@ -77,7 +103,7 @@
                             <c:choose>
                                 <c:when test="${empty listaMisPropiedades}">
                                     <tr>
-                                        <td colspan="6" class="px-6 py-8 text-center text-slate-500">
+                                        <td colspan="7" class="px-6 py-8 text-center text-slate-500">
                                             No tienes propiedades publicadas todavía. ¡Haz clic en "Publicar Inmueble" para empezar!
                                         </td>
                                     </tr>
@@ -85,24 +111,46 @@
                                 <c:otherwise>
                                     <c:forEach var="p" items="${listaMisPropiedades}">
                                         <tr class="hover:bg-slate-50 transition-colors">
-                                            <td class="px-6 py-4 font-medium text-slate-900">#${p.id}</td>
                                             <td class="px-6 py-4">
-                                                <div class="font-bold text-slate-800">${p.titulo}</div>
-                                                <span class="inline-block mt-1 px-2 py-1 bg-${p.estado == 'ACTIVO' ? 'emerald' : 'slate'}-100 text-${p.estado == 'ACTIVO' ? 'emerald' : 'slate'}-700 text-xs rounded-full font-semibold">${p.estado}</span>
+                                                <div class="flex items-center gap-3">
+                                                    <c:choose>
+                                                        <c:when test="${not empty p.fotoPrincipal}">
+                                                            <img src="${pageContext.request.contextPath}/${p.fotoPrincipal}" alt="" class="w-14 h-10 object-cover rounded-lg border border-slate-200">
+                                                        </c:when>
+                                                        <c:otherwise>
+                                                            <div class="w-14 h-10 bg-slate-100 rounded-lg flex items-center justify-center text-slate-400 text-lg">🏠</div>
+                                                        </c:otherwise>
+                                                    </c:choose>
+                                                    <div>
+                                                        <div class="font-bold text-slate-800 line-clamp-1 w-40">${p.titulo}</div>
+                                                        <div class="text-xs text-slate-400">#${p.id}</div>
+                                                    </div>
+                                                </div>
                                             </td>
                                             <td class="px-6 py-4">
                                                 <span class="block">${p.tipoInmueble}</span>
                                                 <span class="block text-xs text-slate-400 font-semibold uppercase mt-1">${p.operacion}</span>
                                             </td>
-                                            <td class="px-6 py-4">
-                                                ${p.distrito}
-                                            </td>
+                                            <td class="px-6 py-4">${p.distrito}</td>
                                             <td class="px-6 py-4 font-bold text-slate-900">
-                                                ${p.monedaBase == 'USD' ? '$' : 'S/'} ${p.precioPen != null ? (p.monedaBase == 'USD' ? p.precioUsd : p.precioPen) : 0}
+                                                ${p.monedaBase == 'USD' ? 'US$' : 'S/.'} ${p.precio}
                                             </td>
-                                            <td class="px-6 py-4 flex justify-center gap-3">
-                                                <a href="${pageContext.request.contextPath}/propiedades?accion=editar&id=${p.id}" class="text-blue-600 hover:text-blue-800 bg-blue-50 hover:bg-blue-100 px-3 py-1.5 rounded-lg transition-colors font-medium text-xs">Editar</a>
-                                                <button onclick="confirmarEliminacion('${pageContext.request.contextPath}/propiedades?accion=eliminar&id=${p.id}')" class="text-red-600 hover:text-red-800 bg-red-50 hover:bg-red-100 px-3 py-1.5 rounded-lg transition-colors font-medium text-xs">Eliminar</button>
+                                            <td class="px-6 py-4 text-center">
+                                                <span class="inline-flex items-center px-3 py-1 bg-blue-50 text-blue-700 rounded-full text-xs font-bold">${p.numeroVistas}</span>
+                                            </td>
+                                            <td class="px-6 py-4">
+                                                <span class="inline-flex items-center px-2 py-1 rounded text-xs font-bold
+                                                    ${p.estado == 'ACTIVO' ? 'bg-emerald-100 text-emerald-700' : 
+                                                      p.estado == 'VENDIDO' ? 'bg-purple-100 text-purple-700' : 
+                                                      p.estado == 'BORRADOR' ? 'bg-amber-100 text-amber-700' : 'bg-slate-100 text-slate-700'}">
+                                                    ${p.estado}
+                                                </span>
+                                            </td>
+                                            <td class="px-6 py-4">
+                                                <div class="flex justify-center gap-2">
+                                                    <a href="${pageContext.request.contextPath}/propiedades?accion=editar&id=${p.id}" class="text-blue-600 hover:text-blue-800 bg-blue-50 hover:bg-blue-100 px-3 py-1.5 rounded-lg transition-colors font-medium text-xs">Editar</a>
+                                                    <button onclick="confirmarEliminacion('${pageContext.request.contextPath}/propiedades?accion=eliminar&id=${p.id}')" class="text-red-600 hover:text-red-800 bg-red-50 hover:bg-red-100 px-3 py-1.5 rounded-lg transition-colors font-medium text-xs">Eliminar</button>
+                                                </div>
                                             </td>
                                         </tr>
                                     </c:forEach>

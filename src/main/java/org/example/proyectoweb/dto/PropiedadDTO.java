@@ -289,4 +289,22 @@ public class PropiedadDTO {
     public void setBonoVerde(int bonoVerde) {
         this.bonoVerde = bonoVerde;
     }
+
+    // Sprint 2: Multimedia, Favoritos, Vistas
+    private String fotoPrincipal;
+    private int numeroVistas;
+    private boolean favorito; // Flag temporal para la vista
+    private BigDecimal tipoCambioVenta; // Para mostrar referencia
+
+    public String getFotoPrincipal() { return fotoPrincipal; }
+    public void setFotoPrincipal(String fotoPrincipal) { this.fotoPrincipal = fotoPrincipal; }
+
+    public int getNumeroVistas() { return numeroVistas; }
+    public void setNumeroVistas(int numeroVistas) { this.numeroVistas = numeroVistas; }
+
+    public boolean isFavorito() { return favorito; }
+    public void setFavorito(boolean favorito) { this.favorito = favorito; }
+
+    public BigDecimal getTipoCambioVenta() { return tipoCambioVenta; }
+    public void setTipoCambioVenta(BigDecimal tipoCambioVenta) { this.tipoCambioVenta = tipoCambioVenta; }
 }

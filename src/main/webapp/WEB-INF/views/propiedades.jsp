@@ -37,6 +37,10 @@
                                 class="text-sm font-semibold text-blue-600 transition-colors">Catálogo</a>
                             <a href="${pageContext.request.contextPath}/propiedades?accion=nuevo"
                                 class="text-sm font-semibold text-slate-600 hover:text-blue-600 transition-colors">Publicar</a>
+                            <c:if test="${not empty sessionScope.usuarioLogueado}">
+                                <a href="${pageContext.request.contextPath}/favorito?accion=listar"
+                                    class="text-sm font-semibold text-red-500 hover:text-red-600 transition-colors">♥ Favoritos</a>
+                            </c:if>
                             <a href="${pageContext.request.contextPath}/contacto"
                                 class="text-sm font-semibold text-slate-600 hover:text-blue-600 transition-colors">Contacto</a>
                         </nav>
@@ -82,33 +86,69 @@
                         </a>
                     </div>
 
-                    <!-- Barra de Búsqueda -->
-                    <form action="${pageContext.request.contextPath}/propiedades" method="get" class="mb-10 bg-white p-4 rounded-2xl shadow-sm border border-slate-200 flex flex-col md:flex-row gap-4">
-                        <div class="flex-grow">
-                            <label class="sr-only">Buscar</label>
-                            <input type="text" name="q" value="${paramQ}" placeholder="Buscar por distrito, título o descripción..." class="w-full px-4 py-3 rounded-xl border border-slate-300 focus:ring-2 focus:ring-indigo-500 outline-none text-slate-700">
+                    <!-- Barra de Búsqueda Avanzada (Sprint 2) -->
+                    <form action="${pageContext.request.contextPath}/propiedades" method="get" class="mb-6 bg-white p-5 rounded-2xl shadow-sm border border-slate-200">
+                        <div class="flex flex-col md:flex-row gap-3 mb-3">
+                            <div class="flex-grow">
+                                <input type="text" name="q" value="${paramQ}" placeholder="Buscar por distrito, título o descripción..." class="w-full px-4 py-3 rounded-xl border border-slate-300 focus:ring-2 focus:ring-indigo-500 outline-none text-slate-700">
+                            </div>
+                            <div class="md:w-44">
+                                <select name="operacion" class="w-full px-4 py-3 rounded-xl border border-slate-300 focus:ring-2 focus:ring-indigo-500 outline-none text-slate-700 bg-white">
+                                    <option value="">Operación</option>
+                                    <option value="VENTA" ${paramOperacion == 'VENTA' ? 'selected' : ''}>Venta</option>
+                                    <option value="ALQUILER" ${paramOperacion == 'ALQUILER' ? 'selected' : ''}>Alquiler</option>
+                                </select>
+                            </div>
+                            <div class="md:w-44">
+                                <select name="tipo" class="w-full px-4 py-3 rounded-xl border border-slate-300 focus:ring-2 focus:ring-indigo-500 outline-none text-slate-700 bg-white">
+                                    <option value="">Tipo Inmueble</option>
+                                    <option value="Casa" ${paramTipo == 'Casa' ? 'selected' : ''}>Casa</option>
+                                    <option value="Departamento" ${paramTipo == 'Departamento' ? 'selected' : ''}>Departamento</option>
+                                    <option value="Terreno" ${paramTipo == 'Terreno' ? 'selected' : ''}>Terreno</option>
+                                    <option value="Local Comercial" ${paramTipo == 'Local Comercial' ? 'selected' : ''}>Local Comercial</option>
+                                </select>
+                            </div>
                         </div>
-                        <div class="md:w-48">
-                            <select name="operacion" class="w-full px-4 py-3 rounded-xl border border-slate-300 focus:ring-2 focus:ring-indigo-500 outline-none text-slate-700 bg-white">
-                                <option value="">Todas las Operaciones</option>
-                                <option value="VENTA" ${paramOperacion == 'VENTA' ? 'selected' : ''}>Venta</option>
-                                <option value="ALQUILER" ${paramOperacion == 'ALQUILER' ? 'selected' : ''}>Alquiler</option>
-                                <option value="ANTICRESIS" ${paramOperacion == 'ANTICRESIS' ? 'selected' : ''}>Anticresis</option>
-                            </select>
+                        <!-- Filtros avanzados Sprint 2 -->
+                        <div class="flex flex-col md:flex-row gap-3 items-end">
+                            <div class="md:w-36">
+                                <label class="block text-xs font-bold text-slate-500 mb-1">Precio Mín (USD)</label>
+                                <input type="number" name="precioMin" value="${paramPrecioMin}" placeholder="0" min="0" class="w-full px-3 py-2.5 rounded-lg border border-slate-300 text-sm">
+                            </div>
+                            <div class="md:w-36">
+                                <label class="block text-xs font-bold text-slate-500 mb-1">Precio Máx (USD)</label>
+                                <input type="number" name="precioMax" value="${paramPrecioMax}" placeholder="∞" min="0" class="w-full px-3 py-2.5 rounded-lg border border-slate-300 text-sm">
+                            </div>
+                            <div class="md:w-36">
+                                <label class="block text-xs font-bold text-slate-500 mb-1">Dormitorios</label>
+                                <select name="dormitorios" class="w-full px-3 py-2.5 rounded-lg border border-slate-300 text-sm bg-white">
+                                    <option value="">Todos</option>
+                                    <option value="1" ${paramDormitorios == '1' ? 'selected' : ''}>1</option>
+                                    <option value="2" ${paramDormitorios == '2' ? 'selected' : ''}>2</option>
+                                    <option value="3" ${paramDormitorios == '3' ? 'selected' : ''}>3</option>
+                                    <option value="4" ${paramDormitorios == '4' ? 'selected' : ''}>4+</option>
+                                </select>
+                            </div>
+                            <div class="md:w-36">
+                                <label class="block text-xs font-bold text-slate-500 mb-1">Baños</label>
+                                <select name="banos" class="w-full px-3 py-2.5 rounded-lg border border-slate-300 text-sm bg-white">
+                                    <option value="">Todos</option>
+                                    <option value="1" ${paramBanos == '1' ? 'selected' : ''}>1</option>
+                                    <option value="2" ${paramBanos == '2' ? 'selected' : ''}>2</option>
+                                    <option value="3" ${paramBanos == '3' ? 'selected' : ''}>3+</option>
+                                </select>
+                            </div>
+                            <button type="submit" class="bg-indigo-600 hover:bg-indigo-700 text-white px-8 py-2.5 rounded-xl font-bold shadow-md transition-colors">Buscar</button>
+                            <a href="${pageContext.request.contextPath}/propiedades" class="text-sm text-slate-500 hover:text-slate-700 font-bold px-4 py-2.5">Limpiar</a>
                         </div>
-                        <div class="md:w-48">
-                            <select name="tipo" class="w-full px-4 py-3 rounded-xl border border-slate-300 focus:ring-2 focus:ring-indigo-500 outline-none text-slate-700 bg-white">
-                                <option value="">Todos los Tipos</option>
-                                <option value="Casa" ${paramTipo == 'Casa' ? 'selected' : ''}>Casa</option>
-                                <option value="Departamento" ${paramTipo == 'Departamento' ? 'selected' : ''}>Departamento</option>
-                                <option value="Terreno" ${paramTipo == 'Terreno' ? 'selected' : ''}>Terreno</option>
-                                <option value="Local Comercial" ${paramTipo == 'Local Comercial' ? 'selected' : ''}>Local Comercial</option>
-                            </select>
-                        </div>
-                        <button type="submit" class="bg-indigo-600 hover:bg-indigo-700 text-white px-8 py-3 rounded-xl font-bold shadow-md transition-colors">
-                            Buscar
-                        </button>
                     </form>
+
+                    <!-- Contador de resultados -->
+                    <c:if test="${totalResultados != null}">
+                        <div class="mb-6 text-sm font-semibold text-slate-500">
+                            Se encontraron <span class="text-slate-900 font-black">${totalResultados}</span> propiedades
+                        </div>
+                    </c:if>
 
                     <c:choose>
                         <c:when test="${empty listaPropiedades}">
@@ -137,27 +177,38 @@
                                     <!-- Card -->
                                     <div
                                         class="group bg-white rounded-2xl shadow-sm hover:shadow-xl border border-slate-200 overflow-hidden transition-all duration-300 hover:-translate-y-1 flex flex-col">
-                                        <div class="relative h-56 bg-slate-200 overflow-hidden">
-                                            <!-- Placeholder Image (Since no image URL in the original DB, using a random unsplash architecture photo) -->
-                                            <img src="https://images.unsplash.com/photo-1600596542815-ffad4c1539a9?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80"
-                                                alt="Propiedad"
-                                                class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500">
-                                                <div
-                                                    class="absolute top-4 left-4 bg-white/90 backdrop-blur-sm px-3 py-1 rounded-full text-xs font-bold text-indigo-600 shadow-sm uppercase">
-                                                    <c:out value="${propiedad.operacion != null ? propiedad.operacion : 'En Venta'}" />
-                                                </div>
+                                        <!-- Imagen con foto principal Sprint 2 -->
+                                        <div class="relative h-56 bg-gradient-to-br from-slate-200 to-slate-300 overflow-hidden">
+                                            <c:choose>
+                                                <c:when test="${not empty propiedad.fotoPrincipal}">
+                                                    <img src="${pageContext.request.contextPath}/${propiedad.fotoPrincipal}" alt="${propiedad.titulo}"
+                                                        class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500">
+                                                </c:when>
+                                                <c:otherwise>
+                                                    <div class="w-full h-full flex items-center justify-center text-slate-400 text-6xl">🏠</div>
+                                                </c:otherwise>
+                                            </c:choose>
+                                            <div class="absolute top-4 left-4 bg-white/90 backdrop-blur-sm px-3 py-1 rounded-full text-xs font-bold text-indigo-600 shadow-sm uppercase">
+                                                <c:out value="${propiedad.operacion != null ? propiedad.operacion : 'En Venta'}" />
+                                            </div>
+                                            <!-- Sprint 2: Botón favorito -->
+                                            <c:if test="${not empty sessionScope.usuarioLogueado}">
+                                                <c:choose>
+                                                    <c:when test="${propiedad.favorito}">
+                                                        <a href="${pageContext.request.contextPath}/favorito?accion=remover&id=${propiedad.id}" class="absolute top-4 right-4 w-10 h-10 bg-red-500 text-white rounded-full flex items-center justify-center text-lg shadow-lg hover:bg-red-600 transition-colors" title="Quitar de favoritos">♥</a>
+                                                    </c:when>
+                                                    <c:otherwise>
+                                                        <a href="${pageContext.request.contextPath}/favorito?accion=agregar&id=${propiedad.id}" class="absolute top-4 right-4 w-10 h-10 bg-white/80 backdrop-blur text-slate-400 rounded-full flex items-center justify-center text-lg shadow-lg hover:bg-red-50 hover:text-red-500 transition-colors" title="Guardar en favoritos">♡</a>
+                                                    </c:otherwise>
+                                                </c:choose>
+                                            </c:if>
                                         </div>
                                         <div class="p-6 flex-grow flex flex-col">
-                                            <div class="flex items-baseline gap-2 mb-2">
-                                                <h3 class="text-2xl font-bold text-slate-900 line-clamp-1">
-                                                    <c:out value="${propiedad.titulo}" />
-                                                </h3>
-                                            </div>
+                                            <h3 class="text-xl font-bold text-slate-900 line-clamp-1 mb-2">
+                                                <c:out value="${propiedad.titulo}" />
+                                            </h3>
                                             <div class="flex items-center text-slate-500 text-sm mb-3">
-                                                <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mr-1 text-slate-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
-                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
-                                                </svg>
+                                                <span class="mr-1">📍</span>
                                                 <span class="truncate">
                                                     <c:out value="${propiedad.distrito != null ? propiedad.distrito : propiedad.ubicacion}" /><c:if test="${propiedad.provincia != null}">, <c:out value="${propiedad.provincia}" /></c:if>
                                                 </span>
@@ -165,34 +216,31 @@
                                             
                                             <div class="flex gap-4 text-xs font-semibold text-slate-600 mb-4 bg-slate-50 p-2 rounded-lg">
                                                 <c:if test="${propiedad.numDormitorios > 0}">
-                                                    <div class="flex items-center gap-1">🛏️ ${propiedad.numDormitorios} dor.</div>
+                                                    <div class="flex items-center gap-1">🛏️ ${propiedad.numDormitorios} dorm.</div>
                                                 </c:if>
                                                 <c:if test="${propiedad.numBanos > 0}">
-                                                    <div class="flex items-center gap-1">🛁 ${propiedad.numBanos} bañ.</div>
+                                                    <div class="flex items-center gap-1">🛁 ${propiedad.numBanos} baños</div>
                                                 </c:if>
                                                 <c:if test="${propiedad.areaTechadaM2 != null}">
                                                     <div class="flex items-center gap-1">📐 ${propiedad.areaTechadaM2} m²</div>
                                                 </c:if>
                                             </div>
-                                            <p class="text-slate-600 text-sm mb-6 line-clamp-2 flex-grow">
+                                            <p class="text-slate-600 text-sm mb-4 line-clamp-2 flex-grow">
                                                 <c:out value="${propiedad.descripcion}" />
                                             </p>
-                                            <div
-                                                class="pt-4 border-t border-slate-100 flex justify-between items-center mt-auto">
+                                            <div class="pt-4 border-t border-slate-100 flex justify-between items-center mt-auto">
                                                 <div>
-                                                    <div class="text-emerald-600 font-extrabold text-xl">
+                                                    <div class="text-blue-600 font-extrabold text-lg">
                                                         US$ <c:out value="${propiedad.precioUsd != null ? propiedad.precioUsd : propiedad.precio}" />
                                                     </div>
                                                     <c:if test="${propiedad.precioPen != null}">
                                                         <div class="text-xs text-slate-500 font-medium">
-                                                            S/ <c:out value="${propiedad.precioPen}" />
+                                                            S/. <c:out value="${propiedad.precioPen}" />
                                                         </div>
                                                     </c:if>
                                                 </div>
-                                                <div class="flex gap-2">
-                                                    <a href="${pageContext.request.contextPath}/propiedades?accion=ver&id=${propiedad.id}"
-                                                        class="text-sm font-bold text-white hover:bg-blue-700 transition-colors bg-blue-600 px-5 py-2 rounded-lg shadow-md shadow-blue-600/20">Ver Detalle</a>
-                                                </div>
+                                                <a href="${pageContext.request.contextPath}/propiedades?accion=ver&id=${propiedad.id}"
+                                                    class="text-sm font-bold text-white hover:bg-blue-700 transition-colors bg-blue-600 px-5 py-2 rounded-lg shadow-md shadow-blue-600/20">Ver Detalle</a>
                                             </div>
                                         </div>
                                     </div>
@@ -201,24 +249,23 @@
 
                             <!-- Paginación -->
                             <c:if test="${totalPages > 1}">
+                                <c:set var="paginParams" value="q=${paramQ}&operacion=${paramOperacion}&tipo=${paramTipo}&precioMin=${paramPrecioMin}&precioMax=${paramPrecioMax}&dormitorios=${paramDormitorios}&banos=${paramBanos}" />
                                 <div class="mt-12 flex justify-center items-center gap-2">
                                     <c:if test="${currentPage > 1}">
-                                        <a href="${pageContext.request.contextPath}/propiedades?page=${currentPage - 1}&q=${paramQ}&operacion=${paramOperacion}&tipo=${paramTipo}" class="px-4 py-2 border border-slate-200 rounded-lg text-slate-600 hover:bg-slate-50 font-semibold transition-colors">Anterior</a>
+                                        <a href="${pageContext.request.contextPath}/propiedades?page=${currentPage - 1}&${paginParams}" class="px-4 py-2 border border-slate-200 rounded-lg text-slate-600 hover:bg-slate-50 font-semibold transition-colors">Anterior</a>
                                     </c:if>
-
                                     <c:forEach begin="1" end="${totalPages}" var="i">
                                         <c:choose>
                                             <c:when test="${currentPage == i}">
                                                 <span class="px-4 py-2 bg-blue-600 text-white rounded-lg font-bold shadow-md shadow-blue-600/20">${i}</span>
                                             </c:when>
                                             <c:otherwise>
-                                                <a href="${pageContext.request.contextPath}/propiedades?page=${i}&q=${paramQ}&operacion=${paramOperacion}&tipo=${paramTipo}" class="px-4 py-2 border border-slate-200 rounded-lg text-slate-600 hover:bg-slate-50 font-semibold transition-colors">${i}</a>
+                                                <a href="${pageContext.request.contextPath}/propiedades?page=${i}&${paginParams}" class="px-4 py-2 border border-slate-200 rounded-lg text-slate-600 hover:bg-slate-50 font-semibold transition-colors">${i}</a>
                                             </c:otherwise>
                                         </c:choose>
                                     </c:forEach>
-
                                     <c:if test="${currentPage < totalPages}">
-                                        <a href="${pageContext.request.contextPath}/propiedades?page=${currentPage + 1}&q=${paramQ}&operacion=${paramOperacion}&tipo=${paramTipo}" class="px-4 py-2 border border-slate-200 rounded-lg text-slate-600 hover:bg-slate-50 font-semibold transition-colors">Siguiente</a>
+                                        <a href="${pageContext.request.contextPath}/propiedades?page=${currentPage + 1}&${paginParams}" class="px-4 py-2 border border-slate-200 rounded-lg text-slate-600 hover:bg-slate-50 font-semibold transition-colors">Siguiente</a>
                                     </c:if>
                                 </div>
                             </c:if>

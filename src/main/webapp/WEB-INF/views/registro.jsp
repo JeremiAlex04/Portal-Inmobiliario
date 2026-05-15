@@ -79,7 +79,7 @@
                         </div>
                     </c:if>
 
-                    <form action="${pageContext.request.contextPath}/propiedades" method="post" class="space-y-8">
+                    <form action="${pageContext.request.contextPath}/propiedades" method="post" enctype="multipart/form-data" class="space-y-8">
                         <input type="hidden" name="id" value="${propiedad != null ? propiedad.id : ''}">
 
                         <!-- Sección 1: Datos Principales -->
@@ -248,6 +248,41 @@
                                 </label>
                             </div>
                         </div>
+
+                        <!-- Sección 5: Foto Principal (Sprint 2) -->
+                        <div>
+                            <h3 class="text-xl font-bold text-slate-800 mb-4 border-b pb-2">5. Foto Principal</h3>
+                            <div>
+                                <c:if test="${propiedad != null && not empty propiedad.fotoPrincipal}">
+                                    <div class="mb-4">
+                                        <p class="text-sm text-slate-500 mb-2">Foto actual:</p>
+                                        <img src="${pageContext.request.contextPath}/${propiedad.fotoPrincipal}" alt="Foto actual" class="w-48 h-32 object-cover rounded-lg border border-slate-200">
+                                    </div>
+                                </c:if>
+                                <label class="block text-sm font-semibold text-slate-700 mb-2">Subir imagen (JPG, PNG o WebP — máx. 2 MB)</label>
+                                <input type="file" name="fotoPrincipal" accept=".jpg,.jpeg,.png,.webp"
+                                    class="w-full px-4 py-3 rounded-lg border border-slate-300 text-sm file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:bg-indigo-50 file:text-indigo-700 file:font-semibold hover:file:bg-indigo-100"
+                                    onchange="previewImage(this)">
+                                <div id="imgPreview" class="mt-3 hidden">
+                                    <img id="previewImg" src="" alt="Preview" class="w-48 h-32 object-cover rounded-lg border border-slate-200">
+                                </div>
+                            </div>
+                        </div>
+
+                        <script>
+                            function previewImage(input) {
+                                const preview = document.getElementById('previewImg');
+                                const container = document.getElementById('imgPreview');
+                                if (input.files && input.files[0]) {
+                                    const reader = new FileReader();
+                                    reader.onload = function(e) {
+                                        preview.src = e.target.result;
+                                        container.classList.remove('hidden');
+                                    };
+                                    reader.readAsDataURL(input.files[0]);
+                                }
+                            }
+                        </script>
 
                         <div class="pt-6 flex gap-4 border-t border-slate-200 mt-8">
                             <a href="${pageContext.request.contextPath}/propiedades"
