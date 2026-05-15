@@ -18,4 +18,28 @@ public class UsuarioFacade {
     public UsuarioDTO autenticar(String correo, String password) {
         return usuarioDAO.autenticar(correo, password);
     }
+
+    public java.util.List<UsuarioDTO> listarUsuarios() {
+        return usuarioDAO.listarUsuarios();
+    }
+
+    public boolean cambiarEstadoUsuario(int idUsuario, int activo) {
+        return usuarioDAO.cambiarEstadoUsuario(idUsuario, activo);
+    }
+
+    public boolean cambiarRolUsuario(int idUsuario, int idRol) {
+        return usuarioDAO.cambiarRolUsuario(idUsuario, idRol);
+    }
+
+    public boolean eliminarUsuario(int idUsuario) {
+        return usuarioDAO.eliminarUsuario(idUsuario);
+    }
+
+    public int contarUsuariosPorRol(int idRol) {
+        return usuarioDAO.contarUsuariosPorRol(idRol);
+    }
+
+    public boolean repararCuentasPrueba(String nuevoHash) {
+        return usuarioDAO.repararCuentasPrueba(nuevoHash);
+    }
 }

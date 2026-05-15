@@ -4,11 +4,13 @@
 --  Versión: 1.0
 -- ============================================================
 
-CREATE DATABASE IF NOT EXISTS inmobix_db
-    CHARACTER SET utf8mb4
-    COLLATE utf8mb4_unicode_ci;
+-- DROP DATABASE IF EXISTS inmobix_db;
 
-USE inmobix_db;
+-- CREATE DATABASE inmobix_db
+--    CHARACTER SET utf8mb4
+--    COLLATE utf8mb4_unicode_ci;
+
+-- USE inmobix_db;
 
 -- ============================================================
 -- BLOQUE 1: GEOGRAFÍA PERUANA
@@ -43,6 +45,14 @@ CREATE TABLE distrito (
     CONSTRAINT fk_dist_prov FOREIGN KEY (id_provincia)
         REFERENCES provincia(id_provincia) ON UPDATE CASCADE
 ) ENGINE=InnoDB;
+
+-- Datos de Prueba Geográficos
+INSERT INTO departamento (id_departamento, nombre, codigo_ubigeo) VALUES (1, 'Lima', '15');
+INSERT INTO provincia (id_provincia, id_departamento, nombre, codigo_ubigeo) VALUES (1, 1, 'Lima', '1501');
+INSERT INTO distrito (id_distrito, id_provincia, nombre, codigo_ubigeo) VALUES 
+(1, 1, 'Miraflores', '150122'), (2, 1, 'San Isidro', '150131'), (3, 1, 'Santiago de Surco', '150140'),
+(4, 1, 'La Molina', '150114'), (5, 1, 'Lima Cercado', '150101'), (6, 1, 'San Borja', '150130');
+
 
 CREATE TABLE urbanizacion (
     id_urbanizacion   INT UNSIGNED     NOT NULL AUTO_INCREMENT,
@@ -95,6 +105,12 @@ CREATE TABLE usuario (
     CONSTRAINT fk_usr_rol FOREIGN KEY (id_rol)
         REFERENCES rol(id_rol) ON UPDATE CASCADE
 ) ENGINE=InnoDB COMMENT='Tabla central de usuarios - Ley 29733';
+
+-- Datos de Prueba: Usuario Agente y Usuario Administrador (Password: 123456)
+INSERT INTO usuario (id_usuario, id_rol, nombres, apellidos, correo, password_hash, activo, verificado) VALUES
+(1, 3, 'Carlos', 'Agente Inmobix', 'agente@inmobix.com', '$2a$12$lO5G/V8N2U2zGvJv1bV3U.eH4F.M.4Q4R4Q4R4Q4R4Q4R4Q4R4Q4q', 1, 1),
+(2, 5, 'Super', 'Administrador', 'admin@inmobix.pe', '$2a$12$lO5G/V8N2U2zGvJv1bV3U.eH4F.M.4Q4R4Q4R4Q4R4Q4R4Q4R4Q4q', 1, 1);
+
 
 CREATE TABLE recuperacion_cuenta (
     id_recuperacion   BIGINT UNSIGNED  NOT NULL AUTO_INCREMENT,
@@ -219,6 +235,15 @@ CREATE TABLE propiedad (
         REFERENCES distrito(id_distrito)
 ) ENGINE=InnoDB COMMENT='Tabla principal de propiedades (RF-02)';
 
+-- Datos de Prueba: 3 Propiedades Catálogo
+INSERT INTO propiedad (
+    id_usuario_agente, id_tipo_inmueble, id_operacion, id_distrito, partida_sunarp, titulo, descripcion, direccion, 
+    area_total_m2, area_techada_m2, num_dormitorios, num_banos, num_cocheras, anio_construccion, moneda_base, precio, bono_mi_vivienda, bono_verde, estado
+) VALUES 
+(1, 1, 1, 1, '11002233', 'Casa Moderna de Estreno cerca al Malecón', 'Hermosa casa de 2 pisos con jardín interno, amplia terraza y finos acabados en zona residencial tranquila, a 3 cuadras de los parques.', 'Av. Pardo 1234', 250.00, 200.00, 4, 4, 2, 2023, 'USD', 450000.00, 0, 0, 'ACTIVO'),
+(1, 2, 2, 2, '11223344', 'Departamento Amoblado Flat con vista panorámica', 'Lujoso departamento completamente amoblado en el piso 8. Cuenta con vista espectacular a la ciudad, gimnasio, piscina y seguridad 24/7.', 'Av. Javier Prado Oeste 789', 110.00, 110.00, 2, 2, 1, 2018, 'PEN', 3500.00, 0, 0, 'ACTIVO'),
+(1, 2, 1, 3, '11445566', 'Departamento Proyecto Ecológico y Familiar', 'Moderno departamento ideal para familias. Excelente iluminación natural, áreas comunes ecológicas y pet friendly. Califica a bonos del estado.', 'Jr. El Cortijo 456', 80.00, 80.00, 3, 2, 1, 2024, 'PEN', 280000.00, 1, 1, 'ACTIVO');
+
 CREATE TABLE propiedad_multimedia (
     id_multimedia     BIGINT UNSIGNED  NOT NULL AUTO_INCREMENT,
     id_propiedad      BIGINT UNSIGNED  NOT NULL,
@@ -260,6 +285,10 @@ CREATE TABLE tipo_cambio (
     UNIQUE KEY uq_tc_fecha (par_moneda, fecha_vigencia),
     INDEX idx_tc_vigencia (fecha_vigencia)
 ) ENGINE=InnoDB COMMENT='Tipo de cambio diario SBS/SUNAT (RNF-07)';
+
+-- Datos de Prueba: Tipo de Cambio del día para que la vista SQL no devuelva nulos
+INSERT INTO tipo_cambio (par_moneda, compra, venta, fuente, fecha_vigencia) VALUES
+('USD/PEN', 3.7500, 3.7800, 'SBS', CURDATE());
 
 -- ============================================================
 -- BLOQUE 6: BÚSQUEDA Y ALERTAS (RF-03)
@@ -332,7 +361,7 @@ CREATE TABLE comparador_item (
 -- BLOQUE 8: CONTACTO Y LEAD MANAGEMENT (RF-05)
 -- ============================================================
 
-CREATE TABLE lead (
+CREATE TABLE `lead` (
     id_lead           BIGINT UNSIGNED  NOT NULL AUTO_INCREMENT,
     id_propiedad      BIGINT UNSIGNED  NOT NULL,
     id_usuario        BIGINT UNSIGNED  NULL COMMENT 'NULL si es visitante anónimo',
@@ -351,7 +380,7 @@ CREATE TABLE lead (
     CONSTRAINT fk_lead_prop FOREIGN KEY (id_propiedad)
         REFERENCES propiedad(id_propiedad) ON DELETE CASCADE,
     CONSTRAINT fk_lead_usr  FOREIGN KEY (id_usuario)
-        REFERENCES usuario(id_usuario) ON SET NULL
+        REFERENCES usuario(id_usuario) ON DELETE SET NULL
 ) ENGINE=InnoDB COMMENT='Gestión de leads (RF-05)';
 
 CREATE TABLE visita_agendada (
@@ -370,7 +399,7 @@ CREATE TABLE visita_agendada (
     INDEX idx_vis_agente (id_agente),
     INDEX idx_vis_fecha  (fecha_visita),
     CONSTRAINT fk_vis_lead   FOREIGN KEY (id_lead)
-        REFERENCES lead(id_lead) ON DELETE CASCADE,
+        REFERENCES `lead`(id_lead) ON DELETE CASCADE,
     CONSTRAINT fk_vis_agente FOREIGN KEY (id_agente)
         REFERENCES usuario(id_usuario)
 ) ENGINE=InnoDB COMMENT='Calendario de visitas con recordatorio SMS (RF-05)';

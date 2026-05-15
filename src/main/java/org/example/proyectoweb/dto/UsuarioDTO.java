@@ -36,4 +36,18 @@ public class UsuarioDTO {
 
     public String getPasswordHash() { return passwordHash; }
     public void setPasswordHash(String passwordHash) { this.passwordHash = passwordHash; }
+
+    // Admin Fields
+    private int activo;
+    private String fechaRegistro;
+    private String rolNombre;
+
+    public int getActivo() { return activo; }
+    public void setActivo(int activo) { this.activo = activo; }
+
+    public String getFechaRegistro() { return fechaRegistro; }
+    public void setFechaRegistro(String fechaRegistro) { this.fechaRegistro = fechaRegistro; }
+
+    public String getRolNombre() { return rolNombre; }
+    public void setRolNombre(String rolNombre) { this.rolNombre = rolNombre; }
 }

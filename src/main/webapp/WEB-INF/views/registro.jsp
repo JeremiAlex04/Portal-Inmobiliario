@@ -1,149 +1,273 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
-    <!DOCTYPE html>
-    <html lang="es" class="scroll-smooth">
+    <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
+        <!DOCTYPE html>
+        <html lang="es" class="scroll-smooth">
 
-    <head>
-        <meta charset="UTF-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <link rel="icon" type="image/png" href="${pageContext.request.contextPath}/assets/img/logo/Logo_Inmobix.png">
-        <title>Inmobix - Registrar Propiedad</title>
-        <link rel="stylesheet" href="${pageContext.request.contextPath}/assets/css/styles.css">
-        <script src="https://cdn.tailwindcss.com"></script>
-        <script src="${pageContext.request.contextPath}/assets/js/main.js" defer></script>
-    </head>
+        <head>
+            <meta charset="UTF-8">
+            <meta name="viewport" content="width=device-width, initial-scale=1.0">
+            <link rel="icon" type="image/png"
+                href="${pageContext.request.contextPath}/assets/img/logo/Logo_Inmobix.png">
+            <title>Inmobix - Registrar Propiedad</title>
+            <link rel="stylesheet" href="${pageContext.request.contextPath}/assets/css/styles.css">
+            <script src="https://cdn.tailwindcss.com"></script>
+            <script src="${pageContext.request.contextPath}/assets/js/main.js" defer></script>
+        </head>
 
-    <body class="bg-slate-50 text-slate-800 flex flex-col min-h-screen font-sans">
+        <body class="bg-slate-50 text-slate-800 flex flex-col min-h-screen font-sans">
 
-        <!-- Navbar Premium con Glassmorphism -->
-        <header
-            class="fixed w-full top-0 z-50 bg-white/80 backdrop-blur-md border-b border-slate-200/50 shadow-sm transition-all">
-            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-                <div class="flex justify-between items-center h-20">
-                    <!-- Logo -->
-                    <div class="flex items-center gap-3">
-                        <img src="${pageContext.request.contextPath}/assets/img/logo/Logo_Inmobix.png"
-                            alt="Inmobix Logo" class="h-10 w-auto object-contain">
-                        <span
-                            class="text-2xl font-bold bg-gradient-to-r from-blue-600 to-indigo-600 bg-clip-text text-transparent tracking-tight">Inmobix</span>
-                    </div>
-
-                    <!-- Desktop Nav -->
-                    <nav class="hidden md:flex items-center gap-8">
-                        <a href="${pageContext.request.contextPath}/index.jsp"
-                            class="text-sm font-semibold text-slate-600 hover:text-blue-600 transition-colors">Inicio</a>
-                        <a href="${pageContext.request.contextPath}/propiedades"
-                            class="text-sm font-semibold text-slate-600 hover:text-blue-600 transition-colors">Catálogo</a>
-                        <a href="${pageContext.request.contextPath}/propiedades?accion=nuevo"
-                            class="text-sm font-semibold text-blue-600 transition-colors">Publicar</a>
-                        <a href="${pageContext.request.contextPath}/contacto"
-                            class="text-sm font-semibold text-slate-600 hover:text-blue-600 transition-colors">Contacto</a>
-                    </nav>
-
-                    <!-- Actions -->
-                    <div class="hidden md:flex items-center gap-4">
-                        <a href="${pageContext.request.contextPath}/usuario?accion=registro"
-                            class="text-sm font-semibold text-slate-600 hover:text-blue-600 transition-colors">Iniciar
-                            sesión</a>
-                        <a href="${pageContext.request.contextPath}/usuario?accion=registro"
-                            class="bg-blue-600 hover:bg-blue-700 text-white px-5 py-2.5 rounded-full text-sm font-semibold shadow-md shadow-blue-600/20 transition-all hover:-translate-y-0.5">Regístrate</a>
-                    </div>
-                </div>
-            </div>
-        </header>
-
-        <main class="flex-grow pt-28 pb-16 flex items-center justify-center px-4">
-            <div
-                class="w-full max-w-2xl bg-white p-8 md:p-10 rounded-2xl shadow-xl shadow-slate-200/50 border border-slate-100">
-                <div class="text-center mb-8">
-                    <h2 class="text-3xl font-bold text-slate-900 tracking-tight">
-                        ${propiedad != null ? 'Editar Inmueble' : 'Publicar Inmueble'}
-                    </h2>
-                    <p class="text-slate-500 mt-2">
-                        ${propiedad != null ? 'Actualiza los datos de tu propiedad.' : 'Ingresa los datos de la propiedad que deseas ofertar.'}
-                    </p>
-                </div>
-
-                <% String error=(String) request.getAttribute("error"); if(error !=null) { %>
-                    <div class="mb-6 bg-red-50 border-l-4 border-red-500 p-4 rounded-r-md">
-                        <div class="flex">
-                            <div class="flex-shrink-0">
-                                <svg class="h-5 w-5 text-red-400" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20"
-                                    fill="currentColor" aria-hidden="true">
-                                    <path fill-rule="evenodd"
-                                        d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z"
-                                        clip-rule="evenodd" />
-                                </svg>
-                            </div>
-                            <div class="ml-3">
-                                <p class="text-sm text-red-700 font-medium">
-                                    <%= error %>
-                                </p>
-                            </div>
+            <!-- Navbar Premium con Glassmorphism -->
+            <header
+                class="fixed w-full top-0 z-50 bg-white/80 backdrop-blur-md border-b border-slate-200/50 shadow-sm transition-all">
+                <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                    <div class="flex justify-between items-center h-20">
+                        <div class="flex items-center gap-3">
+                            <img src="${pageContext.request.contextPath}/assets/img/logo/Logo_Inmobix.png"
+                                alt="Inmobix Logo" class="h-10 w-auto object-contain">
+                            <span
+                                class="text-2xl font-bold bg-gradient-to-r from-blue-600 to-indigo-600 bg-clip-text text-transparent tracking-tight">Inmobix</span>
+                        </div>
+                        <nav class="hidden md:flex items-center gap-8">
+                            <a href="${pageContext.request.contextPath}/index.jsp"
+                                class="text-sm font-semibold text-slate-600 hover:text-blue-600 transition-colors">Inicio</a>
+                            <a href="${pageContext.request.contextPath}/propiedades"
+                                class="text-sm font-semibold text-slate-600 hover:text-blue-600 transition-colors">Catálogo</a>
+                            <a href="${pageContext.request.contextPath}/propiedades?accion=nuevo"
+                                class="text-sm font-semibold text-blue-600 transition-colors">Publicar</a>
+                            <a href="${pageContext.request.contextPath}/contacto"
+                                class="text-sm font-semibold text-slate-600 hover:text-blue-600 transition-colors">Contacto</a>
+                        </nav>
+                        <div class="hidden md:flex items-center gap-4">
+                            <c:choose>
+                                <c:when test="${not empty sessionScope.usuarioLogueado}">
+                                    <span class="text-sm font-semibold text-slate-600">Hola, ${sessionScope.usuarioLogueado.nombres}</span>
+                                    <c:if test="${sessionScope.usuarioLogueado.idRol == 3 || sessionScope.usuarioLogueado.idRol == 4 || sessionScope.usuarioLogueado.idRol == 5}">
+                                        <a href="${pageContext.request.contextPath}/panel" class="text-sm font-semibold text-blue-600 hover:text-blue-800 transition-colors">Mi Panel</a>
+                                    </c:if>
+                                    <a href="${pageContext.request.contextPath}/usuario?accion=logout" class="bg-slate-800 hover:bg-slate-900 text-white px-5 py-2.5 rounded-full text-sm font-semibold shadow-md shadow-slate-800/20 transition-all hover:-translate-y-0.5">Cerrar Sesión</a>
+                                </c:when>
+                                <c:otherwise>
+                                    <a href="${pageContext.request.contextPath}/usuario?accion=login" class="text-sm font-semibold text-slate-600 hover:text-blue-600 transition-colors">Iniciar sesión</a>
+                                    <a href="${pageContext.request.contextPath}/usuario?accion=registro" class="bg-blue-600 hover:bg-blue-700 text-white px-5 py-2.5 rounded-full text-sm font-semibold shadow-md shadow-blue-600/20 transition-all hover:-translate-y-0.5">Regístrate</a>
+                                </c:otherwise>
+                            </c:choose>
                         </div>
                     </div>
-                    <% } %>
+                </div>
+            </header>
 
-                        <form action="${pageContext.request.contextPath}/propiedades" method="post" class="space-y-6">
-                            <input type="hidden" name="id" value="${propiedad != null ? propiedad.id : ''}">
-                            <div>
-                                <label class="block text-sm font-semibold text-slate-700 mb-2">Título Breve</label>
-                                <input type="text" name="titulo" required placeholder="Ej. Casa de 2 pisos con jardín"
-                                    value="${propiedad != null ? propiedad.titulo : ''}"
-                                    class="w-full px-4 py-3 rounded-lg border border-slate-300 focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 outline-none transition-all text-slate-700 bg-slate-50 focus:bg-white placeholder-slate-400">
-                            </div>
+            <main class="flex-grow pt-28 pb-16 flex justify-center px-4">
+                <div
+                    class="w-full max-w-4xl bg-white p-8 md:p-10 rounded-2xl shadow-xl shadow-slate-200/50 border border-slate-100">
+                    <div class="text-center mb-8">
+                        <h2 class="text-3xl font-bold text-slate-900 tracking-tight">
+                            ${propiedad != null && propiedad.id > 0 ? 'Editar Inmueble' : 'Publicar Inmueble'}
+                        </h2>
+                        <p class="text-slate-500 mt-2">
+                            ${propiedad != null && propiedad.id > 0 ? 'Actualiza los datos de tu propiedad.' : 'Ingresa
+                            los datos de la propiedad que deseas ofertar.'}
+                        </p>
+                    </div>
 
-                            <div>
-                                <label class="block text-sm font-semibold text-slate-700 mb-2">Ubicación</label>
-                                <input type="text" name="ubicacion" required placeholder="Ej. Lima, Miraflores"
-                                    value="${propiedad != null ? propiedad.ubicacion : ''}"
-                                    class="w-full px-4 py-3 rounded-lg border border-slate-300 focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 outline-none transition-all text-slate-700 bg-slate-50 focus:bg-white placeholder-slate-400">
-                            </div>
-
-                            <div>
-                                <label class="block text-sm font-semibold text-slate-700 mb-2">Descripción
-                                    Detallada</label>
-                                <textarea name="descripcion" rows="4" required
-                                    placeholder="Describe las comodidades, áreas, etc."
-                                    class="w-full px-4 py-3 rounded-lg border border-slate-300 focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 outline-none transition-all text-slate-700 bg-slate-50 focus:bg-white placeholder-slate-400 resize-y">${propiedad != null ? propiedad.descripcion : ''}</textarea>
-                            </div>
-
-                            <div>
-                                <label class="block text-sm font-semibold text-slate-700 mb-2">Precio (US$)</label>
-                                <div class="relative">
-                                    <div class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
-                                        <span class="text-slate-500 font-semibold">$</span>
-                                    </div>
-                                    <input type="number" step="0.01" name="precio" required placeholder="150000.00"
-                                        value="${propiedad != null ? propiedad.precio : ''}"
-                                        class="w-full pl-8 pr-4 py-3 rounded-lg border border-slate-300 focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 outline-none transition-all text-slate-700 bg-slate-50 focus:bg-white placeholder-slate-400">
+                    <c:if test="${not empty error}">
+                        <div class="mb-6 bg-red-50 border-l-4 border-red-500 p-4 rounded-r-md">
+                            <div class="flex">
+                                <div class="ml-3">
+                                    <p class="text-sm text-red-700 font-medium">${error}</p>
                                 </div>
                             </div>
+                        </div>
+                    </c:if>
 
-                            <div class="pt-4 flex gap-4">
-                                <a href="${pageContext.request.contextPath}/propiedades"
-                                    class="w-1/3 text-center bg-slate-200 hover:bg-slate-300 text-slate-700 font-bold py-3.5 px-4 rounded-lg transition-all hover:-translate-y-0.5 active:translate-y-0">
-                                    Cancelar
-                                </a>
-                                <button type="submit"
-                                    class="w-2/3 bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-3.5 px-4 rounded-lg shadow-lg shadow-indigo-600/30 transition-all hover:-translate-y-0.5 active:translate-y-0">
-                                    ${propiedad != null ? 'Actualizar Propiedad' : 'Guardar Propiedad'}
-                                </button>
+                    <form action="${pageContext.request.contextPath}/propiedades" method="post" class="space-y-8">
+                        <input type="hidden" name="id" value="${propiedad != null ? propiedad.id : ''}">
+
+                        <!-- Sección 1: Datos Principales -->
+                        <div>
+                            <h3 class="text-xl font-bold text-slate-800 mb-4 border-b pb-2">1. Información Principal
+                            </h3>
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                                <div class="md:col-span-2">
+                                    <label class="block text-sm font-semibold text-slate-700 mb-2">Título Breve
+                                        *</label>
+                                    <input type="text" name="titulo" required
+                                        placeholder="Ej. Hermosa casa en Miraflores"
+                                        value="${propiedad != null ? propiedad.titulo : ''}"
+                                        class="w-full px-4 py-3 rounded-lg border border-slate-300 focus:ring-2 focus:ring-indigo-500 outline-none">
+                                </div>
+                                <div class="md:col-span-2">
+                                    <label class="block text-sm font-semibold text-slate-700 mb-2">Descripción Detallada
+                                        *</label>
+                                    <textarea name="descripcion" rows="4" required
+                                        placeholder="Describe las comodidades, cercanía a parques..."
+                                        class="w-full px-4 py-3 rounded-lg border border-slate-300 focus:ring-2 focus:ring-indigo-500 outline-none">${propiedad != null ? propiedad.descripcion : ''}</textarea>
+                                </div>
+                                <div>
+                                    <label class="block text-sm font-semibold text-slate-700 mb-2">Tipo de Inmueble
+                                        *</label>
+                                    <select name="idTipoInmueble" required
+                                        class="w-full px-4 py-3 rounded-lg border border-slate-300 focus:ring-2 focus:ring-indigo-500 outline-none bg-white">
+                                        <option value="">Seleccione un tipo</option>
+                                        <c:forEach var="t" items="${listaTipos}">
+                                            <option value="${t.id}" ${propiedad != null && propiedad.idTipoInmueble == t.id ? 'selected' : ''}>
+                                                ${t.nombre}
+                                            </option>
+                                        </c:forEach>
+                                    </select>
+                                </div>
+                                <div>
+                                    <label class="block text-sm font-semibold text-slate-700 mb-2">Operación *</label>
+                                    <select name="idOperacion" required
+                                        class="w-full px-4 py-3 rounded-lg border border-slate-300 focus:ring-2 focus:ring-indigo-500 outline-none bg-white">
+                                        <option value="">Seleccione operación</option>
+                                        <c:forEach var="op" items="${listaOperaciones}">
+                                            <option value="${op.id}" ${propiedad != null && propiedad.idOperacion == op.id ? 'selected' : ''}>
+                                                ${op.nombre}
+                                            </option>
+                                        </c:forEach>
+                                    </select>
+                                </div>
                             </div>
-                        </form>
-            </div>
-        </main>
+                        </div>
 
-        <!-- Footer -->
-        <footer class="bg-slate-900 border-t border-slate-800 text-slate-400 py-12 mt-auto">
-            <div class="max-w-7xl mx-auto px-4 text-center">
-                <div class="flex justify-center items-center gap-2 mb-6 opacity-80">
-                    <img src="${pageContext.request.contextPath}/assets/img/logo/Logo_Inmobix.png" alt="Inmobix Logo"
-                        class="h-6 w-auto grayscale">
-                    <span class="text-xl font-bold text-slate-300">Inmobix</span>
+                        <!-- Sección 2: Ubicación -->
+                        <div>
+                            <h3 class="text-xl font-bold text-slate-800 mb-4 border-b pb-2">2. Ubicación y Registro</h3>
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                                <div>
+                                    <label class="block text-sm font-semibold text-slate-700 mb-2">Distrito *</label>
+                                    <select name="idDistrito" required
+                                        class="w-full px-4 py-3 rounded-lg border border-slate-300 focus:ring-2 focus:ring-indigo-500 outline-none bg-white">
+                                        <option value="">Seleccione distrito</option>
+                                        <c:forEach var="d" items="${listaDistritos}">
+                                            <option value="${d.id}" ${propiedad != null && propiedad.idDistrito == d.id ? 'selected' : ''}>
+                                                ${d.nombre}
+                                            </option>
+                                        </c:forEach>
+                                    </select>
+                                </div>
+                                <div>
+                                    <label class="block text-sm font-semibold text-slate-700 mb-2">Dirección Exacta
+                                        *</label>
+                                    <input type="text" name="direccion" required placeholder="Ej. Av. Pardo 123"
+                                        value="${propiedad != null ? propiedad.direccion : ''}"
+                                        class="w-full px-4 py-3 rounded-lg border border-slate-300 focus:ring-2 focus:ring-indigo-500 outline-none">
+                                </div>
+                                <div class="md:col-span-2">
+                                    <label class="block text-sm font-semibold text-slate-700 mb-2">Partida Registral
+                                        (SUNARP)</label>
+                                    <input type="text" name="partidaRegistral" placeholder="Ej. 11029384"
+                                        value="${propiedad != null ? propiedad.partidaRegistral : ''}"
+                                        class="w-full px-4 py-3 rounded-lg border border-slate-300 focus:ring-2 focus:ring-indigo-500 outline-none">
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Sección 3: Precio y Datos Técnicos -->
+                        <div>
+                            <h3 class="text-xl font-bold text-slate-800 mb-4 border-b pb-2">3. Detalles Técnicos y
+                                Precio</h3>
+                            <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                                <div>
+                                    <label class="block text-sm font-semibold text-slate-700 mb-2">Moneda *</label>
+                                    <select name="monedaBase" required
+                                        class="w-full px-4 py-3 rounded-lg border border-slate-300 focus:ring-2 focus:ring-indigo-500 outline-none bg-white">
+                                        <option value="USD" ${propiedad !=null && propiedad.monedaBase=='USD'
+                                            ? 'selected' : '' }>Dólares (US$)</option>
+                                        <option value="PEN" ${propiedad !=null && propiedad.monedaBase=='PEN'
+                                            ? 'selected' : '' }>Soles (S/)</option>
+                                    </select>
+                                </div>
+                                <div class="md:col-span-2">
+                                    <label class="block text-sm font-semibold text-slate-700 mb-2">Precio *</label>
+                                    <input type="number" step="0.01" name="precio" required placeholder="150000.00"
+                                        value="${propiedad != null ? propiedad.precio : ''}"
+                                        class="w-full px-4 py-3 rounded-lg border border-slate-300 focus:ring-2 focus:ring-indigo-500 outline-none">
+                                </div>
+
+                                <!-- Técnicos -->
+                                <div>
+                                    <label class="block text-sm font-semibold text-slate-700 mb-2">Área Total
+                                        (m²)</label>
+                                    <input type="number" step="0.01" name="areaTotalM2" placeholder="120.5"
+                                        value="${propiedad != null ? propiedad.areaTotalM2 : ''}"
+                                        class="w-full px-4 py-3 rounded-lg border border-slate-300 focus:ring-2 focus:ring-indigo-500 outline-none">
+                                </div>
+                                <div>
+                                    <label class="block text-sm font-semibold text-slate-700 mb-2">Área Techada
+                                        (m²)</label>
+                                    <input type="number" step="0.01" name="areaTechadaM2" placeholder="100.0"
+                                        value="${propiedad != null ? propiedad.areaTechadaM2 : ''}"
+                                        class="w-full px-4 py-3 rounded-lg border border-slate-300 focus:ring-2 focus:ring-indigo-500 outline-none">
+                                </div>
+                                <div>
+                                    <label class="block text-sm font-semibold text-slate-700 mb-2">Año
+                                        Construcción</label>
+                                    <input type="number" name="anioConstruccion" placeholder="2015"
+                                        value="${propiedad != null && propiedad.anioConstruccion > 0 ? propiedad.anioConstruccion : ''}"
+                                        class="w-full px-4 py-3 rounded-lg border border-slate-300 focus:ring-2 focus:ring-indigo-500 outline-none">
+                                </div>
+
+                                <!-- Ambientes -->
+                                <div>
+                                    <label class="block text-sm font-semibold text-slate-700 mb-2">Dormitorios</label>
+                                    <input type="number" name="numDormitorios" placeholder="3"
+                                        value="${propiedad != null && propiedad.numDormitorios > 0 ? propiedad.numDormitorios : ''}"
+                                        class="w-full px-4 py-3 rounded-lg border border-slate-300 focus:ring-2 focus:ring-indigo-500 outline-none">
+                                </div>
+                                <div>
+                                    <label class="block text-sm font-semibold text-slate-700 mb-2">Baños</label>
+                                    <input type="number" name="numBanos" placeholder="2"
+                                        value="${propiedad != null && propiedad.numBanos > 0 ? propiedad.numBanos : ''}"
+                                        class="w-full px-4 py-3 rounded-lg border border-slate-300 focus:ring-2 focus:ring-indigo-500 outline-none">
+                                </div>
+                                <div>
+                                    <label class="block text-sm font-semibold text-slate-700 mb-2">Cocheras</label>
+                                    <input type="number" name="numCocheras" placeholder="1"
+                                        value="${propiedad != null && propiedad.numCocheras > 0 ? propiedad.numCocheras : ''}"
+                                        class="w-full px-4 py-3 rounded-lg border border-slate-300 focus:ring-2 focus:ring-indigo-500 outline-none">
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Sección 4: Atributos Especiales -->
+                        <div>
+                            <h3 class="text-xl font-bold text-slate-800 mb-4 border-b pb-2">4. Atributos Especiales</h3>
+                            <div class="flex gap-8">
+                                <label class="flex items-center gap-3 cursor-pointer">
+                                    <input type="checkbox" name="bonoMiVivienda" value="1" ${propiedad !=null &&
+                                        propiedad.bonoMiVivienda==1 ? 'checked' : '' }
+                                        class="w-5 h-5 text-indigo-600 rounded focus:ring-indigo-500">
+                                    <span class="text-slate-700 font-medium">Aplica a Bono MiVivienda</span>
+                                </label>
+                                <label class="flex items-center gap-3 cursor-pointer">
+                                    <input type="checkbox" name="bonoVerde" value="1" ${propiedad !=null &&
+                                        propiedad.bonoVerde==1 ? 'checked' : '' }
+                                        class="w-5 h-5 text-emerald-500 rounded focus:ring-emerald-500">
+                                    <span class="text-slate-700 font-medium text-emerald-700">Aplica a Bono Verde</span>
+                                </label>
+                            </div>
+                        </div>
+
+                        <div class="pt-6 flex gap-4 border-t border-slate-200 mt-8">
+                            <a href="${pageContext.request.contextPath}/propiedades"
+                                class="w-1/3 text-center bg-slate-200 hover:bg-slate-300 text-slate-700 font-bold py-4 rounded-xl transition-all">
+                                Cancelar
+                            </a>
+                            <button type="submit"
+                                class="w-2/3 bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-4 rounded-xl shadow-lg transition-all">
+                                ${propiedad != null && propiedad.id > 0 ? 'Actualizar Propiedad' : 'Publicar Propiedad'}
+                            </button>
+                        </div>
+                    </form>
                 </div>
-                <p class="text-sm">&copy; 2026 Portal Inmobiliario. Todos los derechos reservados.</p>
-            </div>
-        </footer>
-    </body>
+            </main>
 
-    </html>
+            <footer class="bg-slate-900 border-t border-slate-800 text-slate-400 py-12 mt-auto">
+                <div class="max-w-7xl mx-auto px-4 text-center">
+                    <p class="text-sm">&copy; 2026 Portal Inmobiliario. Todos los derechos reservados.</p>
+                </div>
+            </footer>
+        </body>
+
+        </html>

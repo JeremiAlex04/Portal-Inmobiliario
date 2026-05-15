@@ -1,0 +1,161 @@
+<%@ page contentType="text/html;charset=UTF-8" language="java" %>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
+<!DOCTYPE html>
+<html lang="es" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" type="image/png" href="${pageContext.request.contextPath}/assets/img/logo/Logo_Inmobix.png">
+    <title>Inmobix - Detalle de Propiedad</title>
+    <link rel="stylesheet" href="${pageContext.request.contextPath}/assets/css/styles.css">
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-slate-50 text-slate-800 flex flex-col min-h-screen font-sans">
+    
+    <!-- Navbar -->
+    <header class="fixed w-full top-0 z-50 bg-white/80 backdrop-blur-md border-b border-slate-200/50 shadow-sm transition-all">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between items-center h-20">
+                <div class="flex items-center gap-3">
+                    <img src="${pageContext.request.contextPath}/assets/img/logo/Logo_Inmobix.png" alt="Inmobix Logo" class="h-10 w-auto object-contain">
+                    <span class="text-2xl font-bold bg-gradient-to-r from-blue-600 to-indigo-600 bg-clip-text text-transparent tracking-tight">Inmobix</span>
+                </div>
+                
+                <nav class="hidden md:flex items-center gap-8">
+                    <a href="${pageContext.request.contextPath}/index.jsp" class="text-sm font-semibold text-slate-600 hover:text-blue-600 transition-colors">Inicio</a>
+                    <a href="${pageContext.request.contextPath}/propiedades" class="text-sm font-semibold text-slate-600 hover:text-blue-600 transition-colors">Catálogo</a>
+                    <a href="${pageContext.request.contextPath}/propiedades?accion=nuevo" class="text-sm font-semibold text-slate-600 hover:text-blue-600 transition-colors">Publicar</a>
+                    <a href="${pageContext.request.contextPath}/contacto" class="text-sm font-semibold text-slate-600 hover:text-blue-600 transition-colors">Contacto</a>
+                </nav>
+
+                <div class="hidden md:flex items-center gap-4">
+                    <c:choose>
+                        <c:when test="${not empty sessionScope.usuarioLogueado}">
+                            <span class="text-sm font-semibold text-slate-600">Hola, ${sessionScope.usuarioLogueado.nombres}</span>
+                            <c:if test="${sessionScope.usuarioLogueado.idRol == 3 || sessionScope.usuarioLogueado.idRol == 4 || sessionScope.usuarioLogueado.idRol == 5}">
+                                <a href="${pageContext.request.contextPath}/panel" class="text-sm font-semibold text-blue-600 hover:text-blue-800 transition-colors">Mi Panel</a>
+                            </c:if>
+                            <a href="${pageContext.request.contextPath}/usuario?accion=logout" class="bg-slate-800 hover:bg-slate-900 text-white px-5 py-2.5 rounded-full text-sm font-semibold shadow-md shadow-slate-800/20 transition-all hover:-translate-y-0.5">Cerrar Sesión</a>
+                        </c:when>
+                        <c:otherwise>
+                            <a href="${pageContext.request.contextPath}/usuario?accion=login" class="text-sm font-semibold text-slate-600 hover:text-blue-600 transition-colors">Iniciar sesión</a>
+                            <a href="${pageContext.request.contextPath}/usuario?accion=registro" class="bg-blue-600 hover:bg-blue-700 text-white px-5 py-2.5 rounded-full text-sm font-semibold shadow-md shadow-blue-600/20 transition-all hover:-translate-y-0.5">Regístrate</a>
+                        </c:otherwise>
+                    </c:choose>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <main class="flex-grow pt-28 pb-16 px-4">
+        <div class="max-w-6xl mx-auto">
+            
+            <a href="${pageContext.request.contextPath}/propiedades" class="text-blue-600 hover:text-blue-800 flex items-center gap-2 font-semibold mb-6 transition-colors">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"></path></svg>
+                Volver al catálogo
+            </a>
+
+            <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+                <!-- Detalles Principales -->
+                <div class="lg:col-span-2 space-y-8">
+                    <!-- Tarjeta Hero -->
+                    <div class="bg-white rounded-2xl p-8 shadow-xl shadow-slate-200/50 border border-slate-100">
+                        <div class="flex flex-wrap gap-2 mb-4">
+                            <span class="px-3 py-1 bg-blue-100 text-blue-700 rounded-full text-sm font-bold tracking-wide">${propiedad.operacion}</span>
+                            <span class="px-3 py-1 bg-slate-100 text-slate-700 rounded-full text-sm font-bold tracking-wide">${propiedad.tipoInmueble}</span>
+                            <c:if test="${propiedad.bonoMiVivienda == 1}">
+                                <span class="px-3 py-1 bg-emerald-100 text-emerald-700 rounded-full text-sm font-bold tracking-wide">Bono MiVivienda</span>
+                            </c:if>
+                            <c:if test="${propiedad.bonoVerde == 1}">
+                                <span class="px-3 py-1 bg-teal-100 text-teal-700 rounded-full text-sm font-bold tracking-wide">Bono Verde</span>
+                            </c:if>
+                        </div>
+                        <h1 class="text-4xl font-extrabold text-slate-900 mb-4 leading-tight">${propiedad.titulo}</h1>
+                        <p class="text-slate-500 flex items-center gap-2 text-lg mb-6">
+                            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"></path></svg>
+                            ${propiedad.direccion}, ${propiedad.distrito}, ${propiedad.provincia}
+                        </p>
+                        <div class="text-4xl font-black text-blue-600">
+                            ${propiedad.monedaBase == 'USD' ? 'US$' : 'S/'} ${propiedad.monedaBase == 'USD' ? propiedad.precioUsd : propiedad.precioPen}
+                        </div>
+                    </div>
+
+                    <!-- Descripción -->
+                    <div class="bg-white rounded-2xl p-8 shadow-xl shadow-slate-200/50 border border-slate-100">
+                        <h2 class="text-2xl font-bold text-slate-900 mb-6">Descripción de la Propiedad</h2>
+                        <div class="text-slate-600 leading-relaxed whitespace-pre-wrap">${propiedad.descripcion}</div>
+                    </div>
+
+                    <!-- Características -->
+                    <div class="bg-white rounded-2xl p-8 shadow-xl shadow-slate-200/50 border border-slate-100">
+                        <h2 class="text-2xl font-bold text-slate-900 mb-6">Características Principales</h2>
+                        <div class="grid grid-cols-2 md:grid-cols-4 gap-6">
+                            <div class="flex flex-col items-center p-4 bg-slate-50 rounded-xl">
+                                <svg class="w-8 h-8 text-blue-500 mb-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 8V4m0 0h4M4 4l5 5m11-1V4m0 0h-4m4 0l-5 5M4 16v4m0 0h4m-4 0l5-5m11 5l-5-5m5 5v-4m0 4h-4"></path></svg>
+                                <span class="text-xl font-bold text-slate-800">${propiedad.areaTotalM2} m²</span>
+                                <span class="text-sm text-slate-500 font-medium text-center">Área Total</span>
+                            </div>
+                            <div class="flex flex-col items-center p-4 bg-slate-50 rounded-xl">
+                                <svg class="w-8 h-8 text-blue-500 mb-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"></path></svg>
+                                <span class="text-xl font-bold text-slate-800">${propiedad.numDormitorios}</span>
+                                <span class="text-sm text-slate-500 font-medium text-center">Dormitorios</span>
+                            </div>
+                            <div class="flex flex-col items-center p-4 bg-slate-50 rounded-xl">
+                                <svg class="w-8 h-8 text-blue-500 mb-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 14v3m4-3v3m4-3v3M3 21h18M3 10h18M3 7l9-4 9 4M4 10h16v11H4V10z"></path></svg>
+                                <span class="text-xl font-bold text-slate-800">${propiedad.numBanos}</span>
+                                <span class="text-sm text-slate-500 font-medium text-center">Baños</span>
+                            </div>
+                            <div class="flex flex-col items-center p-4 bg-slate-50 rounded-xl">
+                                <svg class="w-8 h-8 text-blue-500 mb-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path></svg>
+                                <span class="text-xl font-bold text-slate-800">${propiedad.anioConstruccion}</span>
+                                <span class="text-sm text-slate-500 font-medium text-center">Año Const.</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Barra Lateral: Agente -->
+                <div class="space-y-6">
+                    <div class="bg-white rounded-2xl p-8 shadow-xl shadow-slate-200/50 border border-slate-100 sticky top-28">
+                        <h3 class="text-xl font-bold text-slate-900 mb-6 border-b pb-4">Publicado por</h3>
+                        <div class="flex items-center gap-4 mb-6">
+                            <div class="w-16 h-16 bg-blue-100 rounded-full flex items-center justify-center text-blue-600 font-bold text-xl uppercase">
+                                ${propiedad.agenteNombre.substring(0,2)}
+                            </div>
+                            <div>
+                                <h4 class="font-bold text-lg text-slate-800">${propiedad.agenteNombre}</h4>
+                                <span class="text-sm text-slate-500">Agente Inmobiliario</span>
+                            </div>
+                        </div>
+                        <div class="space-y-4 mb-8">
+                            <div class="flex items-center gap-3 text-slate-600">
+                                <svg class="w-5 h-5 text-blue-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z"></path></svg>
+                                <span class="font-semibold">${propiedad.agenteTelefono != null ? propiedad.agenteTelefono : 'No especificado'}</span>
+                            </div>
+                            <div class="flex items-center gap-3 text-slate-600">
+                                <svg class="w-5 h-5 text-blue-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"></path></svg>
+                                <span class="font-semibold text-sm break-all">${propiedad.agenteCorreo}</span>
+                            </div>
+                        </div>
+                        <button onclick="alert('Funcionalidad de contacto en desarrollo para el próximo Sprint.')" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-4 px-4 rounded-xl shadow-lg shadow-blue-600/30 transition-all hover:-translate-y-1">
+                            Contactar al Agente
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="bg-slate-900 border-t border-slate-800 text-slate-400 py-12 mt-auto">
+        <div class="max-w-7xl mx-auto px-4 text-center">
+            <div class="flex justify-center items-center gap-2 mb-6 opacity-80">
+                <img src="${pageContext.request.contextPath}/assets/img/logo/Logo_Inmobix.png" alt="Inmobix Logo" class="h-6 w-auto grayscale">
+                <span class="text-xl font-bold text-slate-300">Inmobix</span>
+            </div>
+            <p class="text-sm">&copy; 2026 Portal Inmobiliario. Todos los derechos reservados.</p>
+        </div>
+    </footer>
+</body>
+</html>

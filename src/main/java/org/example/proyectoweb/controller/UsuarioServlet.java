@@ -59,12 +59,17 @@ public class UsuarioServlet extends HttpServlet {
             String apellidos = request.getParameter("apellidos");
             String correo = request.getParameter("correo");
             String password = request.getParameter("password");
+            String idRolStr = request.getParameter("idRol");
 
             UsuarioDTO u = new UsuarioDTO();
             u.setNombres(nombres);
             u.setApellidos(apellidos);
             u.setCorreo(correo);
             u.setPasswordHash(password); // El DAO se encarga de hashear
+            
+            if (idRolStr != null && !idRolStr.isEmpty()) {
+                u.setIdRol(Integer.parseInt(idRolStr));
+            }
 
             boolean ok = usuarioFacade.registrarUsuario(u);
 
@@ -86,7 +91,19 @@ public class UsuarioServlet extends HttpServlet {
                 // Iniciar sesión
                 HttpSession session = request.getSession();
                 session.setAttribute("usuarioLogueado", authUser);
-                response.sendRedirect(request.getContextPath() + "/index.jsp");
+                
+                // Redirección basada en roles (Sprint 1)
+                int rol = authUser.getIdRol();
+                if (rol == 5) {
+                    // Administrador
+                    response.sendRedirect(request.getContextPath() + "/admin");
+                } else if (rol == 3 || rol == 4) {
+                    // Agente o Constructora
+                    response.sendRedirect(request.getContextPath() + "/panel");
+                } else {
+                    // Comprador o Visitante
+                    response.sendRedirect(request.getContextPath() + "/propiedades");
+                }
             } else {
                 request.setAttribute("error", "Credenciales incorrectas o usuario inactivo.");
                 request.getRequestDispatcher("/WEB-INF/views/login.jsp").forward(request, response);
