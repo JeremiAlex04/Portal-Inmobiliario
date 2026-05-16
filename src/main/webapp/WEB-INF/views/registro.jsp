@@ -284,6 +284,38 @@
                             }
                         </script>
 
+                        <!-- Sprint 3: Galería de imágenes -->
+                        <c:if test="${not empty propiedad.id}">
+                        <div class="bg-slate-50 rounded-xl p-6 mt-6 border border-slate-200">
+                            <h3 class="text-lg font-bold text-slate-800 mb-4 flex items-center gap-2">
+                                <svg class="w-5 h-5 text-slate-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 9a2 2 0 012-2h.93a2 2 0 001.664-.89l.812-1.22A2 2 0 0110.07 4h3.86a2 2 0 011.664.89l.812 1.22A2 2 0 0018.07 7H19a2 2 0 012 2v9a2 2 0 01-2 2H5a2 2 0 01-2-2V9z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 13a3 3 0 11-6 0 3 3 0 016 0z"></path></svg>
+                                Galería de Fotos (máx. 5)
+                            </h3>
+                            <c:if test="${not empty galeriaFotos}">
+                                <div class="flex flex-wrap gap-3 mb-4">
+                                    <c:forEach var="foto" items="${galeriaFotos}">
+                                        <div class="relative group">
+                                            <img src="${pageContext.request.contextPath}/${foto.rutaArchivo}" class="w-24 h-20 object-cover rounded-lg border">
+                                            <form action="${pageContext.request.contextPath}/galeria" method="post" class="absolute -top-2 -right-2 hidden group-hover:block">
+                                                <input type="hidden" name="accion" value="eliminar">
+                                                <input type="hidden" name="idFoto" value="${foto.id}">
+                                                <input type="hidden" name="idPropiedad" value="${propiedad.id}">
+                                                <button class="bg-red-500 text-white w-6 h-6 rounded-full text-xs font-bold shadow">✕</button>
+                                            </form>
+                                            <c:if test="${foto.esPrincipal}"><span class="absolute bottom-0 left-0 right-0 bg-blue-600 text-white text-[10px] text-center font-bold rounded-b-lg">Principal</span></c:if>
+                                        </div>
+                                    </c:forEach>
+                                </div>
+                            </c:if>
+                            <form action="${pageContext.request.contextPath}/galeria" method="post" enctype="multipart/form-data" class="flex flex-col gap-3">
+                                <input type="hidden" name="idPropiedad" value="${propiedad.id}">
+                                <input type="file" name="fotos" multiple accept=".jpg,.jpeg,.png,.webp"
+                                    class="w-full text-sm file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:bg-blue-50 file:text-blue-700 file:font-semibold">
+                                <button type="submit" class="bg-blue-600 text-white px-6 py-2 rounded-lg font-bold text-sm w-fit">Subir Fotos</button>
+                            </form>
+                        </div>
+                        </c:if>
+
                         <div class="pt-6 flex gap-4 border-t border-slate-200 mt-8">
                             <a href="${pageContext.request.contextPath}/propiedades"
                                 class="w-1/3 text-center bg-slate-200 hover:bg-slate-300 text-slate-700 font-bold py-4 rounded-xl transition-all">

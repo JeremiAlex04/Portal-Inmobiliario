@@ -8,7 +8,10 @@ import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
 import org.example.proyectoweb.dto.UsuarioDTO;
 import org.example.proyectoweb.dto.PropiedadDTO;
+import org.example.proyectoweb.dto.ConsultaDTO;
 import org.example.proyectoweb.facade.PropiedadFacade;
+import org.example.proyectoweb.dao.ConsultaDAO;
+import org.example.proyectoweb.dao.WhatsAppDAO;
 
 import java.io.IOException;
 import java.util.List;
@@ -16,10 +19,14 @@ import java.util.List;
 @WebServlet("/panel")
 public class PanelAgenteServlet extends HttpServlet {
     private PropiedadFacade propiedadFacade;
+    private ConsultaDAO consultaDAO;
+    private WhatsAppDAO whatsAppDAO;
 
     @Override
     public void init() {
         propiedadFacade = new PropiedadFacade();
+        consultaDAO = new ConsultaDAO();
+        whatsAppDAO = new WhatsAppDAO();
     }
 
     @Override
@@ -31,23 +38,44 @@ public class PanelAgenteServlet extends HttpServlet {
         }
 
         UsuarioDTO usuario = (UsuarioDTO) session.getAttribute("usuarioLogueado");
-        
-        // Validación de rol (Solo agentes = 3, constructoras = 4, o admin = 5)
         if (usuario.getIdRol() != 3 && usuario.getIdRol() != 4 && usuario.getIdRol() != 5) {
             response.sendError(HttpServletResponse.SC_FORBIDDEN, "Acceso denegado. Se requiere rol de Agente.");
             return;
         }
 
-        // Sprint 2: Capturar filtros
-        String estado = request.getParameter("estado");  // ACTIVO, BORRADOR, VENDIDO, etc.
-        String orden = request.getParameter("orden");    // "fecha" o "vistas"
+        String seccion = request.getParameter("seccion");
+        if (seccion == null) seccion = "propiedades";
 
-        List<PropiedadDTO> lista = propiedadFacade.obtenerPropiedadesAgenteConFiltros(
-                usuario.getIdUsuario(), estado, orden);
+        switch (seccion) {
+            case "consultas":
+                String filtroConsulta = request.getParameter("estadoConsulta");
+                List<ConsultaDTO> consultas = consultaDAO.listarConsultasPorAgente(usuario.getIdUsuario(), filtroConsulta);
+                int pendientes = consultaDAO.contarConsultasPendientes(usuario.getIdUsuario());
+                request.setAttribute("listaConsultas", consultas);
+                request.setAttribute("consultasPendientes", pendientes);
+                request.setAttribute("filtroConsultaEstado", filtroConsulta);
+                request.setAttribute("seccion", "consultas");
+                break;
 
-        request.setAttribute("listaMisPropiedades", lista);
-        request.setAttribute("filtroEstado", estado);
-        request.setAttribute("filtroOrden", orden);
+            case "propiedades":
+            default:
+                String estado = request.getParameter("estado");
+                String orden = request.getParameter("orden");
+                List<PropiedadDTO> lista = propiedadFacade.obtenerPropiedadesAgenteConFiltros(
+                        usuario.getIdUsuario(), estado, orden);
+                request.setAttribute("listaMisPropiedades", lista);
+                request.setAttribute("filtroEstado", estado);
+                request.setAttribute("filtroOrden", orden);
+                request.setAttribute("seccion", "propiedades");
+                break;
+        }
+
+        // Métricas globales del panel
+        int whatsappSemana = whatsAppDAO.contarContactosSemana(usuario.getIdUsuario());
+        int consultasPendientesGlobal = consultaDAO.contarConsultasPendientes(usuario.getIdUsuario());
+        request.setAttribute("whatsappSemana", whatsappSemana);
+        request.setAttribute("consultasPendientesGlobal", consultasPendientesGlobal);
+
         request.getRequestDispatcher("/WEB-INF/views/panel_agente.jsp").forward(request, response);
     }
 }

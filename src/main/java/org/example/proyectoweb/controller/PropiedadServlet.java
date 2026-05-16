@@ -9,7 +9,10 @@ import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.Part;
 import org.example.proyectoweb.facade.PropiedadFacade;
 import org.example.proyectoweb.facade.FavoritoFacade;
+import org.example.proyectoweb.dao.EstadisticaDAO;
+import org.example.proyectoweb.dao.GaleriaDAO;
 import org.example.proyectoweb.dto.PropiedadDTO;
+import org.example.proyectoweb.dto.PropiedadFotoDTO;
 import org.example.proyectoweb.dto.UsuarioDTO;
 
 import java.io.File;
@@ -31,6 +34,8 @@ public class PropiedadServlet extends HttpServlet {
 
     private PropiedadFacade propiedadFacade;
     private FavoritoFacade favoritoFacade;
+    private EstadisticaDAO estadisticaDAO;
+    private GaleriaDAO galeriaDAO;
 
     // Extensiones permitidas para fotos
     private static final List<String> EXTENSIONES_PERMITIDAS = Arrays.asList("jpg", "jpeg", "png", "webp");
@@ -39,6 +44,8 @@ public class PropiedadServlet extends HttpServlet {
     public void init() throws ServletException {
         propiedadFacade = new PropiedadFacade();
         favoritoFacade = new FavoritoFacade();
+        estadisticaDAO = new EstadisticaDAO();
+        galeriaDAO = new GaleriaDAO();
     }
 
     private void cargarCatalogos(HttpServletRequest request) {
@@ -114,6 +121,8 @@ public class PropiedadServlet extends HttpServlet {
 
                     // Sprint 2: Incrementar contador de vistas
                     propiedadFacade.incrementarVistas(idVer);
+                    // Sprint 3: Registrar vista diaria para analytics
+                    estadisticaDAO.registrarVistaDiaria(idVer);
 
                     PropiedadDTO pVer = propiedadFacade.obtenerPropiedad(idVer);
                     if (pVer != null) {
@@ -122,6 +131,9 @@ public class PropiedadServlet extends HttpServlet {
                         if (userFav != null) {
                             pVer.setFavorito(favoritoFacade.esFavorito(userFav.getIdUsuario(), idVer));
                         }
+                        // Sprint 3: Galería de fotos
+                        List<PropiedadFotoDTO> galeria = galeriaDAO.obtenerFotos(idVer);
+                        request.setAttribute("galeriaFotos", galeria);
                         request.setAttribute("propiedad", pVer);
                         request.getRequestDispatcher("/WEB-INF/views/detalle_propiedad.jsp").forward(request, response);
                     } else {
@@ -133,6 +145,8 @@ public class PropiedadServlet extends HttpServlet {
                     int idEditar = Integer.parseInt(request.getParameter("id"));
                     PropiedadDTO pEditar = propiedadFacade.obtenerPropiedad(idEditar);
                     request.setAttribute("propiedad", pEditar);
+                    // Sprint 3: Cargar galería para edición
+                    request.setAttribute("galeriaFotos", galeriaDAO.obtenerFotos(idEditar));
                     cargarCatalogos(request);
                     request.getRequestDispatcher("/WEB-INF/views/registro.jsp").forward(request, response);
                     break;

@@ -34,6 +34,8 @@
                             class="text-sm font-semibold text-blue-600 transition-colors">Inicio</a>
                         <a href="${pageContext.request.contextPath}/propiedades"
                             class="text-sm font-semibold text-slate-600 hover:text-blue-600 transition-colors">Catálogo</a>
+                        <a href="${pageContext.request.contextPath}/pagos?accion=planes"
+                            class="text-sm font-semibold text-slate-600 hover:text-blue-600 transition-colors">Planes</a>
                         <a href="${pageContext.request.contextPath}/propiedades?accion=nuevo"
                             class="text-sm font-semibold text-slate-600 hover:text-blue-600 transition-colors">Publicar</a>
                         <a href="${pageContext.request.contextPath}/contacto"

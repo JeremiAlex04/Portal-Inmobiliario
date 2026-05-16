@@ -626,5 +626,74 @@ CREATE TABLE IF NOT EXISTS usuario_favorito (
 ) ENGINE=InnoDB COMMENT='Favoritos del usuario (Sprint 2)';
 
 -- ============================================================
+-- SPRINT 3: FUNCIONALIDADES AVANZADAS
+-- ============================================================
+
+-- Galería de imágenes (hasta 5 fotos por propiedad)
+CREATE TABLE IF NOT EXISTS propiedad_fotos (
+    id_foto           BIGINT UNSIGNED  NOT NULL AUTO_INCREMENT,
+    id_propiedad      BIGINT UNSIGNED  NOT NULL,
+    ruta_archivo      VARCHAR(255)     NOT NULL,
+    orden             TINYINT UNSIGNED NOT NULL DEFAULT 0,
+    es_principal      TINYINT(1)       NOT NULL DEFAULT 0,
+    fecha_subida      DATETIME         NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    PRIMARY KEY (id_foto),
+    INDEX idx_pf_propiedad (id_propiedad),
+    CONSTRAINT fk_pf_prop FOREIGN KEY (id_propiedad)
+        REFERENCES propiedad(id_propiedad) ON DELETE CASCADE
+) ENGINE=InnoDB COMMENT='Galería hasta 5 fotos por propiedad (Sprint 3)';
+
+-- Consultas de contacto (sistema real, no simulado)
+CREATE TABLE IF NOT EXISTS consultas (
+    id_consulta       BIGINT UNSIGNED  NOT NULL AUTO_INCREMENT,
+    id_propiedad      BIGINT UNSIGNED  NOT NULL,
+    id_usuario        BIGINT UNSIGNED  NULL COMMENT 'NULL si es visitante',
+    nombre            VARCHAR(120)     NOT NULL,
+    email             VARCHAR(120)     NOT NULL,
+    telefono          VARCHAR(15)      NULL,
+    mensaje           TEXT             NOT NULL,
+    estado            ENUM('PENDIENTE','LEIDA','RESPONDIDA','NO_INTERESADO') NOT NULL DEFAULT 'PENDIENTE',
+    fecha             DATETIME         NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    PRIMARY KEY (id_consulta),
+    INDEX idx_cons_prop (id_propiedad),
+    INDEX idx_cons_estado (estado),
+    CONSTRAINT fk_cons_prop FOREIGN KEY (id_propiedad)
+        REFERENCES propiedad(id_propiedad) ON DELETE CASCADE,
+    CONSTRAINT fk_cons_usr FOREIGN KEY (id_usuario)
+        REFERENCES usuario(id_usuario) ON DELETE SET NULL
+) ENGINE=InnoDB COMMENT='Consultas de contacto por propiedad (Sprint 3)';
+
+-- Contactos WhatsApp (registro real en BD)
+CREATE TABLE IF NOT EXISTS contactos_whatsapp (
+    id_contacto       BIGINT UNSIGNED  NOT NULL AUTO_INCREMENT,
+    id_propiedad      BIGINT UNSIGNED  NOT NULL,
+    id_usuario        BIGINT UNSIGNED  NULL,
+    fecha             DATETIME         NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    PRIMARY KEY (id_contacto),
+    INDEX idx_cwa_prop (id_propiedad),
+    CONSTRAINT fk_cwa_prop FOREIGN KEY (id_propiedad)
+        REFERENCES propiedad(id_propiedad) ON DELETE CASCADE,
+    CONSTRAINT fk_cwa_usr FOREIGN KEY (id_usuario)
+        REFERENCES usuario(id_usuario) ON DELETE SET NULL
+) ENGINE=InnoDB COMMENT='Registro de contactos WhatsApp (Sprint 3)';
+
+-- Estadísticas diarias de propiedad (para gráfico Chart.js)
+CREATE TABLE IF NOT EXISTS estadisticas_propiedad (
+    id_estadistica    BIGINT UNSIGNED  NOT NULL AUTO_INCREMENT,
+    id_propiedad      BIGINT UNSIGNED  NOT NULL,
+    fecha             DATE             NOT NULL,
+    num_vistas        INT UNSIGNED     NOT NULL DEFAULT 0,
+    PRIMARY KEY (id_estadistica),
+    UNIQUE KEY uq_est_prop_fecha (id_propiedad, fecha),
+    CONSTRAINT fk_est_prop FOREIGN KEY (id_propiedad)
+        REFERENCES propiedad(id_propiedad) ON DELETE CASCADE
+) ENGINE=InnoDB COMMENT='Vistas diarias para analytics (Sprint 3)';
+
+-- Actualizar planes según Sprint 3
+UPDATE plan SET nombre='GRATUITO', precio_pen=0.00, max_propiedades=1, descripcion='1 propiedad activa. Publicación básica.' WHERE id_plan=1;
+UPDATE plan SET nombre='BASICO', precio_pen=50.00, max_propiedades=5, descripcion='5 propiedades activas. Visibilidad estándar.' WHERE id_plan=2;
+UPDATE plan SET nombre='PREMIUM', precio_pen=150.00, max_propiedades=20, destacada=1, analytics=1, descripcion='20 propiedades destacadas. Analytics y prioridad.' WHERE id_plan=3;
+
+-- ============================================================
 -- FIN DEL SCRIPT
 -- ============================================================

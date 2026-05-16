@@ -35,6 +35,8 @@
                                 class="text-sm font-semibold text-slate-600 hover:text-blue-600 transition-colors">Inicio</a>
                             <a href="${pageContext.request.contextPath}/propiedades"
                                 class="text-sm font-semibold text-blue-600 transition-colors">Catálogo</a>
+                            <a href="${pageContext.request.contextPath}/pagos?accion=planes"
+                                class="text-sm font-semibold text-slate-600 hover:text-blue-600 transition-colors">Planes</a>
                             <a href="${pageContext.request.contextPath}/propiedades?accion=nuevo"
                                 class="text-sm font-semibold text-slate-600 hover:text-blue-600 transition-colors">Publicar</a>
                             <c:if test="${not empty sessionScope.usuarioLogueado}">
@@ -208,21 +210,30 @@
                                                 <c:out value="${propiedad.titulo}" />
                                             </h3>
                                             <div class="flex items-center text-slate-500 text-sm mb-3">
-                                                <span class="mr-1">📍</span>
+                                                <svg class="w-4 h-4 text-red-500 mr-1 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"></path></svg>
                                                 <span class="truncate">
                                                     <c:out value="${propiedad.distrito != null ? propiedad.distrito : propiedad.ubicacion}" /><c:if test="${propiedad.provincia != null}">, <c:out value="${propiedad.provincia}" /></c:if>
                                                 </span>
                                             </div>
                                             
-                                            <div class="flex gap-4 text-xs font-semibold text-slate-600 mb-4 bg-slate-50 p-2 rounded-lg">
+                                            <div class="flex gap-3 text-[10px] font-bold text-slate-500 mb-4 bg-slate-50 p-2 rounded-lg uppercase tracking-tight">
                                                 <c:if test="${propiedad.numDormitorios > 0}">
-                                                    <div class="flex items-center gap-1">🛏️ ${propiedad.numDormitorios} dorm.</div>
+                                                    <div class="flex items-center gap-1">
+                                                        <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"></path></svg>
+                                                        ${propiedad.numDormitorios} Dorm.
+                                                    </div>
                                                 </c:if>
                                                 <c:if test="${propiedad.numBanos > 0}">
-                                                    <div class="flex items-center gap-1">🛁 ${propiedad.numBanos} baños</div>
+                                                    <div class="flex items-center gap-1">
+                                                        <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"></path></svg>
+                                                        ${propiedad.numBanos} Baños
+                                                    </div>
                                                 </c:if>
                                                 <c:if test="${propiedad.areaTechadaM2 != null}">
-                                                    <div class="flex items-center gap-1">📐 ${propiedad.areaTechadaM2} m²</div>
+                                                    <div class="flex items-center gap-1">
+                                                        <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 8V4m0 0h4M4 4l5 5m11-1V4m0 0h-4m4 0l-5 5M4 16v4m0 0h4m-4 0l5-5m11 5l-5-5m5 5v-4m0 4h-4"></path></svg>
+                                                        ${propiedad.areaTechadaM2} m²
+                                                    </div>
                                                 </c:if>
                                             </div>
                                             <p class="text-slate-600 text-sm mb-4 line-clamp-2 flex-grow">
@@ -234,14 +245,16 @@
                                                         US$ <c:out value="${propiedad.precioUsd != null ? propiedad.precioUsd : propiedad.precio}" />
                                                     </div>
                                                     <c:if test="${propiedad.precioPen != null}">
-                                                        <div class="text-xs text-slate-500 font-medium">
-                                                            S/. <c:out value="${propiedad.precioPen}" />
-                                                        </div>
+                                                        <div class="text-xs text-slate-500 font-medium">S/. <c:out value="${propiedad.precioPen}" /></div>
                                                     </c:if>
                                                 </div>
-                                                <a href="${pageContext.request.contextPath}/propiedades?accion=ver&id=${propiedad.id}"
-                                                    class="text-sm font-bold text-white hover:bg-blue-700 transition-colors bg-blue-600 px-5 py-2 rounded-lg shadow-md shadow-blue-600/20">Ver Detalle</a>
+                                                <a href="${pageContext.request.contextPath}/propiedades?accion=ver&id=${propiedad.id}" class="text-sm font-bold text-white bg-blue-600 hover:bg-blue-700 px-5 py-2 rounded-lg shadow-md">Ver Detalle</a>
                                             </div>
+                                            <!-- Sprint 3: Checkbox comparador -->
+                                            <label class="flex items-center gap-2 mt-3 text-xs text-slate-500 cursor-pointer hover:text-blue-600">
+                                                <input type="checkbox" class="comp-check rounded" data-id="${propiedad.id}" onchange="actualizarComparador()">
+                                                Agregar a comparación
+                                            </label>
                                         </div>
                                     </div>
                                 </c:forEach>
@@ -286,6 +299,44 @@
                     <p class="text-sm">&copy; 2026 Portal Inmobiliario. Todos los derechos reservados.</p>
                 </div>
             </footer>
-        </body>
 
+            <!-- Sprint 3: Botón flotante comparador -->
+            <div id="compBar" class="hidden fixed bottom-6 left-1/2 -translate-x-1/2 z-50 bg-indigo-600 text-white px-8 py-4 rounded-full shadow-2xl flex items-center gap-4 font-bold">
+                <span id="compCount">Comparar (0)</span>
+                <button onclick="irComparar()" class="bg-white text-indigo-700 px-4 py-2 rounded-full text-sm font-bold hover:bg-indigo-50">Ver Comparación</button>
+                <button onclick="limpiarComparador()" class="text-indigo-200 hover:text-white text-sm">✕</button>
+            </div>
+
+            <script>
+            let comparar_ids = JSON.parse(localStorage.getItem('comparar_ids') || '[]');
+            function actualizarComparador() {
+                comparar_ids = [];
+                document.querySelectorAll('.comp-check:checked').forEach(cb => {
+                    if(comparar_ids.length < 4) comparar_ids.push(cb.dataset.id);
+                    else { cb.checked = false; alert('Máximo 4 propiedades.'); }
+                });
+                localStorage.setItem('comparar_ids', JSON.stringify(comparar_ids));
+                const bar = document.getElementById('compBar');
+                document.getElementById('compCount').textContent = 'Comparar (' + comparar_ids.length + ')';
+                bar.classList.toggle('hidden', comparar_ids.length === 0);
+            }
+            function irComparar() {
+                if(comparar_ids.length < 2) { alert('Selecciona al menos 2 propiedades.'); return; }
+                window.location.href = '${pageContext.request.contextPath}/comparar?ids=' + comparar_ids.join(',');
+            }
+            function limpiarComparador() {
+                comparar_ids = []; localStorage.removeItem('comparar_ids');
+                document.querySelectorAll('.comp-check').forEach(cb => cb.checked = false);
+                actualizarComparador();
+            }
+            // Restore on load
+            window.addEventListener('DOMContentLoaded', function() {
+                comparar_ids.forEach(id => {
+                    const cb = document.querySelector('.comp-check[data-id="'+id+'"]');
+                    if(cb) cb.checked = true;
+                });
+                actualizarComparador();
+            });
+            </script>
+        </body>
         </html>
