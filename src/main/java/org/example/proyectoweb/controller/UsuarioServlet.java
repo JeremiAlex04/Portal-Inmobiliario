@@ -16,10 +16,12 @@ import java.io.IOException;
 public class UsuarioServlet extends HttpServlet {
 
     private UsuarioFacade usuarioFacade;
+    private org.example.proyectoweb.facade.AuditoriaFacade auditoriaFacade;
 
     @Override
     public void init() {
         usuarioFacade = new UsuarioFacade();
+        auditoriaFacade = new org.example.proyectoweb.facade.AuditoriaFacade();
     }
 
     @Override
@@ -36,6 +38,10 @@ public class UsuarioServlet extends HttpServlet {
             case "logout":
                 HttpSession session = request.getSession(false);
                 if (session != null) {
+                    UsuarioDTO user = (UsuarioDTO) session.getAttribute("usuarioLogueado");
+                    if (user != null) {
+                        auditoriaFacade.registrarEvento(user.getIdUsuario(), "usuario", user.getIdUsuario(), "LOGOUT", request.getRemoteAddr(), request.getHeader("User-Agent"), "{\"correo\":\"" + user.getCorreo() + "\"}");
+                    }
                     session.invalidate();
                 }
                 response.sendRedirect(request.getContextPath() + "/index.jsp");
@@ -74,6 +80,7 @@ public class UsuarioServlet extends HttpServlet {
             boolean ok = usuarioFacade.registrarUsuario(u);
 
             if (ok) {
+                auditoriaFacade.registrarEvento(null, "usuario", 0, "CREAR", request.getRemoteAddr(), request.getHeader("User-Agent"), "{\"correo\":\"" + u.getCorreo() + "\",\"rol\":" + u.getIdRol() + "}");
                 request.setAttribute("msg", "Usuario registrado correctamente. Por favor, inicie sesión.");
                 request.getRequestDispatcher("/WEB-INF/views/login.jsp").forward(request, response);
             } else {
@@ -92,6 +99,8 @@ public class UsuarioServlet extends HttpServlet {
                 HttpSession session = request.getSession();
                 session.setAttribute("usuarioLogueado", authUser);
                 
+                auditoriaFacade.registrarEvento(authUser.getIdUsuario(), "usuario", authUser.getIdUsuario(), "LOGIN", request.getRemoteAddr(), request.getHeader("User-Agent"), "{\"status\":\"success\",\"correo\":\"" + authUser.getCorreo() + "\"}");
+
                 // Redirección basada en roles (Sprint 1)
                 int rol = authUser.getIdRol();
                 if (rol == 5) {
@@ -105,6 +114,7 @@ public class UsuarioServlet extends HttpServlet {
                     response.sendRedirect(request.getContextPath() + "/propiedades");
                 }
             } else {
+                auditoriaFacade.registrarEvento(null, "usuario", 0, "LOGIN", request.getRemoteAddr(), request.getHeader("User-Agent"), "{\"status\":\"failed\",\"correo\":\"" + correo + "\"}");
                 request.setAttribute("error", "Credenciales incorrectas o usuario inactivo.");
                 request.getRequestDispatcher("/WEB-INF/views/login.jsp").forward(request, response);
             }

@@ -128,6 +128,57 @@
                             </c:forEach>
                         </tr>
                         <tr class="hover:bg-slate-50">
+                            <td class="px-6 py-3 font-bold text-slate-600">Bono MiVivienda</td>
+                            <c:forEach var="p" items="${propiedadesComparar}">
+                                <td class="px-6 py-3 text-center">
+                                    <c:choose>
+                                        <c:when test="${p.bonoMiVivienda == 1}">
+                                            <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold bg-indigo-100 text-indigo-700">Aplica</span>
+                                        </c:when>
+                                        <c:otherwise>
+                                            <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold bg-slate-100 text-slate-400">No aplica</span>
+                                        </c:otherwise>
+                                    </c:choose>
+                                </td>
+                            </c:forEach>
+                        </tr>
+                        <tr class="hover:bg-slate-50">
+                            <td class="px-6 py-3 font-bold text-slate-600">Bono Verde</td>
+                            <c:forEach var="p" items="${propiedadesComparar}">
+                                <td class="px-6 py-3 text-center">
+                                    <c:choose>
+                                        <c:when test="${p.bonoVerde == 1}">
+                                            <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold bg-emerald-100 text-emerald-700">Aplica</span>
+                                        </c:when>
+                                        <c:otherwise>
+                                            <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold bg-slate-100 text-slate-400">No aplica</span>
+                                        </c:otherwise>
+                                    </c:choose>
+                                </td>
+                            </c:forEach>
+                        </tr>
+                        <tr class="hover:bg-slate-50">
+                            <td class="px-6 py-3 font-bold text-slate-600">Agente Inmobiliario</td>
+                            <c:forEach var="p" items="${propiedadesComparar}">
+                                <td class="px-6 py-3 text-center">
+                                    <c:choose>
+                                        <c:when test="${not empty p.agenteNombre}">
+                                            <div class="font-bold text-slate-900">${p.agenteNombre}</div>
+                                            <c:if test="${not empty p.agenteTelefono}">
+                                                <div class="text-xs text-slate-500 mt-0.5">📞 ${p.agenteTelefono}</div>
+                                            </c:if>
+                                            <c:if test="${not empty p.agenteCorreo}">
+                                                <div class="text-[11px] text-slate-400">✉️ ${p.agenteCorreo}</div>
+                                            </c:if>
+                                        </c:when>
+                                        <c:otherwise>
+                                            <span class="text-slate-400 italic">No asignado</span>
+                                        </c:otherwise>
+                                    </c:choose>
+                                </td>
+                            </c:forEach>
+                        </tr>
+                        <tr class="hover:bg-slate-50">
                             <td class="px-6 py-3 font-bold text-slate-600">Acción</td>
                             <c:forEach var="p" items="${propiedadesComparar}">
                                 <td class="px-6 py-3 text-center">

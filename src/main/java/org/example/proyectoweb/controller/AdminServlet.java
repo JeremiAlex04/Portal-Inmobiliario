@@ -8,9 +8,11 @@ import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
 import org.example.proyectoweb.dto.UsuarioDTO;
 import org.example.proyectoweb.dto.UbicacionDTO;
+import org.example.proyectoweb.dto.PropiedadDTO;
 import org.example.proyectoweb.facade.PropiedadFacade;
 import org.example.proyectoweb.facade.UsuarioFacade;
 import org.example.proyectoweb.facade.UbicacionFacade;
+import org.example.proyectoweb.facade.AuditoriaFacade;
 
 import java.io.IOException;
 
@@ -19,17 +21,20 @@ public class AdminServlet extends HttpServlet {
     private UsuarioFacade usuarioFacade;
     private PropiedadFacade propiedadFacade;
     private UbicacionFacade ubicacionFacade;
+    private AuditoriaFacade auditoriaFacade;
 
     @Override
     public void init() {
         usuarioFacade = new UsuarioFacade();
         propiedadFacade = new PropiedadFacade();
         ubicacionFacade = new UbicacionFacade();
+        auditoriaFacade = new AuditoriaFacade();
     }
 
     // =========================================================
     // Validación de acceso administrativo (rol = 5)
     // =========================================================
+    
     private UsuarioDTO validarAdmin(HttpServletRequest request, HttpServletResponse response) throws IOException {
         HttpSession session = request.getSession(false);
         if (session == null || session.getAttribute("usuarioLogueado") == null) {
@@ -98,7 +103,12 @@ public class AdminServlet extends HttpServlet {
             case "eliminar_usuario":
                 int idEliminar = Integer.parseInt(request.getParameter("id"));
                 if (idEliminar != usuario.getIdUsuario()) {
-                    usuarioFacade.eliminarUsuario(idEliminar);
+                    UsuarioDTO targetUser = usuarioFacade.obtenerUsuarioPorId(idEliminar);
+                    boolean deleted = usuarioFacade.eliminarUsuario(idEliminar);
+                    if (deleted && targetUser != null) {
+                        String det = "{\"correo\":\"" + targetUser.getCorreo() + "\",\"nombre\":\"" + targetUser.getNombres() + " " + targetUser.getApellidos() + "\"}";
+                        auditoriaFacade.registrarEvento(usuario.getIdUsuario(), "usuario", idEliminar, "ELIMINAR", request.getRemoteAddr(), request.getHeader("User-Agent"), det);
+                    }
                 }
                 response.sendRedirect(request.getContextPath() + "/admin?accion=usuarios");
                 break;
@@ -108,7 +118,12 @@ public class AdminServlet extends HttpServlet {
                 int idEstado = Integer.parseInt(request.getParameter("id"));
                 int nuevoEstado = Integer.parseInt(request.getParameter("estado"));
                 if (idEstado != usuario.getIdUsuario()) {
-                    usuarioFacade.cambiarEstadoUsuario(idEstado, nuevoEstado);
+                    UsuarioDTO targetUser = usuarioFacade.obtenerUsuarioPorId(idEstado);
+                    boolean changed = usuarioFacade.cambiarEstadoUsuario(idEstado, nuevoEstado);
+                    if (changed && targetUser != null) {
+                        String det = "{\"correo\":\"" + targetUser.getCorreo() + "\",\"activo\":" + nuevoEstado + "}";
+                        auditoriaFacade.registrarEvento(usuario.getIdUsuario(), "usuario", idEstado, "ACTUALIZAR", request.getRemoteAddr(), request.getHeader("User-Agent"), det);
+                    }
                 }
                 response.sendRedirect(request.getContextPath() + "/admin?accion=usuarios");
                 break;
@@ -118,7 +133,12 @@ public class AdminServlet extends HttpServlet {
                 int idRolUser = Integer.parseInt(request.getParameter("id"));
                 int nuevoRol = Integer.parseInt(request.getParameter("rol"));
                 if (idRolUser != usuario.getIdUsuario()) {
-                    usuarioFacade.cambiarRolUsuario(idRolUser, nuevoRol);
+                    UsuarioDTO targetUser = usuarioFacade.obtenerUsuarioPorId(idRolUser);
+                    boolean changed = usuarioFacade.cambiarRolUsuario(idRolUser, nuevoRol);
+                    if (changed && targetUser != null) {
+                        String det = "{\"correo\":\"" + targetUser.getCorreo() + "\",\"rol_nuevo\":" + nuevoRol + ",\"rol_anterior\":" + targetUser.getIdRol() + "}";
+                        auditoriaFacade.registrarEvento(usuario.getIdUsuario(), "usuario", idRolUser, "ACTUALIZAR", request.getRemoteAddr(), request.getHeader("User-Agent"), det);
+                    }
                 }
                 response.sendRedirect(request.getContextPath() + "/admin?accion=usuarios");
                 break;
@@ -144,14 +164,24 @@ public class AdminServlet extends HttpServlet {
             case "cambiar_estado_prop":
                 int idProp = Integer.parseInt(request.getParameter("id"));
                 String nuevoEstadoProp = request.getParameter("estado");
-                propiedadFacade.cambiarEstadoPropiedad(idProp, nuevoEstadoProp);
+                PropiedadDTO targetProp = propiedadFacade.obtenerPropiedad(idProp);
+                boolean changedProp = propiedadFacade.cambiarEstadoPropiedad(idProp, nuevoEstadoProp);
+                if (changedProp && targetProp != null) {
+                    String det = "{\"titulo\":\"" + targetProp.getTitulo().replace("\"", "\\\"") + "\",\"estado_nuevo\":\"" + nuevoEstadoProp + "\",\"estado_anterior\":\"" + targetProp.getEstado() + "\"}";
+                    auditoriaFacade.registrarEvento(usuario.getIdUsuario(), "propiedad", idProp, "ACTUALIZAR", request.getRemoteAddr(), request.getHeader("User-Agent"), det);
+                }
                 response.sendRedirect(request.getContextPath() + "/admin?accion=propiedades");
                 break;
 
             // ---- PROPIEDADES: Eliminar ----
             case "eliminar_prop":
                 int idEliminarProp = Integer.parseInt(request.getParameter("id"));
-                propiedadFacade.eliminarPropiedad(idEliminarProp);
+                PropiedadDTO targetPropDel = propiedadFacade.obtenerPropiedad(idEliminarProp);
+                boolean deletedProp = propiedadFacade.eliminarPropiedad(idEliminarProp);
+                if (deletedProp && targetPropDel != null) {
+                    String det = "{\"titulo\":\"" + targetPropDel.getTitulo().replace("\"", "\\\"") + "\"}";
+                    auditoriaFacade.registrarEvento(usuario.getIdUsuario(), "propiedad", idEliminarProp, "ELIMINAR", request.getRemoteAddr(), request.getHeader("User-Agent"), det);
+                }
                 response.sendRedirect(request.getContextPath() + "/admin?accion=propiedades");
                 break;
 
@@ -178,6 +208,12 @@ public class AdminServlet extends HttpServlet {
                 String tipoDel = request.getParameter("tipo");
                 ubicacionFacade.eliminarUbicacion(idUbi, tipoDel);
                 response.sendRedirect(request.getContextPath() + "/admin?accion=ubicaciones&tipo=" + tipoDel);
+                break;
+
+            // ---- AUDITORIA: Panel de logs ----
+            case "auditoria":
+                request.setAttribute("listaEventos", auditoriaFacade.listarEventos());
+                request.getRequestDispatcher("/WEB-INF/views/admin_auditoria.jsp").forward(request, response);
                 break;
 
             default:
@@ -208,7 +244,11 @@ public class AdminServlet extends HttpServlet {
                 nuevo.setPasswordHash(request.getParameter("password"));
                 nuevo.setIdRol(Integer.parseInt(request.getParameter("idRol")));
 
-                usuarioFacade.registrarUsuario(nuevo);
+                boolean regUser = usuarioFacade.registrarUsuario(nuevo);
+                if (regUser) {
+                    String det = "{\"correo\":\"" + nuevo.getCorreo() + "\",\"rol\":" + nuevo.getIdRol() + "}";
+                    auditoriaFacade.registrarEvento(admin.getIdUsuario(), "usuario", 0, "CREAR", request.getRemoteAddr(), request.getHeader("User-Agent"), det);
+                }
                 response.sendRedirect(request.getContextPath() + "/admin?accion=usuarios");
                 break;
 
@@ -220,7 +260,11 @@ public class AdminServlet extends HttpServlet {
                 editar.setApellidos(request.getParameter("apellidos"));
                 editar.setCorreo(request.getParameter("correo"));
 
-                usuarioFacade.editarUsuario(editar);
+                boolean edUser = usuarioFacade.editarUsuario(editar);
+                if (edUser) {
+                    String det = "{\"correo\":\"" + editar.getCorreo() + "\"}";
+                    auditoriaFacade.registrarEvento(admin.getIdUsuario(), "usuario", editar.getIdUsuario(), "ACTUALIZAR", request.getRemoteAddr(), request.getHeader("User-Agent"), det);
+                }
                 response.sendRedirect(request.getContextPath() + "/admin?accion=usuarios");
                 break;
 

@@ -42,6 +42,13 @@ public class PropiedadDTO {
     private String agenteTelefono;
     private String agenteCorreo;
 
+    // Campos de consistencia de base de datos
+    private String referencia;
+    private Integer numPisos;
+    private String tour360Url;
+    private String fechaPublicacion;
+    private String fechaExpiracion;
+
     public PropiedadDTO() {
     }
 
@@ -294,7 +301,14 @@ public class PropiedadDTO {
     private String fotoPrincipal;
     private int numeroVistas;
     private boolean favorito; // Flag temporal para la vista
-    private BigDecimal tipoCambioVenta; // Para mostrar referencia
+    private java.math.BigDecimal tipoCambioVenta; // Para mostrar referencia
+    private java.math.BigDecimal latitud;
+    private java.math.BigDecimal longitud;
+
+    public java.math.BigDecimal getLatitud() { return latitud; }
+    public void setLatitud(java.math.BigDecimal latitud) { this.latitud = latitud; }
+    public java.math.BigDecimal getLongitud() { return longitud; }
+    public void setLongitud(java.math.BigDecimal longitud) { this.longitud = longitud; }
 
     public String getFotoPrincipal() { return fotoPrincipal; }
     public void setFotoPrincipal(String fotoPrincipal) { this.fotoPrincipal = fotoPrincipal; }
@@ -307,4 +321,20 @@ public class PropiedadDTO {
 
     public BigDecimal getTipoCambioVenta() { return tipoCambioVenta; }
     public void setTipoCambioVenta(BigDecimal tipoCambioVenta) { this.tipoCambioVenta = tipoCambioVenta; }
+
+    // Getters y Setters de consistencia de base de datos
+    public String getReferencia() { return referencia; }
+    public void setReferencia(String referencia) { this.referencia = referencia; }
+
+    public Integer getNumPisos() { return numPisos; }
+    public void setNumPisos(Integer numPisos) { this.numPisos = numPisos; }
+
+    public String getTour360Url() { return tour360Url; }
+    public void setTour360Url(String tour360Url) { this.tour360Url = tour360Url; }
+
+    public String getFechaPublicacion() { return fechaPublicacion; }
+    public void setFechaPublicacion(String fechaPublicacion) { this.fechaPublicacion = fechaPublicacion; }
+
+    public String getFechaExpiracion() { return fechaExpiracion; }
+    public void setFechaExpiracion(String fechaExpiracion) { this.fechaExpiracion = fechaExpiracion; }
 }

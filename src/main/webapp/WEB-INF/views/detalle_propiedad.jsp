@@ -257,13 +257,18 @@ document.querySelectorAll('.gallery-thumb, #heroImg').forEach(img => {
     });
 });
 
-// Inicializar Mapa (Coordenadas referenciales de Lima si no hay específicas)
-var map = L.map('map').setView([-12.046374, -77.042793], 13);
+// Inicializar Mapa (Coordenadas dinámicas de la propiedad o Lima Centro como fallback)
+var lat = ${propiedad.latitud != null ? propiedad.latitud : -12.046374};
+var lng = ${propiedad.longitud != null ? propiedad.longitud : -77.042793};
+var zoom = ${propiedad.latitud != null ? 15 : 13};
+
+var map = L.map('map').setView([lat, lng], zoom);
 L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
     attribution: '&copy; OpenStreetMap contributors'
 }).addTo(map);
-L.marker([-12.046374, -77.042793]).addTo(map)
-    .bindPopup('<b>${propiedad.titulo}</b><br>${propiedad.distrito}')
+
+L.marker([lat, lng]).addTo(map)
+    .bindPopup('<b><c:out value="${propiedad.titulo}"/></b><br><c:out value="${propiedad.distrito}"/>')
     .openPopup();
 
 // Auto-show contact form if consultaEnviada

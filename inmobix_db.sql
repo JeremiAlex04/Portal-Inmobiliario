@@ -109,11 +109,12 @@ CREATE TABLE usuario (
         REFERENCES rol(id_rol) ON UPDATE CASCADE
 ) ENGINE=InnoDB COMMENT='Tabla central de usuarios - Ley 29733';
 
--- Datos de Prueba: 1 Admin, 2 Agentes (Password para todos: 123456)
+-- Datos de Prueba: 1 Admin, 2 Agentes, 1 Comprador (Password para todos: 123456)
 INSERT INTO usuario (id_usuario, id_rol, nombres, apellidos, correo, password_hash, telefono, activo, verificado) VALUES
 (1, 3, 'Carlos', 'Mendoza López', 'agente@inmobix.com', '$2a$10$Gtq9fAQEJWhkZi0fZXnVH.90d09O/L1amhSzPar/OlQsCuAHk9IFO', '987654321', 1, 1),
 (2, 5, 'Super', 'Administrador', 'admin@inmobix.pe', '$2a$10$Gtq9fAQEJWhkZi0fZXnVH.90d09O/L1amhSzPar/OlQsCuAHk9IFO', '999888777', 1, 1),
-(3, 3, 'María', 'Torres Gutiérrez', 'maria.torres@inmobix.com', '$2a$10$Gtq9fAQEJWhkZi0fZXnVH.90d09O/L1amhSzPar/OlQsCuAHk9IFO', '912345678', 1, 1);
+(3, 3, 'María', 'Torres Gutiérrez', 'maria.torres@inmobix.com', '$2a$10$Gtq9fAQEJWhkZi0fZXnVH.90d09O/L1amhSzPar/OlQsCuAHk9IFO', '912345678', 1, 1),
+(4, 2, 'Pedro', 'Ramírez Castro', 'comprador@inmobix.pe', '$2a$10$Gtq9fAQEJWhkZi0fZXnVH.90d09O/L1amhSzPar/OlQsCuAHk9IFO', '955444333', 1, 1);
 
 
 CREATE TABLE recuperacion_cuenta (
@@ -693,6 +694,16 @@ CREATE TABLE IF NOT EXISTS estadisticas_propiedad (
 UPDATE plan SET nombre='GRATUITO', precio_pen=0.00, max_propiedades=1, descripcion='1 propiedad activa. Publicación básica.' WHERE id_plan=1;
 UPDATE plan SET nombre='BASICO', precio_pen=50.00, max_propiedades=5, descripcion='5 propiedades activas. Visibilidad estándar.' WHERE id_plan=2;
 UPDATE plan SET nombre='PREMIUM', precio_pen=150.00, max_propiedades=20, destacada=1, analytics=1, descripcion='20 propiedades destacadas. Analytics y prioridad.' WHERE id_plan=3;
+
+-- Tabla para el formulario de contacto general (feedback del sitio web)
+CREATE TABLE IF NOT EXISTS contacto (
+    id_contacto       INT UNSIGNED     NOT NULL AUTO_INCREMENT,
+    nombre            VARCHAR(120)     NOT NULL,
+    email             VARCHAR(120)     NOT NULL,
+    mensaje           TEXT             NOT NULL,
+    fecha             DATETIME         NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    PRIMARY KEY (id_contacto)
+) ENGINE=InnoDB COMMENT='Mensajes del formulario de contacto general (Sprint 3)';
 
 -- ============================================================
 -- FIN DEL SCRIPT

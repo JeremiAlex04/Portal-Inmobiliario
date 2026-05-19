@@ -223,11 +223,11 @@ public class PropiedadDAO {
     }
 
     public boolean registrarPropiedad(PropiedadDTO p) {
-        String sql = "INSERT INTO propiedad (id_usuario_agente, id_tipo_inmueble, id_operacion, id_distrito, partida_sunarp, titulo, descripcion, direccion, area_total_m2, area_techada_m2, num_dormitorios, num_banos, num_cocheras, anio_construccion, moneda_base, precio, bono_mi_vivienda, bono_verde, foto_principal, estado) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 'ACTIVO')";
+        String sql = "INSERT INTO propiedad (id_usuario_agente, id_tipo_inmueble, id_operacion, id_distrito, partida_sunarp, titulo, descripcion, direccion, area_total_m2, area_techada_m2, num_dormitorios, num_banos, num_cocheras, anio_construccion, moneda_base, precio, bono_mi_vivienda, bono_verde, foto_principal, latitud, longitud, referencia, num_pisos, tour_360_url, fecha_publicacion, fecha_expiracion, estado) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, NOW(), DATE_ADD(NOW(), INTERVAL 30 DAY), 'ACTIVO')";
         boolean rowInserted = false;
 
         try (Connection conn = ConexionDB.getConnection();
-                PreparedStatement stmt = conn.prepareStatement(sql)) {
+                PreparedStatement stmt = conn.prepareStatement(sql, java.sql.Statement.RETURN_GENERATED_KEYS)) {
 
             stmt.setInt(1, p.getIdUsuarioAgente());
             stmt.setInt(2, p.getIdTipoInmueble());
@@ -249,8 +249,26 @@ public class PropiedadDAO {
             stmt.setInt(17, p.getBonoMiVivienda());
             stmt.setInt(18, p.getBonoVerde());
             stmt.setString(19, p.getFotoPrincipal());
+            stmt.setBigDecimal(20, p.getLatitud());
+            stmt.setBigDecimal(21, p.getLongitud());
+            
+            stmt.setString(22, p.getReferencia());
+            if (p.getNumPisos() != null) {
+                stmt.setInt(23, p.getNumPisos());
+            } else {
+                stmt.setNull(23, java.sql.Types.INTEGER);
+            }
+            stmt.setString(24, p.getTour360Url());
 
-            rowInserted = stmt.executeUpdate() > 0;
+            int affectedRows = stmt.executeUpdate();
+            if (affectedRows > 0) {
+                rowInserted = true;
+                try (ResultSet rs = stmt.getGeneratedKeys()) {
+                    if (rs.next()) {
+                        p.setId(rs.getInt(1));
+                    }
+                }
+            }
         } catch (SQLException e) {
             System.err.println("Error al registrar propiedad: " + e.getMessage());
         } catch (Exception e) {
@@ -294,6 +312,8 @@ public class PropiedadDAO {
                     p.setBonoMiVivienda(rs.getInt("bono_mi_vivienda"));
                     p.setBonoVerde(rs.getInt("bono_verde"));
                     p.setEstado(rs.getString("estado"));
+                    p.setLatitud(rs.getBigDecimal("latitud"));
+                    p.setLongitud(rs.getBigDecimal("longitud"));
 
                     // Text catalogs from view
                     p.setTipoInmueble(rs.getString("tipo_inmueble"));
@@ -303,6 +323,13 @@ public class PropiedadDAO {
                     p.setDepartamento(rs.getString("departamento"));
                     p.setPrecioPen(rs.getBigDecimal("precio_pen"));
                     p.setPrecioUsd(rs.getBigDecimal("precio_usd"));
+
+                    // New DB fields
+                    p.setReferencia(rs.getString("referencia"));
+                    p.setNumPisos(rs.getObject("num_pisos") != null ? rs.getInt("num_pisos") : null);
+                    p.setTour360Url(rs.getString("tour_360_url"));
+                    p.setFechaPublicacion(rs.getString("fecha_publicacion"));
+                    p.setFechaExpiracion(rs.getString("fecha_expiracion"));
 
                     // Agent details
                     String nombres = rs.getString("agente_nombres") != null ? rs.getString("agente_nombres") : "";
@@ -319,7 +346,7 @@ public class PropiedadDAO {
     }
 
     public boolean actualizarPropiedad(PropiedadDTO p) {
-        String sql = "UPDATE propiedad SET id_tipo_inmueble=?, id_operacion=?, id_distrito=?, partida_sunarp=?, titulo=?, descripcion=?, direccion=?, area_total_m2=?, area_techada_m2=?, num_dormitorios=?, num_banos=?, num_cocheras=?, anio_construccion=?, moneda_base=?, precio=?, bono_mi_vivienda=?, bono_verde=?, foto_principal=COALESCE(?,foto_principal) WHERE id_propiedad=?";
+        String sql = "UPDATE propiedad SET id_tipo_inmueble=?, id_operacion=?, id_distrito=?, partida_sunarp=?, titulo=?, descripcion=?, direccion=?, area_total_m2=?, area_techada_m2=?, num_dormitorios=?, num_banos=?, num_cocheras=?, anio_construccion=?, moneda_base=?, precio=?, bono_mi_vivienda=?, bono_verde=?, foto_principal=COALESCE(?,foto_principal), latitud=?, longitud=? WHERE id_propiedad=?";
         boolean rowUpdated = false;
 
         try (Connection conn = ConexionDB.getConnection();
@@ -344,7 +371,9 @@ public class PropiedadDAO {
             stmt.setInt(16, p.getBonoMiVivienda());
             stmt.setInt(17, p.getBonoVerde());
             stmt.setString(18, p.getFotoPrincipal());
-            stmt.setInt(19, p.getId());
+            stmt.setBigDecimal(19, p.getLatitud());
+            stmt.setBigDecimal(20, p.getLongitud());
+            stmt.setInt(21, p.getId());
 
             rowUpdated = stmt.executeUpdate() > 0;
         } catch (SQLException e) {

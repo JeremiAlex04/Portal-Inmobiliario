@@ -10,6 +10,8 @@
                 href="${pageContext.request.contextPath}/assets/img/logo/Logo_Inmobix.png">
             <title>Inmobix - Registrar Propiedad</title>
             <link rel="stylesheet" href="${pageContext.request.contextPath}/assets/css/styles.css">
+            <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+            <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
             <script src="https://cdn.tailwindcss.com"></script>
             <script src="${pageContext.request.contextPath}/assets/js/main.js" defer></script>
         </head>
@@ -159,6 +161,13 @@
                                     <input type="text" name="partidaRegistral" placeholder="Ej. 11029384"
                                         value="${propiedad != null ? propiedad.partidaRegistral : ''}"
                                         class="w-full px-4 py-3 rounded-lg border border-slate-300 focus:ring-2 focus:ring-indigo-500 outline-none">
+                                </div>
+                                <div class="md:col-span-2">
+                                    <label class="block text-sm font-semibold text-slate-700 mb-2">Ubicación Geográfica en el Mapa * (Haga clic para situar el pin o arrástrelo)</label>
+                                    <div id="registro-map" class="w-full h-72 rounded-xl border border-slate-300 shadow-md z-10"></div>
+                                    <p class="text-xs text-slate-500 mt-2">Coordenadas seleccionadas: <span id="coordenadas-display" class="font-mono font-semibold text-slate-800">Ninguna</span></p>
+                                    <input type="hidden" id="latitud" name="latitud" value="${propiedad != null && propiedad.latitud != null ? propiedad.latitud : ''}">
+                                    <input type="hidden" id="longitud" name="longitud" value="${propiedad != null && propiedad.longitud != null ? propiedad.longitud : ''}">
                                 </div>
                             </div>
                         </div>
@@ -335,6 +344,62 @@
                     <p class="text-sm">&copy; 2026 Portal Inmobiliario. Todos los derechos reservados.</p>
                 </div>
             </footer>
+
+            <script>
+                // Inicialización del Mapa
+                document.addEventListener("DOMContentLoaded", function() {
+                    var defaultLat = -12.046374;
+                    var defaultLng = -77.042793;
+                    
+                    var savedLat = document.getElementById('latitud').value;
+                    var savedLng = document.getElementById('longitud').value;
+                    
+                    var initialLat = savedLat ? parseFloat(savedLat) : defaultLat;
+                    var initialLng = savedLng ? parseFloat(savedLng) : defaultLng;
+                    var initialZoom = savedLat ? 16 : 13;
+                    
+                    var regMap = L.map('registro-map').setView([initialLat, initialLng], initialZoom);
+                    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+                        attribution: '&copy; OpenStreetMap contributors'
+                    }).addTo(regMap);
+                    
+                    var marker;
+                    
+                    // Función para actualizar coordenadas en pantalla y en los inputs
+                    function updateCoords(lat, lng) {
+                        document.getElementById('latitud').value = lat;
+                        document.getElementById('longitud').value = lng;
+                        document.getElementById('coordenadas-display').textContent = lat.toFixed(6) + ", " + lng.toFixed(6);
+                    }
+                    
+                    if (savedLat && savedLng) {
+                        marker = L.marker([initialLat, initialLng], {draggable: true}).addTo(regMap);
+                        document.getElementById('coordenadas-display').textContent = initialLat.toFixed(6) + ", " + initialLng.toFixed(6);
+                        
+                        marker.on('dragend', function(e) {
+                            var position = marker.getLatLng();
+                            updateCoords(position.lat, position.lng);
+                        });
+                    }
+                    
+                    regMap.on('click', function(e) {
+                        var clickLat = e.latlng.lat;
+                        var clickLng = e.latlng.lng;
+                        
+                        updateCoords(clickLat, clickLng);
+                        
+                        if (marker) {
+                            marker.setLatLng(e.latlng);
+                        } else {
+                            marker = L.marker(e.latlng, {draggable: true}).addTo(regMap);
+                            marker.on('dragend', function(ev) {
+                                var position = marker.getLatLng();
+                                updateCoords(position.lat, position.lng);
+                            });
+                        }
+                    });
+                });
+            </script>
         </body>
 
         </html>

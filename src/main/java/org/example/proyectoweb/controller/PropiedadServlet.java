@@ -36,6 +36,7 @@ public class PropiedadServlet extends HttpServlet {
     private FavoritoFacade favoritoFacade;
     private EstadisticaDAO estadisticaDAO;
     private GaleriaDAO galeriaDAO;
+    private org.example.proyectoweb.facade.AuditoriaFacade auditoriaFacade;
 
     // Extensiones permitidas para fotos
     private static final List<String> EXTENSIONES_PERMITIDAS = Arrays.asList("jpg", "jpeg", "png", "webp");
@@ -46,6 +47,7 @@ public class PropiedadServlet extends HttpServlet {
         favoritoFacade = new FavoritoFacade();
         estadisticaDAO = new EstadisticaDAO();
         galeriaDAO = new GaleriaDAO();
+        auditoriaFacade = new org.example.proyectoweb.facade.AuditoriaFacade();
     }
 
     private void cargarCatalogos(HttpServletRequest request) {
@@ -153,8 +155,13 @@ public class PropiedadServlet extends HttpServlet {
 
                 case "eliminar":
                     int idEliminar = Integer.parseInt(request.getParameter("id"));
+                    PropiedadDTO pDel = propiedadFacade.obtenerPropiedad(idEliminar);
                     propiedadFacade.eliminarPropiedad(idEliminar);
                     UsuarioDTO sessionUser = (UsuarioDTO) request.getSession().getAttribute("usuarioLogueado");
+                    if (sessionUser != null) {
+                        String details = pDel != null ? "{\"titulo\":\"" + pDel.getTitulo().replace("\"", "\\\"") + "\",\"precio\":" + pDel.getPrecio() + ",\"moneda\":\"" + pDel.getMonedaBase() + "\"}" : "{}";
+                        auditoriaFacade.registrarEvento(sessionUser.getIdUsuario(), "propiedad", idEliminar, "ELIMINAR", request.getRemoteAddr(), request.getHeader("User-Agent"), details);
+                    }
                     if (sessionUser != null && (sessionUser.getIdRol() == 3 || sessionUser.getIdRol() == 4 || sessionUser.getIdRol() == 5)) {
                         response.sendRedirect(request.getContextPath() + "/panel");
                     } else {
@@ -280,6 +287,16 @@ public class PropiedadServlet extends HttpServlet {
             propiedad.setBonoMiVivienda(request.getParameter("bonoMiVivienda") != null ? 1 : 0);
             propiedad.setBonoVerde(request.getParameter("bonoVerde") != null ? 1 : 0);
 
+            // Coordenadas
+            String latStr = request.getParameter("latitud");
+            if (latStr != null && !latStr.isEmpty()) {
+                propiedad.setLatitud(new BigDecimal(latStr));
+            }
+            String lngStr = request.getParameter("longitud");
+            if (lngStr != null && !lngStr.isEmpty()) {
+                propiedad.setLongitud(new BigDecimal(lngStr));
+            }
+
             // Sprint 2: Procesar imagen
             try {
                 String rutaFoto = procesarImagen(request);
@@ -304,17 +321,61 @@ public class PropiedadServlet extends HttpServlet {
             }
 
             boolean exito;
-            if (propiedad.getId() > 0) {
+            boolean esNuevo = (propiedad.getId() <= 0);
+            PropiedadDTO oldProp = null;
+            UsuarioDTO usuario = (UsuarioDTO) request.getSession().getAttribute("usuarioLogueado");
+
+            if (!esNuevo) {
+                oldProp = propiedadFacade.obtenerPropiedad(propiedad.getId());
                 exito = propiedadFacade.actualizarPropiedad(propiedad);
             } else {
-                UsuarioDTO usuario = (UsuarioDTO) request.getSession().getAttribute("usuarioLogueado");
                 propiedad.setIdUsuarioAgente(usuario != null ? usuario.getIdUsuario() : 1);
                 exito = propiedadFacade.registrarPropiedad(propiedad);
             }
 
             if (exito) {
-                UsuarioDTO sessionUser = (UsuarioDTO) request.getSession().getAttribute("usuarioLogueado");
-                if (sessionUser != null && (sessionUser.getIdRol() == 3 || sessionUser.getIdRol() == 4 || sessionUser.getIdRol() == 5)) {
+                if (usuario != null) {
+                    String details;
+                    if (esNuevo) {
+                        details = "{\"titulo\":\"" + propiedad.getTitulo().replace("\"", "\\\"") + "\",\"precio\":" + propiedad.getPrecio() + ",\"moneda\":\"" + propiedad.getMonedaBase() + "\"}";
+                        auditoriaFacade.registrarEvento(usuario.getIdUsuario(), "propiedad", propiedad.getId(), "CREAR", request.getRemoteAddr(), request.getHeader("User-Agent"), details);
+                    } else {
+                        // Comparación de precio
+                        boolean cambioSignificativo = false;
+                        BigDecimal pct = BigDecimal.ZERO;
+                        if (oldProp != null) {
+                            BigDecimal oldPrice = oldProp.getPrecio();
+                            BigDecimal newPrice = propiedad.getPrecio();
+                            
+                            if (oldProp.getMonedaBase().equals(propiedad.getMonedaBase())) {
+                                BigDecimal diff = newPrice.subtract(oldPrice).abs();
+                                if (oldPrice.compareTo(BigDecimal.ZERO) > 0) {
+                                    pct = diff.divide(oldPrice, 4, java.math.RoundingMode.HALF_UP);
+                                }
+                            } else {
+                                BigDecimal oldUsd = oldProp.getPrecioUsd();
+                                BigDecimal tc = oldProp.getTipoCambioVenta() != null ? oldProp.getTipoCambioVenta() : new BigDecimal("3.75");
+                                BigDecimal newUsd = propiedad.getMonedaBase().equals("USD") ? propiedad.getPrecio() : propiedad.getPrecio().divide(tc, 4, java.math.RoundingMode.HALF_UP);
+                                BigDecimal diff = newUsd.subtract(oldUsd).abs();
+                                if (oldUsd.compareTo(BigDecimal.ZERO) > 0) {
+                                    pct = diff.divide(oldUsd, 4, java.math.RoundingMode.HALF_UP);
+                                }
+                            }
+                            if (pct.compareTo(new BigDecimal("0.20")) > 0) {
+                                cambioSignificativo = true;
+                            }
+                        }
+
+                        if (cambioSignificativo) {
+                            details = "{\"titulo\":\"" + propiedad.getTitulo().replace("\"", "\\\"") + "\",\"cambio_precio_20_pct\":true,\"precio_anterior\":" + oldProp.getPrecio() + ",\"moneda_anterior\":\"" + oldProp.getMonedaBase() + "\",\"precio_nuevo\":" + propiedad.getPrecio() + ",\"moneda_nueva\":\"" + propiedad.getMonedaBase() + "\",\"porcentaje\":" + pct.multiply(new BigDecimal("100")).setScale(2, java.math.RoundingMode.HALF_UP) + "}";
+                        } else {
+                            details = "{\"titulo\":\"" + propiedad.getTitulo().replace("\"", "\\\"") + "\",\"precio\":" + propiedad.getPrecio() + ",\"moneda\":\"" + propiedad.getMonedaBase() + "\"}";
+                        }
+                        auditoriaFacade.registrarEvento(usuario.getIdUsuario(), "propiedad", propiedad.getId(), "ACTUALIZAR", request.getRemoteAddr(), request.getHeader("User-Agent"), details);
+                    }
+                }
+
+                if (usuario != null && (usuario.getIdRol() == 3 || usuario.getIdRol() == 4 || usuario.getIdRol() == 5)) {
                     response.sendRedirect(request.getContextPath() + "/panel");
                 } else {
                     response.sendRedirect(request.getContextPath() + "/propiedades");

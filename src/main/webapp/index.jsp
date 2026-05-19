@@ -67,7 +67,7 @@
             <div class="relative min-h-[85vh] flex items-center justify-center overflow-hidden">
                 <!-- Background Image -->
                 <div class="absolute inset-0 z-0">
-                    <img src="https://images.unsplash.com/photo-1560518883-ce09059eeffa?ixlib=rb-4.0.3&auto=format&fit=crop&w=1920&q=80"
+                    <img src="https://constructivo.com/imgPosts/1617113803lEt5g56F.jpg"
                         alt="Hero Background" class="w-full h-full object-cover" />
                     <div class="absolute inset-0 bg-gradient-to-r from-slate-900/90 via-slate-900/70 to-transparent">
                     </div>
