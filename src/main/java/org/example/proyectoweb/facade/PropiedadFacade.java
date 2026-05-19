@@ -152,4 +152,12 @@ public class PropiedadFacade {
     public List<PropiedadDTO> obtenerPropiedadesAgenteConFiltros(int idAgente, String estado, String orden) {
         return propiedadDAO.obtenerPropiedadesAgenteConFiltros(idAgente, estado, orden);
     }
+
+    public int obtenerLimitePublicaciones(int idUsuario) {
+        return propiedadDAO.obtenerLimitePublicaciones(idUsuario);
+    }
+
+    public int contarPropiedadesActivas(int idUsuario) {
+        return propiedadDAO.contarPropiedadesActivas(idUsuario);
+    }
 }

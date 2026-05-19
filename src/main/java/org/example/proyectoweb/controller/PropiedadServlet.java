@@ -297,6 +297,14 @@ public class PropiedadServlet extends HttpServlet {
                 propiedad.setLongitud(new BigDecimal(lngStr));
             }
 
+            // Datos de Consistencia de BD
+            propiedad.setReferencia(request.getParameter("referencia"));
+            String numPisosStr = request.getParameter("numPisos");
+            if (numPisosStr != null && !numPisosStr.isEmpty()) {
+                propiedad.setNumPisos(Integer.parseInt(numPisosStr));
+            }
+            propiedad.setTour360Url(request.getParameter("tour360Url"));
+
             // Sprint 2: Procesar imagen
             try {
                 String rutaFoto = procesarImagen(request);
@@ -329,7 +337,17 @@ public class PropiedadServlet extends HttpServlet {
                 oldProp = propiedadFacade.obtenerPropiedad(propiedad.getId());
                 exito = propiedadFacade.actualizarPropiedad(propiedad);
             } else {
-                propiedad.setIdUsuarioAgente(usuario != null ? usuario.getIdUsuario() : 1);
+                int idAgente = usuario != null ? usuario.getIdUsuario() : 1;
+                int activeCount = propiedadFacade.contarPropiedadesActivas(idAgente);
+                int limit = propiedadFacade.obtenerLimitePublicaciones(idAgente);
+                if (activeCount >= limit) {
+                    request.setAttribute("error", "Límite de publicaciones alcanzado (" + limit + " activo/s). Por favor, actualiza tu plan en la sección Suscripciones.");
+                    request.setAttribute("propiedad", propiedad);
+                    cargarCatalogos(request);
+                    request.getRequestDispatcher("/WEB-INF/views/registro.jsp").forward(request, response);
+                    return;
+                }
+                propiedad.setIdUsuarioAgente(idAgente);
                 exito = propiedadFacade.registrarPropiedad(propiedad);
             }
 

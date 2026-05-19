@@ -163,6 +163,12 @@
                                         class="w-full px-4 py-3 rounded-lg border border-slate-300 focus:ring-2 focus:ring-indigo-500 outline-none">
                                 </div>
                                 <div class="md:col-span-2">
+                                    <label class="block text-sm font-semibold text-slate-700 mb-2">Referencia de Ubicación</label>
+                                    <input type="text" name="referencia" placeholder="Ej. Altura de la cuadra 8 de Av. Larco, frente a la Iglesia"
+                                        value="${propiedad != null ? propiedad.referencia : ''}"
+                                        class="w-full px-4 py-3 rounded-lg border border-slate-300 focus:ring-2 focus:ring-indigo-500 outline-none">
+                                </div>
+                                <div class="md:col-span-2">
                                     <label class="block text-sm font-semibold text-slate-700 mb-2">Ubicación Geográfica en el Mapa * (Haga clic para situar el pin o arrástrelo)</label>
                                     <div id="registro-map" class="w-full h-72 rounded-xl border border-slate-300 shadow-md z-10"></div>
                                     <p class="text-xs text-slate-500 mt-2">Coordenadas seleccionadas: <span id="coordenadas-display" class="font-mono font-semibold text-slate-800">Ninguna</span></p>
@@ -234,6 +240,18 @@
                                     <label class="block text-sm font-semibold text-slate-700 mb-2">Cocheras</label>
                                     <input type="number" name="numCocheras" placeholder="1"
                                         value="${propiedad != null && propiedad.numCocheras > 0 ? propiedad.numCocheras : ''}"
+                                        class="w-full px-4 py-3 rounded-lg border border-slate-300 focus:ring-2 focus:ring-indigo-500 outline-none">
+                                </div>
+                                <div>
+                                    <label class="block text-sm font-semibold text-slate-700 mb-2">Número de Pisos</label>
+                                    <input type="number" name="numPisos" placeholder="Ej. 3"
+                                        value="${propiedad != null && propiedad.numPisos > 0 ? propiedad.numPisos : ''}"
+                                        class="w-full px-4 py-3 rounded-lg border border-slate-300 focus:ring-2 focus:ring-indigo-500 outline-none">
+                                </div>
+                                <div class="md:col-span-2">
+                                    <label class="block text-sm font-semibold text-slate-700 mb-2">Enlace Tour 360 (Recorrido 3D)</label>
+                                    <input type="url" name="tour360Url" placeholder="https://my.matterport.com/show/?m=..."
+                                        value="${propiedad != null ? propiedad.tour360Url : ''}"
                                         class="w-full px-4 py-3 rounded-lg border border-slate-300 focus:ring-2 focus:ring-indigo-500 outline-none">
                                 </div>
                             </div>

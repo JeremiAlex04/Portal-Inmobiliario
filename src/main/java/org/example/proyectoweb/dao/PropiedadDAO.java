@@ -346,7 +346,7 @@ public class PropiedadDAO {
     }
 
     public boolean actualizarPropiedad(PropiedadDTO p) {
-        String sql = "UPDATE propiedad SET id_tipo_inmueble=?, id_operacion=?, id_distrito=?, partida_sunarp=?, titulo=?, descripcion=?, direccion=?, area_total_m2=?, area_techada_m2=?, num_dormitorios=?, num_banos=?, num_cocheras=?, anio_construccion=?, moneda_base=?, precio=?, bono_mi_vivienda=?, bono_verde=?, foto_principal=COALESCE(?,foto_principal), latitud=?, longitud=? WHERE id_propiedad=?";
+        String sql = "UPDATE propiedad SET id_tipo_inmueble=?, id_operacion=?, id_distrito=?, partida_sunarp=?, titulo=?, descripcion=?, direccion=?, area_total_m2=?, area_techada_m2=?, num_dormitorios=?, num_banos=?, num_cocheras=?, anio_construccion=?, moneda_base=?, precio=?, bono_mi_vivienda=?, bono_verde=?, foto_principal=COALESCE(?,foto_principal), latitud=?, longitud=?, referencia=?, num_pisos=?, tour_360_url=? WHERE id_propiedad=?";
         boolean rowUpdated = false;
 
         try (Connection conn = ConexionDB.getConnection();
@@ -373,7 +373,16 @@ public class PropiedadDAO {
             stmt.setString(18, p.getFotoPrincipal());
             stmt.setBigDecimal(19, p.getLatitud());
             stmt.setBigDecimal(20, p.getLongitud());
-            stmt.setInt(21, p.getId());
+            
+            stmt.setString(21, p.getReferencia());
+            if (p.getNumPisos() != null) {
+                stmt.setInt(22, p.getNumPisos());
+            } else {
+                stmt.setNull(22, java.sql.Types.INTEGER);
+            }
+            stmt.setString(23, p.getTour360Url());
+            
+            stmt.setInt(24, p.getId());
 
             rowUpdated = stmt.executeUpdate() > 0;
         } catch (SQLException e) {
@@ -630,5 +639,42 @@ public class PropiedadDAO {
             e.printStackTrace();
         }
         return lista;
+    }
+
+    public int obtenerLimitePublicaciones(int idUsuario) {
+        String sql = "SELECT COALESCE(p.max_propiedades, 1) AS max_propiedades " +
+                     "FROM usuario u " +
+                     "LEFT JOIN suscripcion s ON u.id_usuario = s.id_usuario AND s.estado = 'ACTIVA' AND s.fecha_fin >= NOW() " +
+                     "LEFT JOIN plan p ON s.id_plan = p.id_plan " +
+                     "WHERE u.id_usuario = ? " +
+                     "LIMIT 1";
+        try (Connection conn = ConexionDB.getConnection();
+             PreparedStatement stmt = conn.prepareStatement(sql)) {
+            stmt.setInt(1, idUsuario);
+            try (ResultSet rs = stmt.executeQuery()) {
+                if (rs.next()) {
+                    return rs.getInt("max_propiedades");
+                }
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return 1; // Plan Gratuito por defecto
+    }
+
+    public int contarPropiedadesActivas(int idUsuario) {
+        String sql = "SELECT COUNT(*) FROM propiedad WHERE id_usuario_agente = ? AND estado = 'ACTIVO'";
+        try (Connection conn = ConexionDB.getConnection();
+             PreparedStatement stmt = conn.prepareStatement(sql)) {
+            stmt.setInt(1, idUsuario);
+            try (ResultSet rs = stmt.executeQuery()) {
+                if (rs.next()) {
+                    return rs.getInt(1);
+                }
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return 0;
     }
 }
