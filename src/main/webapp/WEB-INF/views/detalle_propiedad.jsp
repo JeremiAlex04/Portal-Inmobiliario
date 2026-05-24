@@ -263,8 +263,8 @@ var lng = ${propiedad.longitud != null ? propiedad.longitud : -77.042793};
 var zoom = ${propiedad.latitud != null ? 15 : 13};
 
 var map = L.map('map').setView([lat, lng], zoom);
-L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-    attribution: '&copy; OpenStreetMap contributors'
+L.tileLayer('https://api.maptiler.com/maps/streets-v2/{z}/{x}/{y}.png?key=8IyYWrIbuDLsiINCC7Du', {
+    attribution: '&copy; MapTiler &copy; OpenStreetMap contributors'
 }).addTo(map);
 
 L.marker([lat, lng]).addTo(map)

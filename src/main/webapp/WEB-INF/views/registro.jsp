@@ -377,8 +377,8 @@
                     var initialZoom = savedLat ? 16 : 13;
                     
                     var regMap = L.map('registro-map').setView([initialLat, initialLng], initialZoom);
-                    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-                        attribution: '&copy; OpenStreetMap contributors'
+                    L.tileLayer('https://api.maptiler.com/maps/streets-v2/{z}/{x}/{y}.png?key=8IyYWrIbuDLsiINCC7Du', {
+                        attribution: '&copy; MapTiler &copy; OpenStreetMap contributors'
                     }).addTo(regMap);
                     
                     var marker;

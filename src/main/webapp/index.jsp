@@ -67,7 +67,9 @@
             <div class="relative min-h-[85vh] flex items-center justify-center overflow-hidden">
                 <!-- Background Image -->
                 <div class="absolute inset-0 z-0">
-                    <img src="https://constructivo.com/imgPosts/1617113803lEt5g56F.jpg"
+
+                <!-- Imagen de Header-->
+                    <img src="https://www.ciudaris.com/blog/wp-content/uploads/elegir-mejor-inmobiliaria-peru-ciudaris.jpg"
                         alt="Hero Background" class="w-full h-full object-cover" />
                     <div class="absolute inset-0 bg-gradient-to-r from-slate-900/90 via-slate-900/70 to-transparent">
                     </div>
