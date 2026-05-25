@@ -15,7 +15,7 @@ public class ContactoDAO {
         try (Connection conn = ConexionDB.getConnection();
              PreparedStatement ps = conn.prepareStatement(sql)) {
 
-            ps.setString(1, c.getNombre());
+            ps.setString(1, c.getNombres());
             ps.setString(2, c.getEmail());
             ps.setString(3, c.getMensaje());
 

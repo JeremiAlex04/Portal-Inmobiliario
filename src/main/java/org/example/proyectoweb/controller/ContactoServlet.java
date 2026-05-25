@@ -29,16 +29,20 @@ public class ContactoServlet extends HttpServlet {
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
 
+        request.setCharacterEncoding("UTF-8");
+
         String nombre = request.getParameter("nombre");
         String email = request.getParameter("email");
         String mensaje = request.getParameter("mensaje");
 
-        ContactoDTO c = new ContactoDTO(0, nombre, email, mensaje);
+        ContactoDTO c = new ContactoDTO(0, nombre, "", email, mensaje);
 
         if (facade.guardarMensaje(c)) {
             request.setAttribute("msg", "Mensaje enviado correctamente ✔");
+            request.setAttribute("msgType", "success");
         } else {
             request.setAttribute("msg", "Error al enviar mensaje ✘");
+            request.setAttribute("msgType", "error");
         }
 
         request.getRequestDispatcher("/WEB-INF/views/contacto.jsp")

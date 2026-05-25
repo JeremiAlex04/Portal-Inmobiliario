@@ -46,6 +46,14 @@ public class UsuarioServlet extends HttpServlet {
                 }
                 response.sendRedirect(request.getContextPath() + "/index.jsp");
                 break;
+            case "perfil":
+                UsuarioDTO currentUser = (UsuarioDTO) request.getSession().getAttribute("usuarioLogueado");
+                if (currentUser == null) {
+                    response.sendRedirect(request.getContextPath() + "/usuario?accion=login");
+                    return;
+                }
+                request.getRequestDispatcher("/WEB-INF/views/perfil.jsp").forward(request, response);
+                break;
             case "login":
             default:
                 request.getRequestDispatcher("/WEB-INF/views/login.jsp").forward(request, response);
@@ -56,6 +64,8 @@ public class UsuarioServlet extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
+
+        request.setCharacterEncoding("UTF-8");
 
         String accion = request.getParameter("accion");
         if (accion == null) accion = "login";
@@ -118,6 +128,30 @@ public class UsuarioServlet extends HttpServlet {
                 request.setAttribute("error", "Credenciales incorrectas o usuario inactivo.");
                 request.getRequestDispatcher("/WEB-INF/views/login.jsp").forward(request, response);
             }
+        } else if ("actualizar_perfil".equals(accion)) {
+            HttpSession session = request.getSession(false);
+            if (session == null || session.getAttribute("usuarioLogueado") == null) {
+                response.sendRedirect(request.getContextPath() + "/usuario?accion=login");
+                return;
+            }
+            UsuarioDTO loggedIn = (UsuarioDTO) session.getAttribute("usuarioLogueado");
+            
+            String nombres = request.getParameter("nombres");
+            String apellidos = request.getParameter("apellidos");
+            String correo = request.getParameter("correo");
+
+            loggedIn.setNombres(nombres);
+            loggedIn.setApellidos(apellidos);
+            loggedIn.setCorreo(correo);
+
+            boolean ok = usuarioFacade.editarUsuario(loggedIn);
+            if (ok) {
+                session.setAttribute("usuarioLogueado", loggedIn); // refresh session
+                request.setAttribute("msg", "Perfil actualizado correctamente.");
+            } else {
+                request.setAttribute("error", "Error al actualizar perfil. Verifique sus datos.");
+            }
+            request.getRequestDispatcher("/WEB-INF/views/perfil.jsp").forward(request, response);
         }
     }
 } 

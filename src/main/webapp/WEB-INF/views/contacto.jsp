@@ -58,6 +58,12 @@
                 <p class="text-slate-500 mt-2">¿Tienes dudas? Envíanos un mensaje y te responderemos a la brevedad.</p>
             </div>
 
+            <c:if test="${not empty msg}">
+                <div class="mb-6 rounded-lg border px-4 py-3 text-sm font-medium ${msgType == 'success' ? 'bg-emerald-50 border-emerald-200 text-emerald-700' : 'bg-red-50 border-red-200 text-red-700'}">
+                    ${msg}
+                </div>
+            </c:if>
+
             <form action="${pageContext.request.contextPath}/contacto" method="post" class="space-y-6">
                 <div>
                     <label class="block text-sm font-semibold text-slate-700 mb-2">Nombre completo</label>
