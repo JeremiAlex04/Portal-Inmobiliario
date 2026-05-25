@@ -1,5 +1,5 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
-<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
+<%@ taglib uri="jakarta.tags.core" prefix="c" %>
 <%@ page import="org.example.proyectoweb.facade.PropiedadFacade" %>
 <%@ page import="org.example.proyectoweb.dto.PropiedadDTO" %>
 <%@ page import="java.util.List" %>
@@ -9,6 +9,7 @@
         List<PropiedadDTO> destacadas = facade.listarPropiedades(0, 3);
         request.setAttribute("destacadas", destacadas);
     } catch (Exception e) {
+        e.printStackTrace();
         request.setAttribute("destacadas", new java.util.ArrayList<PropiedadDTO>());
     }
 %>
@@ -21,23 +22,24 @@
         <link rel="icon" type="image/png" href="${pageContext.request.contextPath}/assets/img/logo/Logo_Inmobix.png">
         <title>Inmobix - Portal Inmobiliario</title>
         <link rel="stylesheet" href="${pageContext.request.contextPath}/assets/css/styles.css">
-        <script src="https://cdn.tailwindcss.com"></script>
-        <script>
-            tailwind.config = {
-                theme: {
-                    extend: {
-                        colors: {
-                            brandHeader: '#000000',
-                            brandFooter: '#000000',
-                            brandBtn: '#000000',
-                            brandHover: '#71717A',
-                            brandBg: '#FFFFFF',
-                            brandText: '#0A0A0A'
-                        }
+            <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        brandHeader: '#000000',
+                        brandFooter: '#000000',
+                        brandBtn: '#000000',
+                        brandHover: '#71717A',
+                        brandBg: '#FFFFFF',
+                        brandText: '#0A0A0A'
                     }
                 }
             }
-        </script>
+        }
+    </script>
+        
         <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400..900;1,400..900&family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
         <style>
             .font-title {
@@ -165,7 +167,7 @@
                     </p>
                     <div class="flex flex-wrap items-center gap-4">
                         <a href="${pageContext.request.contextPath}/propiedades"
-                            class="bg-white hover:bg-zinc-200 text-black px-8 py-4 rounded-full font-bold text-lg shadow-xl transition-all hover:-translate-y-1">
+                            class="bg-brandBtn hover:bg-brandHover text-white px-8 py-4 rounded-full font-bold text-lg shadow-xl transition-all hover:-translate-y-1">
                             Explorar Catálogo
                         </a>
                         <a href="${pageContext.request.contextPath}/propiedades?accion=nuevo"
@@ -337,7 +339,7 @@
                         <h2 class="font-title text-3xl md:text-4xl lg:text-5xl font-light tracking-tight mb-4">¿Deseas vender o alquilar una propiedad?</h2>
                         <p class="text-zinc-400 text-sm mb-8 leading-relaxed">Crea tu cuenta de agente, selecciona tu plan preferido y publica tus propiedades en el portal inmobiliario líder del país en minutos.</p>
                         <div class="flex flex-wrap justify-center gap-4">
-                            <a href="${pageContext.request.contextPath}/usuario?accion=registro" class="bg-white hover:bg-zinc-200 text-black px-8 py-3.5 rounded-full font-bold text-sm shadow-md transition-all hover:-translate-y-0.5">Comenzar Gratis</a>
+                            <a href="${pageContext.request.contextPath}/usuario?accion=registro" class="bg-brandBtn hover:bg-brandHover text-white px-8 py-3.5 rounded-full font-bold text-sm shadow-md transition-all hover:-translate-y-0.5">Comenzar Gratis</a>
                             <a href="${pageContext.request.contextPath}/pagos?accion=planes" class="bg-transparent hover:bg-white/10 text-white border border-white/30 px-8 py-3.5 rounded-full font-bold text-sm transition-all hover:-translate-y-0.5">Ver Planes de Publicación</a>
                         </div>
                     </div>
@@ -406,102 +408,12 @@
 
                 <div class="border-t border-white/10 pt-8 flex flex-col md:flex-row justify-between items-center gap-4 text-xs text-slate-500">
                     <p>&amp;copy; 2026 Portal Inmobiliario Inmobix. Todos los derechos reservados.</p>
-                    <div class="flex items-center gap-6">
-                        <span class="inline-flex items-center gap-1.5"><span class="w-2 h-2 rounded-full bg-emerald-500"></span> BD Conectada</span>
-                        <span>Hecho en Perú</span>
-                    </div>
+                    
                 </div>
             </div>
         </footer>
         <!-- Script de Transiciones y Efectos de Lujo -->
-        <script>
-            // 1. Efecto de Máquina de Escribir (Typing Effect)
-            const words = ["para tu familia", "con seguridad SUNARP", "al mejor precio", "en zonas exclusivas"];
-            let wordIndex = 0;
-            let charIndex = 0;
-            let isDeleting = false;
-            const typedTextSpan = document.getElementById("typed-text");
-
-            function type() {
-                const currentWord = words[wordIndex];
-                if (isDeleting) {
-                    charIndex--;
-                } else {
-                    charIndex++;
-                }
-                typedTextSpan.textContent = currentWord.substring(0, charIndex);
-
-                let typeSpeed = isDeleting ? 40 : 80;
-
-                if (!isDeleting && charIndex === currentWord.length) {
-                    typeSpeed = 2200; // Pausa al completar la frase
-                    isDeleting = true;
-                } else if (isDeleting && charIndex === 0) {
-                    isDeleting = false;
-                    wordIndex = (wordIndex + 1) % words.length;
-                    typeSpeed = 400; // Pausa antes de escribir la siguiente
-                }
-
-                setTimeout(type, typeSpeed);
-            }
-
-            // 2. Transiciones de Aparición al Deslizar (Scroll Reveal Observer)
-            const revealCallback = (entries, observer) => {
-                entries.forEach(entry => {
-                    if (entry.isIntersecting) {
-                        entry.target.classList.add('active');
-                        // Si es la sección de estadísticas, animar los contadores
-                        if (entry.target.id === 'stats-section') {
-                            animateCounters();
-                        }
-                    }
-                });
-            };
-
-            const revealObserver = new IntersectionObserver(revealCallback, {
-                root: null,
-                threshold: 0.15
-            });
-
-            // 3. Animación de Contadores Estadísticos
-            let countersAnimated = false;
-            function animateCounters() {
-                if (countersAnimated) return;
-                countersAnimated = true;
-                
-                const counters = document.querySelectorAll('.stat-counter');
-                counters.forEach(counter => {
-                    const target = +counter.getAttribute('data-target');
-                    const suffix = counter.getAttribute('data-suffix') || "";
-                    const duration = 2000; // 2 segundos de animación
-                    const step = target / (duration / 16); // ~60 FPS
-                    let current = 0;
-                    
-                    const update = () => {
-                        current += step;
-                        if (current < target) {
-                            counter.textContent = Math.floor(current) + suffix;
-                            requestAnimationFrame(update);
-                        } else {
-                            counter.textContent = target + suffix;
-                        }
-                    };
-                    update();
-                });
-            }
-
-            document.addEventListener("DOMContentLoaded", () => {
-                // Iniciar máquina de escribir
-                if (typedTextSpan) {
-                    type();
-                }
-
-                // Observar secciones para animación
-                document.querySelectorAll('.reveal, .reveal-stagger').forEach(el => {
-                    revealObserver.observe(el);
-                });
-            });
-        </script>
+        
     </body>
 
     </html>

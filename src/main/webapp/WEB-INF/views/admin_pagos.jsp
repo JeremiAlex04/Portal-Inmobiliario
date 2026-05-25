@@ -1,26 +1,27 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
-<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
-<%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
+<%@ taglib uri="jakarta.tags.core" prefix="c" %>
+<%@ taglib uri="jakarta.tags.fmt" prefix="fmt" %>
 <!DOCTYPE html>
 <html lang="es"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
 <link rel="icon" type="image/png" href="${pageContext.request.contextPath}/assets/img/logo/Logo_Inmobix.png">
-<title>Inmobix Admin - Pagos</title><script src="https://cdn.tailwindcss.com"></script>
-        <script>
-            tailwind.config = {
-                theme: {
-                    extend: {
-                        colors: {
-                            brandHeader: '#000000',
-                            brandFooter: '#000000',
-                            brandBtn: '#000000',
-                            brandHover: '#71717A',
-                            brandBg: '#FFFFFF',
-                            brandText: '#0A0A0A'
-                        }
+<title>Inmobix Admin - Pagos</title>    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        brandHeader: '#000000',
+                        brandFooter: '#000000',
+                        brandBtn: '#000000',
+                        brandHover: '#71717A',
+                        brandBg: '#FFFFFF',
+                        brandText: '#0A0A0A'
                     }
                 }
             }
-        </script></head>
+        }
+    </script>
+        </head>
 <body class="bg-brandBg text-brandText min-h-screen font-sans">
 <header class="text-white fixed w-full top-0 z-50 bg-black/90 backdrop-blur-md backdrop-blur-xl border-b shadow-lg"><div class="max-w-7xl mx-auto px-4 flex justify-between items-center h-16">
 <a href="${pageContext.request.contextPath}/admin" class="flex items-center gap-2"><img src="${pageContext.request.contextPath}/assets/img/logo/Logo_Inmobix.png" class="h-8"><span class="text-xl font-bold">Inmobix Admin</span></a>
@@ -35,7 +36,7 @@
 <option value="PENDIENTE" ${filtroEstado=='PENDIENTE'?'selected':''}>Pendiente</option>
 <option value="APROBADO" ${filtroEstado=='APROBADO'?'selected':''}>Aprobado</option>
 <option value="RECHAZADO" ${filtroEstado=='RECHAZADO'?'selected':''}>Rechazado</option></select></div>
-<button class="bg-slate-900 text-white px-6 py-2.5 rounded-lg text-sm font-bold">Filtrar</button></form>
+<button class="bg-brandBtn hover:bg-brandHover text-white px-6 py-2.5 rounded-lg text-sm font-bold shadow-md transition-all">Filtrar</button></form>
 <div class="bg-white rounded-2xl shadow-xl border overflow-hidden"><table class="w-full text-sm">
 <thead class="bg-slate-50 border-b text-xs uppercase tracking-wider"><tr><th class="px-4 py-3">ID</th><th class="px-4 py-3 text-left">Usuario</th><th class="px-4 py-3">Plan</th><th class="px-4 py-3">Monto</th><th class="px-4 py-3">Método</th><th class="px-4 py-3">Código</th><th class="px-4 py-3">Fecha</th><th class="px-4 py-3">Estado</th><th class="px-4 py-3">Acciones</th></tr></thead>
 <tbody class="divide-y"><c:forEach var="p" items="${listaPagos}"><tr class="hover:bg-slate-50">

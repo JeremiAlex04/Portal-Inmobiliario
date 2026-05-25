@@ -1,6 +1,6 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
-<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
-<%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
+<%@ taglib uri="jakarta.tags.core" prefix="c" %>
+<%@ taglib uri="jakarta.tags.fmt" prefix="fmt" %>
 <!DOCTYPE html>
 <html lang="es" class="scroll-smooth">
 <head>
@@ -9,23 +9,24 @@
     <link rel="icon" type="image/png" href="${pageContext.request.contextPath}/assets/img/logo/Logo_Inmobix.png">
     <title>Inmobix - Mis Favoritos</title>
     <link rel="stylesheet" href="${pageContext.request.contextPath}/assets/css/styles.css">
-    <script src="https://cdn.tailwindcss.com"></script>
-        <script>
-            tailwind.config = {
-                theme: {
-                    extend: {
-                        colors: {
-                            brandHeader: '#000000',
-                            brandFooter: '#000000',
-                            brandBtn: '#000000',
-                            brandHover: '#71717A',
-                            brandBg: '#FFFFFF',
-                            brandText: '#0A0A0A'
-                        }
+        <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        brandHeader: '#000000',
+                        brandFooter: '#000000',
+                        brandBtn: '#000000',
+                        brandHover: '#71717A',
+                        brandBg: '#FFFFFF',
+                        brandText: '#0A0A0A'
                     }
                 }
             }
-        </script>
+        }
+    </script>
+        
 </head>
 <body class="bg-brandBg text-brandText flex flex-col min-h-screen font-sans">
     

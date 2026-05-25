@@ -1,6 +1,6 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
-<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
-<%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
+<%@ taglib uri="jakarta.tags.core" prefix="c" %>
+<%@ taglib uri="jakarta.tags.fmt" prefix="fmt" %>
 <!DOCTYPE html>
 <html lang="es">
 <head>
@@ -8,23 +8,24 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="icon" type="image/png" href="${pageContext.request.contextPath}/assets/img/logo/Logo_Inmobix.png">
     <title>Inmobix - Planes de Publicación</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-        <script>
-            tailwind.config = {
-                theme: {
-                    extend: {
-                        colors: {
-                            brandHeader: '#000000',
-                            brandFooter: '#000000',
-                            brandBtn: '#000000',
-                            brandHover: '#71717A',
-                            brandBg: '#FFFFFF',
-                            brandText: '#0A0A0A'
-                        }
+        <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        brandHeader: '#000000',
+                        brandFooter: '#000000',
+                        brandBtn: '#000000',
+                        brandHover: '#71717A',
+                        brandBg: '#FFFFFF',
+                        brandText: '#0A0A0A'
                     }
                 }
             }
-        </script>
+        }
+    </script>
+        
 </head>
 <body class="bg-brandBg text-brandText min-h-screen font-sans">
     <header class="text-white fixed w-full top-0 z-50 bg-black/90 backdrop-blur-md backdrop-blur-xl border-b border-white/10 shadow-lg">
@@ -48,9 +49,9 @@
 
             <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
                 <c:forEach var="plan" items="${listaPlanes}">
-                    <div class="relative bg-white rounded-2xl shadow-xl border ${plan.nombre == 'PREMIUM' ? 'border-indigo-400 ring-2 ring-indigo-200' : 'border-slate-100'} p-8 flex flex-col">
+                    <div class="relative bg-white rounded-2xl shadow-xl border ${plan.nombre == 'PREMIUM' ? 'border-black ring-2 ring-black/10' : 'border-slate-100'} p-8 flex flex-col">
                         <c:if test="${plan.nombre == 'PREMIUM'}">
-                            <div class="absolute -top-4 left-1/2 -translate-x-1/2 bg-indigo-600 text-white px-4 py-1 rounded-full text-xs font-bold flex items-center gap-1">
+                            <div class="absolute -top-4 left-1/2 -translate-x-1/2 bg-black text-white px-4 py-1 rounded-full text-xs font-bold flex items-center gap-1">
                                 <svg class="w-3 h-3 text-yellow-300 fill-current" viewBox="0 0 20 20">
                                     <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"></path>
                                 </svg>

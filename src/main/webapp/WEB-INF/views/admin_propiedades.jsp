@@ -1,5 +1,5 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
-<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
+<%@ taglib uri="jakarta.tags.core" prefix="c" %>
 <!DOCTYPE html>
 <html lang="es" class="scroll-smooth">
 <head>
@@ -8,30 +8,26 @@
     <link rel="icon" type="image/png" href="${pageContext.request.contextPath}/assets/img/logo/Logo_Inmobix.png">
     <title>Inmobix - Moderación de Propiedades</title>
     <link rel="stylesheet" href="${pageContext.request.contextPath}/assets/css/styles.css">
-    <script src="https://cdn.tailwindcss.com"></script>
-        <script>
-            tailwind.config = {
-                theme: {
-                    extend: {
-                        colors: {
-                            brandHeader: '#000000',
-                            brandFooter: '#000000',
-                            brandBtn: '#000000',
-                            brandHover: '#71717A',
-                            brandBg: '#FFFFFF',
-                            brandText: '#0A0A0A'
-                        }
+        <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        brandHeader: '#000000',
+                        brandFooter: '#000000',
+                        brandBtn: '#000000',
+                        brandHover: '#71717A',
+                        brandBg: '#FFFFFF',
+                        brandText: '#0A0A0A'
                     }
                 }
             }
-        </script>
-    <script>
-        function confirmarEliminacion(url) {
-            if (confirm("¿Seguro que deseas ELIMINAR permanentemente esta propiedad de la plataforma?")) {
-                window.location.href = url;
-            }
         }
     </script>
+        
+    
+<script src="${pageContext.request.contextPath}/assets/js/admin.js" defer></script>
 </head>
 <body class="bg-brandBg text-brandText flex flex-col min-h-screen font-sans">
     
@@ -47,7 +43,7 @@
                 <nav class="hidden md:flex items-center gap-8">
                     <a href="${pageContext.request.contextPath}/admin?accion=dashboard" class="text-sm font-semibold text-slate-300 hover:text-white transition-colors">Dashboard</a>
                     <a href="${pageContext.request.contextPath}/admin?accion=usuarios" class="text-sm font-semibold text-slate-300 hover:text-white transition-colors">Usuarios</a>
-                    <a href="${pageContext.request.contextPath}/admin?accion=propiedades" class="text-sm font-bold text-blue-400 border-b-2 border-blue-400 py-1 transition-colors">Propiedades</a>
+                    <a href="${pageContext.request.contextPath}/admin?accion=propiedades" class="text-sm font-bold text-white border-b-2 border-white py-1 transition-colors">Propiedades</a>
                     <a href="${pageContext.request.contextPath}/admin?accion=ubicaciones" class="text-sm font-semibold text-slate-300 hover:text-white transition-colors">Ubicaciones</a>
                     <a href="${pageContext.request.contextPath}/admin?accion=auditoria" class="text-sm font-semibold text-slate-300 hover:text-white transition-colors">Auditoría</a>
                 </nav>
@@ -95,7 +91,7 @@
                             <option value="Terreno" ${tipoActual == 'Terreno' ? 'selected' : ''}>Terreno</option>
                         </select>
                     </div>
-                    <button type="submit" class="bg-slate-900 text-white px-6 py-2.5 rounded-lg text-sm font-bold hover:bg-slate-800 transition-colors">Buscar</button>
+                    <button type="submit" class="bg-brandBtn hover:bg-brandHover text-white px-6 py-2.5 rounded-lg text-sm font-bold shadow-md transition-all">Buscar</button>
                     <a href="${pageContext.request.contextPath}/admin?accion=propiedades" class="text-sm text-slate-500 hover:text-slate-700 font-bold px-4 py-2.5">Limpiar</a>
                 </form>
             </div>
@@ -145,7 +141,7 @@
                                     </td>
                                     <td class="px-6 py-4">
                                         <div class="flex justify-center gap-2">
-                                            <a href="${pageContext.request.contextPath}/propiedades?accion=ver&id=${p.id}" target="_blank" class="text-xs font-bold px-3 py-1.5 rounded-lg bg-blue-50 text-blue-600 hover:bg-blue-100 transition-colors">Ver Detalles</a>
+                                             <a href="${pageContext.request.contextPath}/propiedades?accion=ver&id=${p.id}" target="_blank" class="text-xs font-bold px-3 py-1.5 rounded-lg border border-slate-200 text-slate-700 hover:text-black hover:border-black hover:bg-black/5 transition-all">Ver Detalles</a>
                                             <button onclick="confirmarEliminacion('${pageContext.request.contextPath}/admin?accion=eliminar_prop&id=${p.id}')" class="text-xs font-bold px-3 py-1.5 rounded-lg bg-red-50 text-red-600 hover:bg-red-100 transition-colors">Eliminar</button>
                                         </div>
                                     </td>

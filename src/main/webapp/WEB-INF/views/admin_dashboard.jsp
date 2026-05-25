@@ -1,5 +1,5 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
-<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
+<%@ taglib uri="jakarta.tags.core" prefix="c" %>
 <!DOCTYPE html>
 <html lang="es" class="scroll-smooth">
 <head>
@@ -8,23 +8,24 @@
     <link rel="icon" type="image/png" href="${pageContext.request.contextPath}/assets/img/logo/Logo_Inmobix.png">
     <title>Inmobix - Dashboard Administrador</title>
     <link rel="stylesheet" href="${pageContext.request.contextPath}/assets/css/styles.css">
-    <script src="https://cdn.tailwindcss.com"></script>
-        <script>
-            tailwind.config = {
-                theme: {
-                    extend: {
-                        colors: {
-                            brandHeader: '#000000',
-                            brandFooter: '#000000',
-                            brandBtn: '#000000',
-                            brandHover: '#71717A',
-                            brandBg: '#FFFFFF',
-                            brandText: '#0A0A0A'
-                        }
+        <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        brandHeader: '#000000',
+                        brandFooter: '#000000',
+                        brandBtn: '#000000',
+                        brandHover: '#71717A',
+                        brandBg: '#FFFFFF',
+                        brandText: '#0A0A0A'
                     }
                 }
             }
-        </script>
+        }
+    </script>
+        
 </head>
 <body class="bg-brandBg text-brandText flex flex-col min-h-screen font-sans">
     
@@ -38,7 +39,7 @@
                 </div>
                 
                 <nav class="hidden md:flex items-center gap-8">
-                    <a href="${pageContext.request.contextPath}/admin?accion=dashboard" class="text-sm font-bold text-blue-400 border-b-2 border-blue-400 py-1 transition-colors">Dashboard</a>
+                    <a href="${pageContext.request.contextPath}/admin?accion=dashboard" class="text-sm font-bold text-white border-b-2 border-white py-1 transition-colors">Dashboard</a>
                     <a href="${pageContext.request.contextPath}/admin?accion=usuarios" class="text-sm font-semibold text-slate-300 hover:text-white transition-colors">Usuarios</a>
                     <a href="${pageContext.request.contextPath}/admin?accion=propiedades" class="text-sm font-semibold text-slate-300 hover:text-white transition-colors">Propiedades</a>
                     <a href="${pageContext.request.contextPath}/admin?accion=ubicaciones" class="text-sm font-semibold text-slate-300 hover:text-white transition-colors">Ubicaciones</a>

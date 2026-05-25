@@ -1,5 +1,5 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
-<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
+<%@ taglib uri="jakarta.tags.core" prefix="c" %>
 <!DOCTYPE html>
 <html lang="es" class="scroll-smooth">
 <head>
@@ -8,23 +8,24 @@
     <link rel="icon" type="image/png" href="${pageContext.request.contextPath}/assets/img/logo/Logo_Inmobix.png">
     <title>Inmobix - Detalle de Propiedad</title>
     <link rel="stylesheet" href="${pageContext.request.contextPath}/assets/css/styles.css">
-    <script src="https://cdn.tailwindcss.com"></script>
-        <script>
-            tailwind.config = {
-                theme: {
-                    extend: {
-                        colors: {
-                            brandHeader: '#000000',
-                            brandFooter: '#000000',
-                            brandBtn: '#000000',
-                            brandHover: '#71717A',
-                            brandBg: '#FFFFFF',
-                            brandText: '#0A0A0A'
-                        }
+        <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        brandHeader: '#000000',
+                        brandFooter: '#000000',
+                        brandBtn: '#000000',
+                        brandHover: '#71717A',
+                        brandBg: '#FFFFFF',
+                        brandText: '#0A0A0A'
                     }
                 }
             }
-        </script>
+        }
+    </script>
+        
     <!-- Leaflet CSS -->
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
 </head>
@@ -195,7 +196,7 @@
                             <svg class="w-5 h-5 text-red-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"></path></svg>
                             ${propiedad.direccion}, ${propiedad.distrito}, ${propiedad.provincia}
                         </p>
-                        <div id="map" class="w-full h-80 rounded-xl border border-slate-200 z-0"></div>
+                        <div id="map" class="w-full h-80 rounded-xl border border-slate-200 z-0" data-lat="${propiedad.latitud != null ? propiedad.latitud : -12.046374}" data-lng="${propiedad.longitud != null ? propiedad.longitud : -77.042793}" data-zoom="${propiedad.latitud != null ? 15 : 13}" data-titulo="<c:out value='${propiedad.titulo}'/>" data-distrito="<c:out value='${propiedad.distrito}'/>"></div>
                     </div>
                 </div>
 
@@ -257,7 +258,7 @@
             <p class="text-slate-600 mb-2">Se enviará un mensaje al agente <strong>${propiedad.agenteNombre}</strong></p>
             <p class="text-slate-500 mb-6">Número: <strong>${propiedad.agenteTelefono != null ? propiedad.agenteTelefono : 'No disponible'}</strong></p>
             <div class="flex gap-3">
-                <button onclick="document.getElementById('waModal').classList.add('hidden')" class="flex-1 bg-slate-200 text-slate-700 py-3 rounded-xl font-bold">Cancelar</button>
+                <button onclick="document.getElementById('waModal').classList.add('hidden')" class="flex-1 border border-slate-300 hover:border-black text-slate-700 hover:text-black bg-transparent hover:bg-black/5 py-3 rounded-xl font-bold transition-all duration-300">Cancelar</button>
                 <form action="${pageContext.request.contextPath}/whatsapp" method="post" class="flex-1">
                     <input type="hidden" name="idPropiedad" value="${propiedad.id}">
                     <button type="submit" class="w-full bg-emerald-500 hover:bg-emerald-600 text-white py-3 rounded-xl font-bold">Confirmar</button>
@@ -331,49 +332,14 @@
 
                 <div class="border-t border-white/10 pt-8 flex flex-col md:flex-row justify-between items-center gap-4 text-xs text-slate-500">
                     <p>&amp;copy; 2026 Portal Inmobiliario Inmobix. Todos los derechos reservados.</p>
-                    <div class="flex items-center gap-6">
-                        <span class="inline-flex items-center gap-1.5"><span class="w-2 h-2 rounded-full bg-emerald-500"></span> BD Conectada</span>
-                        <span>Hecho en Perú</span>
-                    </div>
+                    
                 </div>
             </div>
         </footer>
 
 <!-- Leaflet JS -->
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
-<script>
-function cambiarFotoPrincipal(src) {
-    const hero = document.getElementById('heroImg');
-    if(hero) hero.src = src;
-}
-document.querySelectorAll('.gallery-thumb, #heroImg').forEach(img => {
-    img.addEventListener('dblclick', function() {
-        document.getElementById('lightboxImg').src = this.src;
-        document.getElementById('lightbox').classList.remove('hidden');
-    });
-});
+<script src="${pageContext.request.contextPath}/assets/js/detalle_propiedad.js" defer></script>
 
-// Inicializar Mapa (Coordenadas dinámicas de la propiedad o Lima Centro como fallback)
-var lat = ${propiedad.latitud != null ? propiedad.latitud : -12.046374};
-var lng = ${propiedad.longitud != null ? propiedad.longitud : -77.042793};
-var zoom = ${propiedad.latitud != null ? 15 : 13};
-
-var map = L.map('map').setView([lat, lng], zoom);
-L.tileLayer('https://api.maptiler.com/maps/streets-v2/{z}/{x}/{y}.png?key=8IyYWrIbuDLsiINCC7Du', {
-    attribution: '&copy; MapTiler &copy; OpenStreetMap contributors'
-}).addTo(map);
-
-L.marker([lat, lng]).addTo(map)
-    .bindPopup('<b><c:out value="${propiedad.titulo}"/></b><br><c:out value="${propiedad.distrito}"/>')
-    .openPopup();
-
-// Auto-show contact form if consultaEnviada
-if(new URLSearchParams(window.location.search).get('consultaEnviada')) {
-    document.getElementById('contactForm').classList.remove('hidden');
-}
-if(new URLSearchParams(window.location.search).get('whatsappRegistrado')) {
-    alert('Contacto por WhatsApp registrado exitosamente.');
-}
-</script>
 </body>
 </html>

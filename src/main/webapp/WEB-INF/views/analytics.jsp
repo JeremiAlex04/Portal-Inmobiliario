@@ -1,5 +1,5 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
-    <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
+    <%@ taglib uri="jakarta.tags.core" prefix="c" %>
         <!DOCTYPE html>
         <html lang="es">
 
@@ -9,25 +9,27 @@
             <link rel="icon" type="image/png"
                 href="${pageContext.request.contextPath}/assets/img/logo/Logo_Inmobix.png">
             <title>Inmobix - Analytics</title>
-            <script src="https://cdn.tailwindcss.com"></script>
-        <script>
-            tailwind.config = {
-                theme: {
-                    extend: {
-                        colors: {
-                            brandHeader: '#000000',
-                            brandFooter: '#000000',
-                            brandBtn: '#000000',
-                            brandHover: '#71717A',
-                            brandBg: '#FFFFFF',
-                            brandText: '#0A0A0A'
-                        }
+                <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        brandHeader: '#000000',
+                        brandFooter: '#000000',
+                        brandBtn: '#000000',
+                        brandHover: '#71717A',
+                        brandBg: '#FFFFFF',
+                        brandText: '#0A0A0A'
                     }
                 }
             }
-        </script>
+        }
+    </script>
+        
             <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
-        </head>
+        <script src="${pageContext.request.contextPath}/assets/js/analytics.js" defer></script>
+</head>
 
         <body class="bg-brandBg text-brandText min-h-screen font-sans">
             <header class="text-white fixed w-full top-0 z-50 bg-black/90 backdrop-blur-md backdrop-blur-xl border-b shadow-lg">
@@ -86,7 +88,7 @@
                     <!-- Gráfico -->
                     <div class="bg-white rounded-2xl shadow-xl border p-6 mb-8">
                         <h2 class="text-xl font-bold mb-4">Vistas - Últimos 30 días</h2>
-                        <canvas id="vistasChart" height="100"></canvas>
+                        <canvas id="vistasChart" height="100" data-labels='${labelsJson}' data-views='${dataJson}'></canvas>
                     </div>
 
                     <c:if test="${not empty diaMax}">
@@ -98,28 +100,7 @@
                 </div>
             </main>
 
-            <script>
-                const ctx = document.getElementById('vistasChart').getContext('2d');
-                new Chart(ctx, {
-                    type: 'line',
-                    data: {
-                        labels: ${labelsJson},
-                    datasets: [{
-                        label: 'Vistas',
-                        data: ${dataJson},
-                    borderColor: 'rgb(79, 70, 229)',
-                    backgroundColor: 'rgba(79, 70, 229, 0.1)',
-                    fill: true, tension: 0.4, pointRadius: 4,
-                    pointBackgroundColor: 'rgb(79, 70, 229)'
-        }]
-    },
-                    options: {
-                    responsive: true,
-                    plugins: { legend: { display: false } },
-                    scales: { y: { beginAtZero: true, ticks: { stepSize: 1 } } }
-                }
-});
-            </script>
+            
         </body>
 
         </html>

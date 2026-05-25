@@ -1,5 +1,5 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
-<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
+<%@ taglib uri="jakarta.tags.core" prefix="c" %>
 <!DOCTYPE html>
 <html lang="es" class="scroll-smooth">
 <head>
@@ -8,33 +8,26 @@
     <link rel="icon" type="image/png" href="${pageContext.request.contextPath}/assets/img/logo/Logo_Inmobix.png">
     <title>Inmobix - Auditoría de Sistema</title>
     <link rel="stylesheet" href="${pageContext.request.contextPath}/assets/css/styles.css">
-    <script src="https://cdn.tailwindcss.com"></script>
-        <script>
-            tailwind.config = {
-                theme: {
-                    extend: {
-                        colors: {
-                            brandHeader: '#000000',
-                            brandFooter: '#000000',
-                            brandBtn: '#000000',
-                            brandHover: '#71717A',
-                            brandBg: '#FFFFFF',
-                            brandText: '#0A0A0A'
-                        }
+        <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        brandHeader: '#000000',
+                        brandFooter: '#000000',
+                        brandBtn: '#000000',
+                        brandHover: '#71717A',
+                        brandBg: '#FFFFFF',
+                        brandText: '#0A0A0A'
                     }
                 }
             }
-        </script>
-    <script>
-        function toggleDetail(id) {
-            const el = document.getElementById('detail-' + id);
-            if (el.classList.contains('hidden')) {
-                el.classList.remove('hidden');
-            } else {
-                el.classList.add('hidden');
-            }
         }
     </script>
+        
+    
+<script src="${pageContext.request.contextPath}/assets/js/admin.js" defer></script>
 </head>
 <body class="bg-brandBg text-brandText flex flex-col min-h-screen font-sans">
     
@@ -52,7 +45,7 @@
                     <a href="${pageContext.request.contextPath}/admin?accion=usuarios" class="text-sm font-semibold text-slate-300 hover:text-white transition-colors">Usuarios</a>
                     <a href="${pageContext.request.contextPath}/admin?accion=propiedades" class="text-sm font-semibold text-slate-300 hover:text-white transition-colors">Propiedades</a>
                     <a href="${pageContext.request.contextPath}/admin?accion=ubicaciones" class="text-sm font-semibold text-slate-300 hover:text-white transition-colors">Ubicaciones</a>
-                    <a href="${pageContext.request.contextPath}/admin?accion=auditoria" class="text-sm font-bold text-blue-400 border-b-2 border-blue-400 py-1 transition-colors">Auditoría</a>
+                    <a href="${pageContext.request.contextPath}/admin?accion=auditoria" class="text-sm font-bold text-white border-b-2 border-white py-1 transition-colors">Auditoría</a>
                 </nav>
 
                 <div class="hidden md:flex items-center gap-4">
@@ -130,7 +123,7 @@
                                         <div class="text-[10px] text-slate-400 truncate max-w-xs" title="${e.userAgent}">${e.userAgent}</div>
                                     </td>
                                     <td class="px-6 py-4 text-center">
-                                        <button onclick="toggleDetail(${e.idEvento})" class="bg-slate-100 hover:bg-slate-200 text-slate-700 px-3 py-1.5 rounded-lg text-xs font-bold transition-all">
+                                        <button onclick="toggleDetail(${e.idEvento})" class="border border-slate-200 text-slate-700 hover:text-black hover:border-black hover:bg-black/5 px-3 py-1.5 rounded-lg text-xs font-bold transition-all">
                                             Ver JSON
                                         </button>
                                     </td>

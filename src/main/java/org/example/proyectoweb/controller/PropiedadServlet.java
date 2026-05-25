@@ -113,10 +113,17 @@ public class PropiedadServlet extends HttpServlet {
 
         try {
             switch (accion) {
-                case "nuevo":
+                case "nuevo": {
+                    UsuarioDTO usuario = (UsuarioDTO) request.getSession().getAttribute("usuarioLogueado");
+                    if (usuario == null) {
+                        request.setAttribute("error", "Por favor, inicia sesión para publicar una propiedad.");
+                        request.getRequestDispatcher("/WEB-INF/views/login.jsp").forward(request, response);
+                        return;
+                    }
                     cargarCatalogos(request);
                     request.getRequestDispatcher("/WEB-INF/views/registro.jsp").forward(request, response);
                     break;
+                }
 
                 case "ver":
                     int idVer = Integer.parseInt(request.getParameter("id"));
@@ -143,31 +150,67 @@ public class PropiedadServlet extends HttpServlet {
                     }
                     break;
 
-                case "editar":
+                case "editar": {
+                    UsuarioDTO usuario = (UsuarioDTO) request.getSession().getAttribute("usuarioLogueado");
+                    if (usuario == null) {
+                        request.setAttribute("error", "Por favor, inicia sesión para editar una propiedad.");
+                        request.getRequestDispatcher("/WEB-INF/views/login.jsp").forward(request, response);
+                        return;
+                    }
                     int idEditar = Integer.parseInt(request.getParameter("id"));
                     PropiedadDTO pEditar = propiedadFacade.obtenerPropiedad(idEditar);
+                    
+                    if (pEditar == null) {
+                        response.sendError(HttpServletResponse.SC_NOT_FOUND, "Propiedad no encontrada");
+                        return;
+                    }
+
+                    // Validar que el usuario sea el dueño o administrador
+                    if (usuario.getIdRol() != 5 && pEditar.getIdUsuarioAgente() != usuario.getIdUsuario()) {
+                        response.sendError(HttpServletResponse.SC_FORBIDDEN, "No tienes permiso para editar esta propiedad.");
+                        return;
+                    }
+
                     request.setAttribute("propiedad", pEditar);
                     // Sprint 3: Cargar galería para edición
                     request.setAttribute("galeriaFotos", galeriaDAO.obtenerFotos(idEditar));
                     cargarCatalogos(request);
                     request.getRequestDispatcher("/WEB-INF/views/registro.jsp").forward(request, response);
                     break;
+                }
 
-                case "eliminar":
+                case "eliminar": {
+                    UsuarioDTO sessionUser = (UsuarioDTO) request.getSession().getAttribute("usuarioLogueado");
+                    if (sessionUser == null) {
+                        request.setAttribute("error", "Por favor, inicia sesión para eliminar una propiedad.");
+                        request.getRequestDispatcher("/WEB-INF/views/login.jsp").forward(request, response);
+                        return;
+                    }
                     int idEliminar = Integer.parseInt(request.getParameter("id"));
                     PropiedadDTO pDel = propiedadFacade.obtenerPropiedad(idEliminar);
-                    propiedadFacade.eliminarPropiedad(idEliminar);
-                    UsuarioDTO sessionUser = (UsuarioDTO) request.getSession().getAttribute("usuarioLogueado");
-                    if (sessionUser != null) {
-                        String details = pDel != null ? "{\"titulo\":\"" + pDel.getTitulo().replace("\"", "\\\"") + "\",\"precio\":" + pDel.getPrecio() + ",\"moneda\":\"" + pDel.getMonedaBase() + "\"}" : "{}";
-                        auditoriaFacade.registrarEvento(sessionUser.getIdUsuario(), "propiedad", idEliminar, "ELIMINAR", request.getRemoteAddr(), request.getHeader("User-Agent"), details);
+                    
+                    if (pDel == null) {
+                        response.sendError(HttpServletResponse.SC_NOT_FOUND, "Propiedad no encontrada");
+                        return;
                     }
-                    if (sessionUser != null && (sessionUser.getIdRol() == 3 || sessionUser.getIdRol() == 4 || sessionUser.getIdRol() == 5)) {
+
+                    // Validar permisos
+                    if (sessionUser.getIdRol() != 5 && pDel.getIdUsuarioAgente() != sessionUser.getIdUsuario()) {
+                        response.sendError(HttpServletResponse.SC_FORBIDDEN, "No tienes permiso para eliminar esta propiedad.");
+                        return;
+                    }
+
+                    propiedadFacade.eliminarPropiedad(idEliminar);
+                    String details = "{\"titulo\":\"" + pDel.getTitulo().replace("\"", "\\\"") + "\",\"precio\":" + pDel.getPrecio() + ",\"moneda\":\"" + pDel.getMonedaBase() + "\"}";
+                    auditoriaFacade.registrarEvento(sessionUser.getIdUsuario(), "propiedad", idEliminar, "ELIMINAR", request.getRemoteAddr(), request.getHeader("User-Agent"), details);
+                    
+                    if (sessionUser.getIdRol() == 3 || sessionUser.getIdRol() == 4 || sessionUser.getIdRol() == 5) {
                         response.sendRedirect(request.getContextPath() + "/panel");
                     } else {
                         response.sendRedirect(request.getContextPath() + "/propiedades");
                     }
                     break;
+                }
 
                 case "listar":
                 default:
@@ -241,6 +284,12 @@ public class PropiedadServlet extends HttpServlet {
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         try {
+            UsuarioDTO usuario = (UsuarioDTO) request.getSession().getAttribute("usuarioLogueado");
+            if (usuario == null) {
+                request.setAttribute("error", "Sesión inválida o expirada. Por favor, inicia sesión.");
+                request.getRequestDispatcher("/WEB-INF/views/login.jsp").forward(request, response);
+                return;
+            }
             PropiedadDTO propiedad = new PropiedadDTO();
 
             // Si hay ID es actualización
@@ -331,13 +380,22 @@ public class PropiedadServlet extends HttpServlet {
             boolean exito;
             boolean esNuevo = (propiedad.getId() <= 0);
             PropiedadDTO oldProp = null;
-            UsuarioDTO usuario = (UsuarioDTO) request.getSession().getAttribute("usuarioLogueado");
 
             if (!esNuevo) {
                 oldProp = propiedadFacade.obtenerPropiedad(propiedad.getId());
+                if (oldProp == null) {
+                    response.sendError(HttpServletResponse.SC_NOT_FOUND, "Propiedad no encontrada");
+                    return;
+                }
+                // Validar que el usuario sea el dueño o administrador
+                if (usuario.getIdRol() != 5 && oldProp.getIdUsuarioAgente() != usuario.getIdUsuario()) {
+                    response.sendError(HttpServletResponse.SC_FORBIDDEN, "No tienes permiso para actualizar esta propiedad.");
+                    return;
+                }
+                propiedad.setIdUsuarioAgente(oldProp.getIdUsuarioAgente());
                 exito = propiedadFacade.actualizarPropiedad(propiedad);
             } else {
-                int idAgente = usuario != null ? usuario.getIdUsuario() : 1;
+                int idAgente = usuario.getIdUsuario();
                 int activeCount = propiedadFacade.contarPropiedadesActivas(idAgente);
                 int limit = propiedadFacade.obtenerLimitePublicaciones(idAgente);
                 if (activeCount >= limit) {

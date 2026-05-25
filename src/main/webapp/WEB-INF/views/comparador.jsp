@@ -1,6 +1,6 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
-<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
-<%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
+<%@ taglib uri="jakarta.tags.core" prefix="c" %>
+<%@ taglib uri="jakarta.tags.fmt" prefix="fmt" %>
 <!DOCTYPE html>
 <html lang="es">
 <head>
@@ -8,23 +8,24 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="icon" type="image/png" href="${pageContext.request.contextPath}/assets/img/logo/Logo_Inmobix.png">
     <title>Inmobix - Comparar Propiedades</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-        <script>
-            tailwind.config = {
-                theme: {
-                    extend: {
-                        colors: {
-                            brandHeader: '#000000',
-                            brandFooter: '#000000',
-                            brandBtn: '#000000',
-                            brandHover: '#71717A',
-                            brandBg: '#FFFFFF',
-                            brandText: '#0A0A0A'
-                        }
+        <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        brandHeader: '#000000',
+                        brandFooter: '#000000',
+                        brandBtn: '#000000',
+                        brandHover: '#71717A',
+                        brandBg: '#FFFFFF',
+                        brandText: '#0A0A0A'
                     }
                 }
             }
-        </script>
+        }
+    </script>
+        
 </head>
 <body class="bg-brandBg text-brandText min-h-screen font-sans">
     <header class="text-white fixed w-full top-0 z-50 bg-black/90 backdrop-blur-md backdrop-blur-xl border-b border-white/10 shadow-lg">
@@ -212,7 +213,7 @@
                 </table>
             </div>
             <div class="mt-6 text-center">
-                <button onclick="localStorage.removeItem('comparar_ids'); window.location.href='${pageContext.request.contextPath}/propiedades';" class="bg-slate-200 hover:bg-slate-300 text-slate-700 px-6 py-3 rounded-xl font-bold">Limpiar Comparación</button>
+                <button onclick="localStorage.removeItem('comparar_ids'); window.location.href='${pageContext.request.contextPath}/propiedades';" class="border border-slate-300 hover:border-black text-slate-700 hover:text-black bg-transparent hover:bg-black/5 px-6 py-3 rounded-xl font-bold transition-all duration-300">Limpiar Comparación</button>
             </div>
             </c:if>
         </div>

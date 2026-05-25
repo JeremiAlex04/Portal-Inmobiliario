@@ -57,3 +57,132 @@ header nav a.text-brandHover::after {
     transform: translateY(-1px) !important;
     box-shadow: 0 10px 20px -10px rgba(0, 0, 0, 0.3) !important;
 }
+
+/* ============================================ */
+/* WIZARD MULTI-STEP STYLES                     */
+/* ============================================ */
+
+/* Panel visibility & transitions */
+.wizard-panel {
+    display: none;
+    opacity: 0;
+    transform: translateY(16px);
+    transition: opacity 0.4s cubic-bezier(0.215, 0.61, 0.355, 1),
+                transform 0.4s cubic-bezier(0.215, 0.61, 0.355, 1);
+}
+
+.wizard-panel.active {
+    display: block;
+    opacity: 1;
+    transform: translateY(0);
+}
+
+.wizard-panel.wizard-exit {
+    display: block;
+    opacity: 0;
+    transform: translateY(-12px);
+}
+
+/* Card Selectors (Tipo Inmueble & Operación) */
+.tipo-card,
+.operacion-card {
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1) !important;
+}
+
+.tipo-card.selected,
+.operacion-card.selected {
+    border: 2px solid #000000 !important;
+    background-color: #fafafa !important;
+    box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1) !important;
+    transform: scale(1.03) !important;
+    position: relative;
+}
+
+.tipo-card.selected::after,
+.operacion-card.selected::after {
+    content: '';
+    position: absolute;
+    top: 8px;
+    right: 8px;
+    width: 22px;
+    height: 22px;
+    border-radius: 50%;
+    background-color: #000000;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 24 24' stroke='%23ffffff' stroke-width='3'%3E%3Cpath stroke-linecap='round' stroke-linejoin='round' d='M5 13l4 4L19 7'/%3E%3C/svg%3E");
+    background-size: 14px;
+    background-position: center;
+    background-repeat: no-repeat;
+    animation: scaleIn 0.2s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+@keyframes scaleIn {
+    0% { transform: scale(0); opacity: 0; }
+    100% { transform: scale(1); opacity: 1; }
+}
+
+.tipo-card.selected svg,
+.operacion-card.selected svg {
+    color: #000000 !important;
+    stroke: #000000 !important;
+}
+
+.tipo-card.selected span,
+.operacion-card.selected span {
+    color: #000000 !important;
+    font-weight: 700 !important;
+}
+
+/* Timeline Step Indicator Hover Effect */
+.wizard-step-indicator {
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+.wizard-step-indicator:hover {
+    transform: translateY(-2px);
+}
+.wizard-step-indicator:active {
+    transform: translateY(0);
+}
+.wizard-step-indicator .step-circle {
+    transition: all 0.3s ease;
+}
+.wizard-step-indicator:hover .step-circle {
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+/* Drag & Drop Zone */
+#drop-zone.drag-active {
+    border-color: #000000 !important;
+    background-color: #f5f5f4 !important;
+    box-shadow: 0 0 0 4px rgba(0, 0, 0, 0.05);
+}
+
+/* Error Shake Animation */
+@keyframes wizardShake {
+    0%, 100% { transform: translateX(0); }
+    20% { transform: translateX(-8px); }
+    40% { transform: translateX(8px); }
+    60% { transform: translateX(-4px); }
+    80% { transform: translateX(4px); }
+}
+
+.wizard-error-shake {
+    animation: wizardShake 0.5s ease-in-out;
+}
+
+/* Responsive: Stack progress on small screens */
+@media (max-width: 640px) {
+    .wizard-progress .flex {
+        gap: 0.25rem;
+    }
+    .wizard-step-indicator .step-label {
+        font-size: 9px !important;
+    }
+    .wizard-step-indicator .step-circle {
+        width: 32px !important;
+        height: 32px !important;
+    }
+    .wizard-step-indicator .step-circle svg {
+        width: 16px !important;
+        height: 16px !important;
+    }
+}

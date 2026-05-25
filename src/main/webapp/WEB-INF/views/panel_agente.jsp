@@ -1,5 +1,5 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
-<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
+<%@ taglib uri="jakarta.tags.core" prefix="c" %>
 <!DOCTYPE html>
 <html lang="es" class="scroll-smooth">
 <head>
@@ -8,30 +8,26 @@
     <link rel="icon" type="image/png" href="${pageContext.request.contextPath}/assets/img/logo/Logo_Inmobix.png">
     <title>Inmobix - Panel de Agente</title>
     <link rel="stylesheet" href="${pageContext.request.contextPath}/assets/css/styles.css">
-    <script src="https://cdn.tailwindcss.com"></script>
-        <script>
-            tailwind.config = {
-                theme: {
-                    extend: {
-                        colors: {
-                            brandHeader: '#000000',
-                            brandFooter: '#000000',
-                            brandBtn: '#000000',
-                            brandHover: '#71717A',
-                            brandBg: '#FFFFFF',
-                            brandText: '#0A0A0A'
-                        }
+        <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        brandHeader: '#000000',
+                        brandFooter: '#000000',
+                        brandBtn: '#000000',
+                        brandHover: '#71717A',
+                        brandBg: '#FFFFFF',
+                        brandText: '#0A0A0A'
                     }
                 }
             }
-        </script>
-    <script>
-        function confirmarEliminacion(url) {
-            if (confirm("¿Estás seguro que deseas eliminar esta propiedad? Esta acción no se puede deshacer.")) {
-                window.location.href = url;
-            }
         }
     </script>
+        
+    
+<script src="${pageContext.request.contextPath}/assets/js/admin.js" defer></script>
 </head>
 <body class="bg-brandBg text-brandText flex flex-col min-h-screen font-sans">
     
@@ -72,8 +68,8 @@
 
             <div class="flex justify-between items-center mb-6">
                 <div class="flex gap-2">
-                    <a href="${pageContext.request.contextPath}/panel?seccion=propiedades" class="px-5 py-2.5 rounded-lg text-sm font-bold ${seccion != 'consultas' ? 'bg-blue-600 text-white shadow-lg' : 'bg-white text-slate-600 border'}">Mis Propiedades</a>
-                    <a href="${pageContext.request.contextPath}/panel?seccion=consultas" class="px-5 py-2.5 rounded-lg text-sm font-bold ${seccion == 'consultas' ? 'bg-blue-600 text-white shadow-lg' : 'bg-white text-slate-600 border'}">Consultas</a>
+                    <a href="${pageContext.request.contextPath}/panel?seccion=propiedades" class="px-5 py-2.5 rounded-lg text-sm font-bold ${seccion != 'consultas' ? 'bg-brandBtn text-white shadow-lg shadow-brandBtn/20' : 'border border-slate-200 text-slate-600 hover:bg-black/5 hover:text-black hover:border-black transition-all'}">Mis Propiedades</a>
+                    <a href="${pageContext.request.contextPath}/panel?seccion=consultas" class="px-5 py-2.5 rounded-lg text-sm font-bold ${seccion == 'consultas' ? 'bg-brandBtn text-white shadow-lg shadow-brandBtn/20' : 'border border-slate-200 text-slate-600 hover:bg-black/5 hover:text-black hover:border-black transition-all'}">Consultas</a>
                 </div>
                 <a href="${pageContext.request.contextPath}/propiedades?accion=nuevo" class="bg-brandBtn hover:bg-brandHover text-white px-6 py-3 rounded-lg font-bold shadow-lg flex items-center gap-2 text-sm">+ Publicar</a>
             </div>
@@ -99,7 +95,7 @@
                             <option value="vistas" ${filtroOrden == 'vistas' ? 'selected' : ''}>Más vistas</option>
                         </select>
                     </div>
-                    <button type="submit" class="bg-slate-900 text-white px-6 py-2.5 rounded-lg text-sm font-bold hover:bg-slate-800 transition-colors">Filtrar</button>
+                    <button type="submit" class="bg-brandBtn hover:bg-brandHover text-white px-6 py-2.5 rounded-lg text-sm font-bold shadow-md transition-all">Filtrar</button>
                     <a href="${pageContext.request.contextPath}/panel" class="text-sm text-slate-500 hover:text-slate-700 font-bold px-4 py-2.5">Limpiar</a>
                 </form>
             </div>

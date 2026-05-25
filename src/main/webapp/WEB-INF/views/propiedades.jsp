@@ -1,5 +1,5 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
-    <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
+    <%@ taglib uri="jakarta.tags.core" prefix="c" %>
         <!DOCTYPE html>
         <html lang="es" class="scroll-smooth">
 
@@ -10,27 +10,29 @@
                 href="${pageContext.request.contextPath}/assets/img/logo/Logo_Inmobix.png">
             <title>Inmobix - Catálogo de Propiedades</title>
             <link rel="stylesheet" href="${pageContext.request.contextPath}/assets/css/styles.css">
-            <script src="https://cdn.tailwindcss.com"></script>
-        <script>
-            tailwind.config = {
-                theme: {
-                    extend: {
-                        colors: {
-                            brandHeader: '#000000',
-                            brandFooter: '#000000',
-                            brandBtn: '#000000',
-                            brandHover: '#71717A',
-                            brandBg: '#FFFFFF',
-                            brandText: '#0A0A0A'
-                        }
+                <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        brandHeader: '#000000',
+                        brandFooter: '#000000',
+                        brandBtn: '#000000',
+                        brandHover: '#71717A',
+                        brandBg: '#FFFFFF',
+                        brandText: '#0A0A0A'
                     }
                 }
             }
-        </script>
+        }
+    </script>
+        
             <script src="${pageContext.request.contextPath}/assets/js/main.js" defer></script>
-        </head>
+        <script src="${pageContext.request.contextPath}/assets/js/propiedades.js" defer></script>
+</head>
 
-        <body class="bg-brandBg text-brandText flex flex-col min-h-screen font-sans">
+        <body class="bg-brandBg text-brandText flex flex-col min-h-screen font-sans" data-context-path="${pageContext.request.contextPath}">
 
             <!-- Navbar Premium con Glassmorphism -->
             <header
@@ -290,20 +292,20 @@
                                 <c:set var="paginParams" value="q=${paramQ}&operacion=${paramOperacion}&tipo=${paramTipo}&precioMin=${paramPrecioMin}&precioMax=${paramPrecioMax}&dormitorios=${paramDormitorios}&banos=${paramBanos}" />
                                 <div class="mt-12 flex justify-center items-center gap-2">
                                     <c:if test="${currentPage > 1}">
-                                        <a href="${pageContext.request.contextPath}/propiedades?page=${currentPage - 1}&${paginParams}" class="px-4 py-2 border border-slate-200 rounded-lg text-slate-600 hover:bg-slate-50 font-semibold transition-colors">Anterior</a>
+                                        <a href="${pageContext.request.contextPath}/propiedades?page=${currentPage - 1}&${paginParams}" class="px-4 py-2 border border-slate-200 rounded-lg text-slate-600 hover:bg-black/5 hover:border-black hover:text-black font-semibold transition-all">Anterior</a>
                                     </c:if>
                                     <c:forEach begin="1" end="${totalPages}" var="i">
                                         <c:choose>
                                             <c:when test="${currentPage == i}">
-                                                <span class="px-4 py-2 bg-blue-600 text-white rounded-lg font-bold shadow-md shadow-brandBtn/20">${i}</span>
+                                                <span class="px-4 py-2 bg-brandBtn text-white rounded-lg font-bold shadow-md shadow-brandBtn/20">${i}</span>
                                             </c:when>
                                             <c:otherwise>
-                                                <a href="${pageContext.request.contextPath}/propiedades?page=${i}&${paginParams}" class="px-4 py-2 border border-slate-200 rounded-lg text-slate-600 hover:bg-slate-50 font-semibold transition-colors">${i}</a>
+                                                <a href="${pageContext.request.contextPath}/propiedades?page=${i}&${paginParams}" class="px-4 py-2 border border-slate-200 rounded-lg text-slate-600 hover:bg-black/5 hover:border-black hover:text-black font-semibold transition-all">${i}</a>
                                             </c:otherwise>
                                         </c:choose>
                                     </c:forEach>
                                     <c:if test="${currentPage < totalPages}">
-                                        <a href="${pageContext.request.contextPath}/propiedades?page=${currentPage + 1}&${paginParams}" class="px-4 py-2 border border-slate-200 rounded-lg text-slate-600 hover:bg-slate-50 font-semibold transition-colors">Siguiente</a>
+                                        <a href="${pageContext.request.contextPath}/propiedades?page=${currentPage + 1}&${paginParams}" class="px-4 py-2 border border-slate-200 rounded-lg text-slate-600 hover:bg-black/5 hover:border-black hover:text-black font-semibold transition-all">Siguiente</a>
                                     </c:if>
                                 </div>
                             </c:if>
@@ -374,55 +376,22 @@
 
                 <div class="border-t border-white/10 pt-8 flex flex-col md:flex-row justify-between items-center gap-4 text-xs text-slate-500">
                     <p>&amp;copy; 2026 Portal Inmobiliario Inmobix. Todos los derechos reservados.</p>
-                    <div class="flex items-center gap-6">
-                        <span class="inline-flex items-center gap-1.5"><span class="w-2 h-2 rounded-full bg-emerald-500"></span> BD Conectada</span>
-                        <span>Hecho en Perú</span>
-                    </div>
+                    
                 </div>
             </div>
         </footer>
 
             <!-- Sprint 3: Botón flotante comparador -->
-            <div id="compBar" class="hidden fixed bottom-6 left-1/2 -translate-x-1/2 z-50 bg-indigo-600 text-white px-8 py-4 rounded-full shadow-2xl flex items-center gap-4 font-bold">
+            <div id="compBar" class="hidden fixed bottom-6 left-1/2 -translate-x-1/2 z-50 bg-slate-900 text-white px-8 py-4 rounded-full shadow-2xl flex items-center gap-4 font-bold border border-white/10">
                 <span id="compCount">Comparar (0)</span>
-                <button onclick="irComparar()" class="bg-white text-indigo-700 px-4 py-2 rounded-full text-sm font-bold hover:bg-indigo-50">Ver Comparación</button>
-                <button onclick="limpiarComparador()" class="text-indigo-200 hover:text-white p-1 rounded-full hover:bg-white/10 transition-colors" title="Limpiar">
+                <button onclick="irComparar()" class="bg-transparent border border-white hover:bg-white hover:text-black text-white px-4 py-2 rounded-full text-sm font-bold transition-all duration-300">Ver Comparación</button>
+                <button onclick="limpiarComparador()" class="text-slate-400 hover:text-white p-1 rounded-full hover:bg-white/10 transition-colors" title="Limpiar">
                     <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M6 18L18 6M6 6l12 12"></path>
                     </svg>
                 </button>
             </div>
 
-            <script>
-            let comparar_ids = JSON.parse(localStorage.getItem('comparar_ids') || '[]');
-            function actualizarComparador() {
-                comparar_ids = [];
-                document.querySelectorAll('.comp-check:checked').forEach(cb => {
-                    if(comparar_ids.length < 4) comparar_ids.push(cb.dataset.id);
-                    else { cb.checked = false; alert('Máximo 4 propiedades.'); }
-                });
-                localStorage.setItem('comparar_ids', JSON.stringify(comparar_ids));
-                const bar = document.getElementById('compBar');
-                document.getElementById('compCount').textContent = 'Comparar (' + comparar_ids.length + ')';
-                bar.classList.toggle('hidden', comparar_ids.length === 0);
-            }
-            function irComparar() {
-                if(comparar_ids.length < 2) { alert('Selecciona al menos 2 propiedades.'); return; }
-                window.location.href = '${pageContext.request.contextPath}/comparar?ids=' + comparar_ids.join(',');
-            }
-            function limpiarComparador() {
-                comparar_ids = []; localStorage.removeItem('comparar_ids');
-                document.querySelectorAll('.comp-check').forEach(cb => cb.checked = false);
-                actualizarComparador();
-            }
-            // Restore on load
-            window.addEventListener('DOMContentLoaded', function() {
-                comparar_ids.forEach(id => {
-                    const cb = document.querySelector('.comp-check[data-id="'+id+'"]');
-                    if(cb) cb.checked = true;
-                });
-                actualizarComparador();
-            });
-            </script>
+            
         </body>
         </html>

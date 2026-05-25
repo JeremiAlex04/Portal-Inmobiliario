@@ -1,5 +1,5 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
-<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
+<%@ taglib uri="jakarta.tags.core" prefix="c" %>
 <!DOCTYPE html>
 <html lang="es" class="scroll-smooth">
 <head>
@@ -7,65 +7,26 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="icon" type="image/png" href="${pageContext.request.contextPath}/assets/img/logo/Logo_Inmobix.png">
     <title>Inmobix - Gestión de Ubicaciones</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-        <script>
-            tailwind.config = {
-                theme: {
-                    extend: {
-                        colors: {
-                            brandHeader: '#000000',
-                            brandFooter: '#000000',
-                            brandBtn: '#000000',
-                            brandHover: '#71717A',
-                            brandBg: '#FFFFFF',
-                            brandText: '#0A0A0A'
-                        }
+        <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        brandHeader: '#000000',
+                        brandFooter: '#000000',
+                        brandBtn: '#000000',
+                        brandHover: '#71717A',
+                        brandBg: '#FFFFFF',
+                        brandText: '#0A0A0A'
                     }
                 }
             }
-        </script>
-    <script>
-        function confirmarEliminacion(id, tipo) {
-            if (confirm("¿Estás seguro de eliminar esta ubicación? Podría afectar a propiedades asociadas.")) {
-                window.location.href = "${pageContext.request.contextPath}/admin?accion=eliminar_ubicacion&id=" + id + "&tipo=" + tipo;
-            }
-        }
-
-        function editarUbicacion(id, nombre, codigo, parentId) {
-            document.getElementById('modalTitle').innerText = 'Editar Ubicación';
-            document.getElementById('formId').value = id;
-            document.getElementById('formNombre').value = nombre;
-            document.getElementById('formCodigo').value = codigo;
-            
-            const parentSelect = document.getElementById('formParentId');
-            if (parentSelect) {
-                parentSelect.value = parentId;
-            }
-            
-            document.getElementById('ubicacionModal').classList.remove('hidden');
-            document.getElementById('ubicacionModal').classList.add('flex');
-        }
-
-        function nuevaUbicacion() {
-            document.getElementById('modalTitle').innerText = 'Nueva Ubicación';
-            document.getElementById('formId').value = '';
-            document.getElementById('formNombre').value = '';
-            document.getElementById('formCodigo').value = '';
-            
-            const parentSelect = document.getElementById('formParentId');
-            if (parentSelect) {
-                parentSelect.selectedIndex = 0;
-            }
-            
-            document.getElementById('ubicacionModal').classList.remove('hidden');
-            document.getElementById('ubicacionModal').classList.add('flex');
-        }
-
-        function cerrarModal() {
-            document.getElementById('ubicacionModal').classList.add('hidden');
-            document.getElementById('ubicacionModal').classList.remove('flex');
         }
     </script>
+        
+    
+<script src="${pageContext.request.contextPath}/assets/js/admin.js" defer></script>
 </head>
 <body class="bg-brandBg text-brandText flex flex-col min-h-screen font-sans">
     
@@ -82,7 +43,7 @@
                     <a href="${pageContext.request.contextPath}/admin?accion=dashboard" class="text-sm font-semibold text-slate-300 hover:text-white transition-colors">Dashboard</a>
                     <a href="${pageContext.request.contextPath}/admin?accion=usuarios" class="text-sm font-semibold text-slate-300 hover:text-white transition-colors">Usuarios</a>
                     <a href="${pageContext.request.contextPath}/admin?accion=propiedades" class="text-sm font-semibold text-slate-300 hover:text-white transition-colors">Propiedades</a>
-                    <a href="${pageContext.request.contextPath}/admin?accion=ubicaciones" class="text-sm font-bold text-blue-400 border-b-2 border-blue-400 py-1 transition-colors">Ubicaciones</a>
+                    <a href="${pageContext.request.contextPath}/admin?accion=ubicaciones" class="text-sm font-bold text-white border-b-2 border-white py-1 transition-colors">Ubicaciones</a>
                     <a href="${pageContext.request.contextPath}/admin?accion=auditoria" class="text-sm font-semibold text-slate-300 hover:text-white transition-colors">Auditoría</a>
                 </nav>
 
@@ -112,9 +73,9 @@
 
             <!-- Tabs de Navegación -->
             <div class="flex border-b border-slate-200 mb-8 overflow-x-auto">
-                <a href="${pageContext.request.contextPath}/admin?accion=ubicaciones&tipo=DEPARTAMENTO" class="px-6 py-3 text-sm font-bold transition-all border-b-2 ${tipoActual == 'DEPARTAMENTO' ? 'border-blue-600 text-blue-600' : 'border-transparent text-slate-500 hover:text-slate-700'}">Departamentos</a>
-                <a href="${pageContext.request.contextPath}/admin?accion=ubicaciones&tipo=PROVINCIA" class="px-6 py-3 text-sm font-bold transition-all border-b-2 ${tipoActual == 'PROVINCIA' ? 'border-blue-600 text-blue-600' : 'border-transparent text-slate-500 hover:text-slate-700'}">Provincias</a>
-                <a href="${pageContext.request.contextPath}/admin?accion=ubicaciones&tipo=DISTRITO" class="px-6 py-3 text-sm font-bold transition-all border-b-2 ${tipoActual == 'DISTRITO' ? 'border-blue-600 text-blue-600' : 'border-transparent text-slate-500 hover:text-slate-700'}">Distritos</a>
+                <a href="${pageContext.request.contextPath}/admin?accion=ubicaciones&tipo=DEPARTAMENTO" class="px-6 py-3 text-sm font-bold transition-all border-b-2 ${tipoActual == 'DEPARTAMENTO' ? 'border-black text-black' : 'border-transparent text-slate-500 hover:text-slate-700'}">Departamentos</a>
+                <a href="${pageContext.request.contextPath}/admin?accion=ubicaciones&tipo=PROVINCIA" class="px-6 py-3 text-sm font-bold transition-all border-b-2 ${tipoActual == 'PROVINCIA' ? 'border-black text-black' : 'border-transparent text-slate-500 hover:text-slate-700'}">Provincias</a>
+                <a href="${pageContext.request.contextPath}/admin?accion=ubicaciones&tipo=DISTRITO" class="px-6 py-3 text-sm font-bold transition-all border-b-2 ${tipoActual == 'DISTRITO' ? 'border-black text-black' : 'border-transparent text-slate-500 hover:text-slate-700'}">Distritos</a>
             </div>
 
             <!-- Tabla de Ubicaciones -->
@@ -149,8 +110,8 @@
                                     </c:if>
                                     <td class="px-6 py-4">
                                         <div class="flex justify-center gap-2">
-                                            <button onclick="editarUbicacion('${u.id}', '${u.nombre}', '${u.codigoUbigeo}', '${u.parentId}')" class="text-xs font-bold px-3 py-1.5 rounded-lg bg-blue-50 text-blue-600 hover:bg-blue-100 transition-colors">Editar</button>
-                                            <button onclick="confirmarEliminacion('${u.id}', '${tipoActual}')" class="text-xs font-bold px-3 py-1.5 rounded-lg bg-red-50 text-red-600 hover:bg-red-100 transition-colors">Eliminar</button>
+                                            <button onclick="editarUbicacion('${u.id}', '${u.nombre}', '${u.codigoUbigeo}', '${u.parentId}')" class="text-xs font-bold px-3 py-1.5 rounded-lg border border-slate-200 text-slate-700 hover:text-black hover:border-black hover:bg-black/5 transition-all">Editar</button>
+                                            <button onclick="confirmarEliminacionUbicacion('${pageContext.request.contextPath}/admin?accion=eliminar_ubicacion&id=${u.id}&tipo=${tipoActual}')" class="text-xs font-bold px-3 py-1.5 rounded-lg bg-red-50 text-red-600 hover:bg-red-100 transition-colors">Eliminar</button>
                                         </div>
                                     </td>
                                 </tr>
@@ -207,7 +168,7 @@
                 </div>
 
                 <div class="pt-4 flex gap-3">
-                    <button type="button" onclick="cerrarModal()" class="flex-1 bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold py-4 rounded-xl transition-all">Cancelar</button>
+                    <button type="button" onclick="cerrarModal()" class="flex-1 border border-slate-200 text-slate-700 hover:text-black hover:border-black hover:bg-black/5 font-bold py-4 rounded-xl transition-all">Cancelar</button>
                     <button type="submit" class="flex-1 bg-brandBtn hover:bg-brandHover text-white font-bold py-4 rounded-xl shadow-lg shadow-brandBtn/20 transition-all">Guardar</button>
                 </div>
             </form>

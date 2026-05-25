@@ -1,5 +1,5 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
-<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
+<%@ taglib uri="jakarta.tags.core" prefix="c" %>
 <!DOCTYPE html>
 <html lang="es" class="scroll-smooth">
 <head>
@@ -8,23 +8,24 @@
     <link rel="icon" type="image/png" href="${pageContext.request.contextPath}/assets/img/logo/Logo_Inmobix.png">
     <title>Inmobix - Mi Perfil</title>
     <link rel="stylesheet" href="${pageContext.request.contextPath}/assets/css/styles.css">
-    <script src="https://cdn.tailwindcss.com"></script>
-        <script>
-            tailwind.config = {
-                theme: {
-                    extend: {
-                        colors: {
-                            brandHeader: '#000000',
-                            brandFooter: '#000000',
-                            brandBtn: '#000000',
-                            brandHover: '#71717A',
-                            brandBg: '#FFFFFF',
-                            brandText: '#0A0A0A'
-                        }
+        <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        brandHeader: '#000000',
+                        brandFooter: '#000000',
+                        brandBtn: '#000000',
+                        brandHover: '#71717A',
+                        brandBg: '#FFFFFF',
+                        brandText: '#0A0A0A'
                     }
                 }
             }
-        </script>
+        }
+    </script>
+        
     <script src="${pageContext.request.contextPath}/assets/js/main.js" defer></script>
 </head>
 <body class="bg-brandBg text-brandText flex flex-col min-h-screen font-sans">
@@ -101,7 +102,7 @@
                     </div>
 
                     <div class="pt-4 border-t border-slate-100 flex justify-end">
-                        <button type="submit" class="bg-brandBtn hover:bg-brandHover text-white font-bold py-3 px-6 rounded-lg shadow-lg shadow-blue-600/30 transition-all hover:-translate-y-0.5">
+                        <button type="submit" class="bg-brandBtn hover:bg-brandHover text-white font-bold py-3 px-6 rounded-lg shadow-lg shadow-brandBtn/20 transition-all hover:-translate-y-0.5">
                             Guardar Cambios
                         </button>
                     </div>
@@ -171,10 +172,7 @@
 
                 <div class="border-t border-white/10 pt-8 flex flex-col md:flex-row justify-between items-center gap-4 text-xs text-slate-500">
                     <p>&amp;copy; 2026 Portal Inmobiliario Inmobix. Todos los derechos reservados.</p>
-                    <div class="flex items-center gap-6">
-                        <span class="inline-flex items-center gap-1.5"><span class="w-2 h-2 rounded-full bg-emerald-500"></span> BD Conectada</span>
-                        <span>Hecho en Perú</span>
-                    </div>
+                    
                 </div>
             </div>
         </footer>
