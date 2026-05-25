@@ -7,80 +7,117 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
 
-import org.example.proyectoweb.dao.UsuarioDAO;
-import org.example.proyectoweb.model.Usuario;
+import org.example.proyectoweb.facade.UsuarioFacade;
+import org.example.proyectoweb.dto.UsuarioDTO;
 
 import java.io.IOException;
 
 @WebServlet("/usuario")
 public class UsuarioServlet extends HttpServlet {
 
-    private UsuarioDAO usuarioDAO;
+    private UsuarioFacade usuarioFacade;
+    private org.example.proyectoweb.facade.AuditoriaFacade auditoriaFacade;
 
     @Override
     public void init() {
-        usuarioDAO = new UsuarioDAO();
+        usuarioFacade = new UsuarioFacade();
+        auditoriaFacade = new org.example.proyectoweb.facade.AuditoriaFacade();
     }
 
     @Override
-    protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        String action = request.getParameter("accion");
-        if ("registro".equals(action)) {
-            request.getRequestDispatcher("/WEB-INF/views/registroUsuario.jsp").forward(request, response);
-        } else if ("login".equals(action)) {
-            request.getRequestDispatcher("/WEB-INF/views/login.jsp").forward(request, response);
-        } else if ("logout".equals(action)) {
-            HttpSession session = request.getSession(false);
-            if (session != null) {
-                session.invalidate();
-            }
-            response.sendRedirect(request.getContextPath() + "/index.jsp");
-        } else {
-            response.sendRedirect(request.getContextPath() + "/index.jsp");
+    protected void doGet(HttpServletRequest request, HttpServletResponse response)
+            throws ServletException, IOException {
+        
+        String accion = request.getParameter("accion");
+        if (accion == null) accion = "login";
+
+        switch (accion) {
+            case "registro":
+                request.getRequestDispatcher("/WEB-INF/views/registroUsuario.jsp").forward(request, response);
+                break;
+            case "logout":
+                HttpSession session = request.getSession(false);
+                if (session != null) {
+                    UsuarioDTO user = (UsuarioDTO) session.getAttribute("usuarioLogueado");
+                    if (user != null) {
+                        auditoriaFacade.registrarEvento(user.getIdUsuario(), "usuario", user.getIdUsuario(), "LOGOUT", request.getRemoteAddr(), request.getHeader("User-Agent"), "{\"correo\":\"" + user.getCorreo() + "\"}");
+                    }
+                    session.invalidate();
+                }
+                response.sendRedirect(request.getContextPath() + "/index.jsp");
+                break;
+            case "login":
+            default:
+                request.getRequestDispatcher("/WEB-INF/views/login.jsp").forward(request, response);
+                break;
         }
     }
 
     @Override
-    protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        String action = request.getParameter("accion");
-        if (action == null) action = "registro";
+    protected void doPost(HttpServletRequest request, HttpServletResponse response)
+            throws ServletException, IOException {
 
-        if ("registro".equals(action)) {
+        String accion = request.getParameter("accion");
+        if (accion == null) accion = "login";
+
+        if ("registro".equals(accion)) {
             String nombres = request.getParameter("nombres");
             String apellidos = request.getParameter("apellidos");
-            String email = request.getParameter("email");
+            String correo = request.getParameter("correo");
             String password = request.getParameter("password");
+            String idRolStr = request.getParameter("idRol");
 
-            // Basic validation
-            if (nombres == null || nombres.trim().isEmpty() || email == null || email.trim().isEmpty() || password == null || password.trim().isEmpty()) {
-                request.setAttribute("error", "Todos los campos obligatorios deben estar llenos.");
-                request.getRequestDispatcher("/WEB-INF/views/registroUsuario.jsp").forward(request, response);
-                return;
+            UsuarioDTO u = new UsuarioDTO();
+            u.setNombres(nombres);
+            u.setApellidos(apellidos);
+            u.setCorreo(correo);
+            u.setPasswordHash(password); // El DAO se encarga de hashear
+            
+            if (idRolStr != null && !idRolStr.isEmpty()) {
+                u.setIdRol(Integer.parseInt(idRolStr));
             }
 
-            Usuario u = new Usuario(0, nombres, apellidos, email, password);
-            boolean ok = usuarioDAO.registrarUsuario(u);
+            boolean ok = usuarioFacade.registrarUsuario(u);
 
             if (ok) {
-                request.setAttribute("msg", "Usuario registrado correctamente. Ahora puedes iniciar sesión.");
+                auditoriaFacade.registrarEvento(null, "usuario", 0, "CREAR", request.getRemoteAddr(), request.getHeader("User-Agent"), "{\"correo\":\"" + u.getCorreo() + "\",\"rol\":" + u.getIdRol() + "}");
+                request.setAttribute("msg", "Usuario registrado correctamente. Por favor, inicie sesión.");
                 request.getRequestDispatcher("/WEB-INF/views/login.jsp").forward(request, response);
             } else {
-                request.setAttribute("error", "Error al registrar usuario. Verifica tus datos.");
+                request.setAttribute("error", "Error al registrar usuario. El correo podría estar en uso.");
                 request.getRequestDispatcher("/WEB-INF/views/registroUsuario.jsp").forward(request, response);
             }
-        } else if ("login".equals(action)) {
-            String email = request.getParameter("email");
+
+        } else if ("login".equals(accion)) {
+            String correo = request.getParameter("correo");
             String password = request.getParameter("password");
 
-            Usuario u = usuarioDAO.loginUsuario(email, password);
-            if (u != null) {
+            UsuarioDTO authUser = usuarioFacade.autenticar(correo, password);
+
+            if (authUser != null) {
+                // Iniciar sesión
                 HttpSession session = request.getSession();
-                session.setAttribute("usuario", u);
-                response.sendRedirect(request.getContextPath() + "/propiedades");
+                session.setAttribute("usuarioLogueado", authUser);
+                
+                auditoriaFacade.registrarEvento(authUser.getIdUsuario(), "usuario", authUser.getIdUsuario(), "LOGIN", request.getRemoteAddr(), request.getHeader("User-Agent"), "{\"status\":\"success\",\"correo\":\"" + authUser.getCorreo() + "\"}");
+
+                // Redirección basada en roles (Sprint 1)
+                int rol = authUser.getIdRol();
+                if (rol == 5) {
+                    // Administrador
+                    response.sendRedirect(request.getContextPath() + "/admin");
+                } else if (rol == 3 || rol == 4) {
+                    // Agente o Constructora
+                    response.sendRedirect(request.getContextPath() + "/panel");
+                } else {
+                    // Comprador o Visitante
+                    response.sendRedirect(request.getContextPath() + "/propiedades");
+                }
             } else {
-                request.setAttribute("error", "Credenciales inválidas.");
+                auditoriaFacade.registrarEvento(null, "usuario", 0, "LOGIN", request.getRemoteAddr(), request.getHeader("User-Agent"), "{\"status\":\"failed\",\"correo\":\"" + correo + "\"}");
+                request.setAttribute("error", "Credenciales incorrectas o usuario inactivo.");
                 request.getRequestDispatcher("/WEB-INF/views/login.jsp").forward(request, response);
             }
         }
     }
-}
+} 
