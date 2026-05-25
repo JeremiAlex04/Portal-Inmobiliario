@@ -1,4 +1,5 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <!DOCTYPE html>
 <html lang="es">
 <head>
@@ -11,15 +12,25 @@
 <body>
     <header>
         <div class="header-container">
-            <img src="${pageContext.request.contextPath}/assets/img/logo/inmobix_logo.png" alt="Inmobix Logo" class="header-logo">
-            <h1 class="header-title">Inmobix - Publicar</h1>
+            <div class="header-brand">
+                <img src="${pageContext.request.contextPath}/assets/img/logo/inmobix_logo.png" alt="Inmobix Logo" class="header-logo">
+                <h1 class="header-title">Inmobix</h1>
+            </div>
+            <nav>
+                <a href="${pageContext.request.contextPath}/index.jsp">Inicio</a>
+                <a href="${pageContext.request.contextPath}/propiedades">Catálogo</a>
+                <a href="${pageContext.request.contextPath}/propiedades?accion=nuevo">Publicar</a>
+                <c:if test="${not empty sessionScope.usuario}">
+                    <a href="${pageContext.request.contextPath}/propiedades?accion=mis_propiedades">Mis Propiedades</a>
+                    <a href="${pageContext.request.contextPath}/usuario?accion=logout" class="btn btn-outline" style="padding: 6px 12px; margin-left: 10px;">Cerrar Sesión</a>
+                </c:if>
+                <c:if test="${empty sessionScope.usuario}">
+                    <a href="${pageContext.request.contextPath}/usuario?accion=login" style="margin-left: 10px;">Login</a>
+                    <a href="${pageContext.request.contextPath}/usuario?accion=registro" class="btn" style="padding: 6px 12px; color: white !important;">Registrarse</a>
+                </c:if>
+            </nav>
         </div>
     </header>
-    <nav>
-        <a href="${pageContext.request.contextPath}/index.jsp">Inicio</a>
-        <a href="${pageContext.request.contextPath}/propiedades">Ver Propiedades</a>
-        <a href="${pageContext.request.contextPath}/propiedades?accion=nuevo">Publicar Propiedad</a>
-    </nav>
     <div class="form-container">
         <h2>Ingresa los datos del inmueble</h2>
         <% 
@@ -30,6 +41,14 @@
         <% } %>
 
         <form action="${pageContext.request.contextPath}/propiedades" method="post">
+            <div class="form-group">
+                <label>Tipo de Operación:</label>
+                <select name="operacion" required>
+                    <option value="VENTA">Venta</option>
+                    <option value="ALQUILER">Alquiler</option>
+                    <option value="PROYECTO">Proyecto</option>
+                </select>
+            </div>
             <div class="form-group">
                 <label>Título Breve:</label>
                 <input type="text" name="titulo" required placeholder="Ej. Casa de 2 pisos con jardín">
@@ -46,7 +65,7 @@
                 <label>Ubicación:</label>
                 <input type="text" name="ubicacion" required placeholder="Ej. Lima, Miraflores">
             </div>
-            <button type="submit">Guardar Propiedad</button>
+            <button type="submit" class="btn">Guardar Propiedad</button>
         </form>
     </div>
 </body>

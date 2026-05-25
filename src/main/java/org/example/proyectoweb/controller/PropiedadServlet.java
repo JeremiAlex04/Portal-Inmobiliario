@@ -5,8 +5,11 @@ import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.HttpSession;
+
 import org.example.proyectoweb.dao.PropiedadDAO;
 import org.example.proyectoweb.model.Propiedad;
+import org.example.proyectoweb.model.Usuario;
 
 import java.io.IOException;
 import java.math.BigDecimal;
@@ -19,43 +22,75 @@ public class PropiedadServlet extends HttpServlet {
 
     @Override
     public void init() throws ServletException {
-        // Inicializa el DAO una sola vez al cargar el Servlet
         propiedadDAO = new PropiedadDAO();
     }
 
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         String action = request.getParameter("accion");
+        HttpSession session = request.getSession(false);
+        Usuario u = (session != null) ? (Usuario) session.getAttribute("usuario") : null;
 
         if ("nuevo".equals(action)) {
-            // Muestra el formulario de registro
+            if (u == null) {
+                request.setAttribute("error", "Debes iniciar sesión para publicar una propiedad.");
+                request.getRequestDispatcher("/WEB-INF/views/login.jsp").forward(request, response);
+                return;
+            }
             request.getRequestDispatcher("/WEB-INF/views/registro.jsp").forward(request, response);
+        } else if ("mis_propiedades".equals(action)) {
+            if (u == null) {
+                response.sendRedirect(request.getContextPath() + "/usuario?accion=login");
+                return;
+            }
+            List<Propiedad> lista = propiedadDAO.obtenerPropiedades(null, u.getId());
+            request.setAttribute("listaPropiedades", lista);
+            request.setAttribute("titulo_pagina", "Mis Propiedades Publicadas");
+            request.getRequestDispatcher("/WEB-INF/views/propiedades.jsp").forward(request, response);
         } else {
-            // Acción por defecto: Listar Propiedades
-            List<Propiedad> listaPropiedades = propiedadDAO.obtenerPropiedades();
-            // Envío de información desde el servlet a la vista (requerido en la rúbrica)
+            String filtro = request.getParameter("filtro");
+            List<Propiedad> listaPropiedades = propiedadDAO.obtenerPropiedades(filtro, null);
             request.setAttribute("listaPropiedades", listaPropiedades);
+            request.setAttribute("filtroActual", filtro);
+            request.setAttribute("titulo_pagina", "Propiedades en Venta / Alquiler / Proyectos");
             request.getRequestDispatcher("/WEB-INF/views/propiedades.jsp").forward(request, response);
         }
     }
 
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        // Recepción de parámetros y procesamiento básico de datos (requerido en rúbrica)
+        HttpSession session = request.getSession(false);
+        Usuario u = (session != null) ? (Usuario) session.getAttribute("usuario") : null;
+
+        if (u == null) {
+            response.sendRedirect(request.getContextPath() + "/usuario?accion=login");
+            return;
+        }
+
         String titulo = request.getParameter("titulo");
         String descripcion = request.getParameter("descripcion");
         String precioStr = request.getParameter("precio");
         String ubicacion = request.getParameter("ubicacion");
+        String operacion = request.getParameter("operacion"); // VENTA, ALQUILER, PROYECTO
 
         try {
             BigDecimal precio = new BigDecimal(precioStr);
-            Propiedad nuevaPropiedad = new Propiedad(0, titulo, descripcion, precio, ubicacion);
+            
+            int idTipo = 1; // 1 = Casa
+            String opFinal = operacion;
+            if ("PROYECTO".equals(operacion)) {
+                idTipo = 8; // 8 = Proyecto
+                opFinal = "VENTA"; // Defaults to VENTA for projects
+            } else if (operacion == null || operacion.isEmpty()) {
+                opFinal = "VENTA";
+            }
+
+            Propiedad nuevaPropiedad = new Propiedad(0, u.getId(), titulo, descripcion, precio, ubicacion, opFinal, idTipo);
             
             boolean insertado = propiedadDAO.registrarPropiedad(nuevaPropiedad);
             
             if (insertado) {
-                // Redirige al doGet normal para listar con la nueva propiedad
-                response.sendRedirect(request.getContextPath() + "/propiedades");
+                response.sendRedirect(request.getContextPath() + "/propiedades?accion=mis_propiedades");
             } else {
                 request.setAttribute("error", "No se pudo registrar la propiedad en la base de datos.");
                 request.getRequestDispatcher("/WEB-INF/views/registro.jsp").forward(request, response);
