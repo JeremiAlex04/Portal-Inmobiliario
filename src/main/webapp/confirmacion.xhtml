@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="jakarta.faces.html"
+      xmlns:f="jakarta.faces.core">
+<h:head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Inmobix - Registro Exitoso (JSF)</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        brandHeader: '#000000',
+                        brandFooter: '#000000',
+                        brandBtn: '#000000',
+                        brandHover: '#71717A',
+                        brandBg: '#FFFFFF',
+                        brandText: '#0A0A0A'
+                    }
+                }
+            }
+        }
+    </script>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;800&amp;display=swap" rel="stylesheet" />
+    <style>
+        body {
+            font-family: 'Outfit', sans-serif;
+        }
+    </style>
+</h:head>
+<h:body class="bg-brandBg text-brandText min-h-screen flex flex-col justify-between">
+
+    <!-- Header -->
+    <header class="text-white bg-black/90 backdrop-blur-md border-b border-white/10 shadow-lg">
+        <div class="max-w-6xl mx-auto px-6 py-5 flex justify-between items-center">
+            <span class="text-2xl font-extrabold text-white tracking-tight">InmobiX <span class="text-xs text-brandHover font-normal px-2 py-0.5 bg-slate-900/40 rounded">Navegación</span></span>
+            <a href="index.jsp" class="text-sm font-semibold text-white/80 hover:text-brandHover transition-colors">Inicio JSP →</a>
+        </div>
+    </header>
+
+    <!-- Main Content Success -->
+    <main class="flex-grow flex items-center justify-center py-12 px-4">
+        <div class="w-full max-w-md bg-white border border-slate-200 rounded-3xl p-8 md:p-10 text-center shadow-2xl shadow-slate-200/50">
+            
+            <!-- Success Icon -->
+            <div class="w-20 h-20 bg-emerald-100 border border-emerald-300 rounded-full flex items-center justify-center mx-auto text-emerald-600 mb-6 shadow-lg shadow-emerald-500/10">
+                <svg class="w-10 h-10" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7"></path>
+                </svg>
+            </div>
+
+            <!-- Title -->
+            <h1 class="text-3xl font-black text-slate-800 tracking-tight">¡Consulta Registrada!</h1>
+            <p class="text-slate-500 mt-3 text-sm">El formulario se ha enviado correctamente a través del ciclo de vida de **Jakarta Server Faces (JSF)**.</p>
+
+            <!-- Customer Detail Badge -->
+            <div class="bg-slate-50 border border-slate-200 rounded-2xl p-4 my-6">
+                <span class="text-xs text-slate-500 uppercase tracking-wider block">Interesado registrado</span>
+                <span class="text-lg font-bold text-blue-600 block mt-1">
+                    <h:outputText value="#{param.cliente != null ? param.cliente : 'Cliente Anónimo'}" />
+                </span>
+            </div>
+
+            <!-- Description -->
+            <p class="text-xs text-slate-500 mb-8 leading-relaxed">
+                Los datos ya están guardados en la tabla <strong>consultas</strong> de tu base de datos MySQL local y estarán visibles inmediatamente en el panel administrativo y panel de agentes en formato JSP.
+            </p>
+
+            <!-- Action Buttons for basic navigation -->
+            <div class="flex flex-col sm:flex-row gap-4">
+                <a href="nuevaConsulta.xhtml" class="flex-1 py-3 px-4 bg-slate-50 hover:bg-slate-100 text-slate-700 text-sm font-bold rounded-xl border border-slate-300 transition-all text-center">
+                    Registrar Otro (JSF)
+                </a>
+                <a href="index.jsp" class="flex-1 py-3 px-4 bg-brandBtn hover:bg-brandHover text-white text-sm font-bold rounded-xl shadow-lg shadow-brandBtn/20 transition-all text-center">
+                    Ver Catálogo (JSP)
+                </a>
+            </div>
+        </div>
+    </main>
+
+    <!-- Footer -->
+        <!-- Footer Premium Monocromático (XHTML) -->
+    <footer class="bg-black border-t border-white/10 text-slate-400 py-16 mt-auto">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="grid grid-cols-1 md:grid-cols-4 gap-12 mb-12 text-left">
+                <!-- Column 1: Brand Info -->
+                <div class="space-y-4">
+                    <div class="flex items-center gap-2">
+                        <img src="assets/img/logo/Logo_Inmobix.png" alt="Inmobix Logo"
+                            class="h-8 w-auto brightness-0 invert">
+                        <span class="text-2xl font-black text-white tracking-tight">InmobiX</span>
+                    </div>
+                    <p class="text-sm text-slate-400 leading-relaxed">
+                        El portal inmobiliario premium del Perú. Encuentra tu próximo hogar con la seguridad, rapidez y confianza que mereces.
+                    </p>
+                    <div class="flex items-center gap-4 pt-2">
+                        <a href="#" class="text-slate-400 hover:text-white transition-colors" title="Facebook">
+                            <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24"><path d="M22 12c0-5.52-4.48-10-10-10S2 6.48 2 12c0 4.84 3.44 8.87 8 9.8V15H8v-3h2V9.5C10 7.57 11.57 6 13.5 6H16v3h-2c-.55 0-1 .45-1 1v2h3v3h-3v6.95c4.56-.93 8-4.96 8-9.75z"/></svg>
+                        </a>
+                        <a href="#" class="text-slate-400 hover:text-white transition-colors" title="Instagram">
+                            <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zM12 0C8.741 0 8.333.014 7.053.072 2.695.272.273 2.69.073 7.051.014 8.333 0 8.741 0 12c0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98C15.668.014 15.259 0 12 0zm0 5.838a6.162 6.162 0 100 12.324 6.162 6.162 0 000-12.324zM12 16a4 4 0 110-8 4 4 0 010 8zm6.406-11.845a1.44 1.44 0 100 2.881 1.44 1.44 0 000-2.881z"/></svg>
+                        </a>
+                    </div>
+                </div>
+                <!-- Column 2: Empresa -->
+                <div class="space-y-4">
+                    <h4 class="text-white font-bold text-sm tracking-wider uppercase">Empresa</h4>
+                    <ul class="space-y-2 text-sm">
+                        <li><a href="#" class="hover:text-white transition-colors">Nosotros</a></li>
+                        <li><a href="#" class="hover:text-white transition-colors">Blog Inmobiliario</a></li>
+                        <li><a href="#" class="hover:text-white transition-colors">Prensa</a></li>
+                        <li><a href="#" class="hover:text-white transition-colors">Carreras</a></li>
+                    </ul>
+                </div>
+                <!-- Column 3: Servicios -->
+                <div class="space-y-4">
+                    <h4 class="text-white font-bold text-sm tracking-wider uppercase">Servicios</h4>
+                    <ul class="space-y-2 text-sm">
+                        <li><a href="propiedades" class="hover:text-white transition-colors">Comprar Propiedad</a></li>
+                        <li><a href="nuevaConsulta.xhtml" class="hover:text-white transition-colors">Enviar Consulta</a></li>
+                    </ul>
+                </div>
+                <!-- Column 4: Soporte -->
+                <div class="space-y-4">
+                    <h4 class="text-white font-bold text-sm tracking-wider uppercase">Soporte</h4>
+                    <ul class="space-y-2 text-sm">
+                        <li><a href="contacto" class="hover:text-white transition-colors">Contacto</a></li>
+                        <li><a href="#" class="hover:text-white transition-colors">Preguntas Frecuentes</a></li>
+                        <li><a href="#" class="hover:text-white transition-colors">Términos y Condiciones</a></li>
+                    </ul>
+                </div>
+            </div>
+            <div class="border-t border-white/10 pt-8 flex flex-col md:flex-row justify-between items-center gap-4 text-xs text-slate-500">
+                <p>&amp;copy; 2026 Portal Inmobiliario Inmobix. Todos los derechos reservados.</p>
+                <div class="flex items-center gap-6">
+                    <span class="inline-flex items-center gap-1.5"><span class="w-2 h-2 rounded-full bg-emerald-500"></span> BD Conectada</span>
+                    <span>Hecho en Perú</span>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+</h:body>
+</html>

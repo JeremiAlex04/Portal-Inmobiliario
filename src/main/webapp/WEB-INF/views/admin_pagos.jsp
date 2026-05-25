@@ -4,11 +4,27 @@
 <!DOCTYPE html>
 <html lang="es"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
 <link rel="icon" type="image/png" href="${pageContext.request.contextPath}/assets/img/logo/Logo_Inmobix.png">
-<title>Inmobix Admin - Pagos</title><script src="https://cdn.tailwindcss.com"></script></head>
-<body class="bg-slate-50 min-h-screen font-sans">
-<header class="fixed w-full top-0 z-50 bg-white/80 backdrop-blur-xl border-b shadow-sm"><div class="max-w-7xl mx-auto px-4 flex justify-between items-center h-16">
+<title>Inmobix Admin - Pagos</title><script src="https://cdn.tailwindcss.com"></script>
+        <script>
+            tailwind.config = {
+                theme: {
+                    extend: {
+                        colors: {
+                            brandHeader: '#000000',
+                            brandFooter: '#000000',
+                            brandBtn: '#000000',
+                            brandHover: '#71717A',
+                            brandBg: '#FFFFFF',
+                            brandText: '#0A0A0A'
+                        }
+                    }
+                }
+            }
+        </script></head>
+<body class="bg-brandBg text-brandText min-h-screen font-sans">
+<header class="text-white fixed w-full top-0 z-50 bg-black/90 backdrop-blur-md backdrop-blur-xl border-b shadow-lg"><div class="max-w-7xl mx-auto px-4 flex justify-between items-center h-16">
 <a href="${pageContext.request.contextPath}/admin" class="flex items-center gap-2"><img src="${pageContext.request.contextPath}/assets/img/logo/Logo_Inmobix.png" class="h-8"><span class="text-xl font-bold">Inmobix Admin</span></a>
-<a href="${pageContext.request.contextPath}/admin" class="text-sm font-bold text-blue-600">← Dashboard</a>
+<a href="${pageContext.request.contextPath}/admin" class="text-sm font-bold text-brandHover">← Dashboard</a>
 </div></header>
 <main class="pt-24 pb-16 px-4"><div class="max-w-6xl mx-auto">
 <h1 class="text-3xl font-bold mb-6">Gestión de Pagos</h1>

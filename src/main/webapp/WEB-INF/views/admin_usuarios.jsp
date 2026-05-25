@@ -9,6 +9,22 @@
     <title>Inmobix - Gestión de Usuarios</title>
     <link rel="stylesheet" href="${pageContext.request.contextPath}/assets/css/styles.css">
     <script src="https://cdn.tailwindcss.com"></script>
+        <script>
+            tailwind.config = {
+                theme: {
+                    extend: {
+                        colors: {
+                            brandHeader: '#000000',
+                            brandFooter: '#000000',
+                            brandBtn: '#000000',
+                            brandHover: '#71717A',
+                            brandBg: '#FFFFFF',
+                            brandText: '#0A0A0A'
+                        }
+                    }
+                }
+            }
+        </script>
     <script>
         function confirmarEliminacion(url) {
             if (confirm("¿Estás seguro que deseas ELIMINAR a este usuario de la plataforma? Esta acción es irreversible.")) {
@@ -45,10 +61,10 @@
         }
     </script>
 </head>
-<body class="bg-slate-50 text-slate-800 flex flex-col min-h-screen font-sans">
+<body class="bg-brandBg text-brandText flex flex-col min-h-screen font-sans">
     
     <!-- Navbar -->
-    <header class="fixed w-full top-0 z-50 bg-slate-900 border-b border-slate-800 shadow-sm transition-all">
+    <header class="text-white fixed w-full top-0 z-50 bg-black/90 backdrop-blur-md border-b border-white/10 shadow-lg transition-all">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div class="flex justify-between items-center h-20">
                 <div class="flex items-center gap-3">
@@ -80,7 +96,7 @@
                     <h1 class="text-3xl font-bold text-slate-900 tracking-tight">Gestión de Usuarios</h1>
                     <p class="text-slate-500 mt-2">Administra roles, accesos y estado de todas las cuentas del sistema.</p>
                 </div>
-                <button onclick="abrirModalNuevo()" class="bg-blue-600 hover:bg-blue-700 text-white px-6 py-3 rounded-xl font-bold shadow-lg shadow-blue-600/20 transition-all hover:-translate-y-0.5 flex items-center gap-2">
+                <button onclick="abrirModalNuevo()" class="bg-brandBtn hover:bg-brandHover text-white px-6 py-3 rounded-xl font-bold shadow-lg shadow-brandBtn/20 transition-all hover:-translate-y-0.5 flex items-center gap-2">
                     <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
                         <path fill-rule="evenodd" d="M10 3a1 1 0 011 1v5h5a1 1 0 110 2h-5v5a1 1 0 11-2 0v-5H4a1 1 0 110-2h5V4a1 1 0 011-1z" clip-rule="evenodd" />
                     </svg>
@@ -230,7 +246,7 @@
 
                 <div class="pt-4 flex gap-3">
                     <button type="button" onclick="cerrarModal()" class="flex-1 bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold py-4 rounded-xl transition-all">Cancelar</button>
-                    <button type="submit" class="flex-1 bg-blue-600 hover:bg-blue-700 text-white font-bold py-4 rounded-xl shadow-lg shadow-blue-600/20 transition-all">Guardar</button>
+                    <button type="submit" class="flex-1 bg-brandBtn hover:bg-brandHover text-white font-bold py-4 rounded-xl shadow-lg shadow-brandBtn/20 transition-all">Guardar</button>
                 </div>
             </form>
         </div>

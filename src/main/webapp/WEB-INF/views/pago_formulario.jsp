@@ -8,12 +8,28 @@
     <link rel="icon" type="image/png" href="${pageContext.request.contextPath}/assets/img/logo/Logo_Inmobix.png">
     <title>Inmobix - Procesar Pago</title>
     <script src="https://cdn.tailwindcss.com"></script>
+        <script>
+            tailwind.config = {
+                theme: {
+                    extend: {
+                        colors: {
+                            brandHeader: '#000000',
+                            brandFooter: '#000000',
+                            brandBtn: '#000000',
+                            brandHover: '#71717A',
+                            brandBg: '#FFFFFF',
+                            brandText: '#0A0A0A'
+                        }
+                    }
+                }
+            }
+        </script>
 </head>
-<body class="bg-slate-50 min-h-screen font-sans">
-<header class="fixed w-full top-0 z-50 bg-white/80 backdrop-blur-xl border-b shadow-sm">
+<body class="bg-brandBg text-brandText min-h-screen font-sans">
+<header class="text-white fixed w-full top-0 z-50 bg-black/90 backdrop-blur-md backdrop-blur-xl border-b shadow-lg">
     <div class="max-w-7xl mx-auto px-4 flex justify-between items-center h-16">
         <a href="${pageContext.request.contextPath}/index.jsp" class="flex items-center gap-2"><img src="${pageContext.request.contextPath}/assets/img/logo/Logo_Inmobix.png" class="h-8"><span class="text-xl font-bold">Inmobix</span></a>
-        <a href="${pageContext.request.contextPath}/pagos?accion=planes" class="text-sm font-bold text-blue-600">← Planes</a>
+        <a href="${pageContext.request.contextPath}/pagos?accion=planes" class="text-sm font-bold text-brandHover">← Planes</a>
     </div>
 </header>
 <main class="pt-24 pb-16 px-4"><div class="max-w-lg mx-auto bg-white rounded-2xl shadow-xl border p-8">
@@ -28,11 +44,11 @@
         <input type="hidden" name="accion" value="procesar"><input type="hidden" name="idPlan" value="${planSeleccionado.id}">
         <div><label class="block text-sm font-bold text-slate-700 mb-2">Método de Pago *</label>
             <select name="metodoPago" required class="w-full px-4 py-3 rounded-lg border focus:ring-2 focus:ring-blue-500 outline-none bg-white">
-                <option value="TARJETA">💳 Tarjeta</option><option value="TRANSFERENCIA">🏦 Transferencia</option><option value="YAPE">📱 Yape</option><option value="EFECTIVO">💵 Efectivo</option>
+                <option value="TARJETA">Tarjeta</option><option value="TRANSFERENCIA">Transferencia</option><option value="YAPE">Yape</option><option value="EFECTIVO">Efectivo</option>
             </select></div>
         <div><label class="block text-sm font-bold text-slate-700 mb-2">Nombre Titular *</label><input type="text" required class="w-full px-4 py-3 rounded-lg border focus:ring-2 focus:ring-blue-500 outline-none"></div>
         <div><label class="block text-sm font-bold text-slate-700 mb-2">RUC/DNI *</label><input type="text" required class="w-full px-4 py-3 rounded-lg border focus:ring-2 focus:ring-blue-500 outline-none"></div>
-        <button type="submit" class="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-4 rounded-xl shadow-lg">Confirmar Pago</button>
+        <button type="submit" class="w-full bg-brandBtn hover:bg-brandHover text-white font-bold py-4 rounded-xl shadow-lg">Confirmar Pago</button>
     </form>
 </div></main>
 </body></html>

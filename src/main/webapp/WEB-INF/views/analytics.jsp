@@ -10,16 +10,32 @@
                 href="${pageContext.request.contextPath}/assets/img/logo/Logo_Inmobix.png">
             <title>Inmobix - Analytics</title>
             <script src="https://cdn.tailwindcss.com"></script>
+        <script>
+            tailwind.config = {
+                theme: {
+                    extend: {
+                        colors: {
+                            brandHeader: '#000000',
+                            brandFooter: '#000000',
+                            brandBtn: '#000000',
+                            brandHover: '#71717A',
+                            brandBg: '#FFFFFF',
+                            brandText: '#0A0A0A'
+                        }
+                    }
+                }
+            }
+        </script>
             <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
         </head>
 
-        <body class="bg-slate-50 min-h-screen font-sans">
-            <header class="fixed w-full top-0 z-50 bg-white/80 backdrop-blur-xl border-b shadow-sm">
+        <body class="bg-brandBg text-brandText min-h-screen font-sans">
+            <header class="text-white fixed w-full top-0 z-50 bg-black/90 backdrop-blur-md backdrop-blur-xl border-b shadow-lg">
                 <div class="max-w-7xl mx-auto px-4 flex justify-between items-center h-16">
                     <a href="${pageContext.request.contextPath}/index.jsp" class="flex items-center gap-2"><img
                             src="${pageContext.request.contextPath}/assets/img/logo/Logo_Inmobix.png" class="h-8"><span
                             class="text-xl font-bold">Inmobix</span></a>
-                    <a href="${pageContext.request.contextPath}/panel" class="text-sm font-bold text-blue-600">← Mi
+                    <a href="${pageContext.request.contextPath}/panel" class="text-sm font-bold text-brandHover">← Mi
                         Panel</a>
                 </div>
             </header>

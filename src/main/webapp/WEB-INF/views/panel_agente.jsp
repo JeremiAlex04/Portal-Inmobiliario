@@ -9,6 +9,22 @@
     <title>Inmobix - Panel de Agente</title>
     <link rel="stylesheet" href="${pageContext.request.contextPath}/assets/css/styles.css">
     <script src="https://cdn.tailwindcss.com"></script>
+        <script>
+            tailwind.config = {
+                theme: {
+                    extend: {
+                        colors: {
+                            brandHeader: '#000000',
+                            brandFooter: '#000000',
+                            brandBtn: '#000000',
+                            brandHover: '#71717A',
+                            brandBg: '#FFFFFF',
+                            brandText: '#0A0A0A'
+                        }
+                    }
+                }
+            }
+        </script>
     <script>
         function confirmarEliminacion(url) {
             if (confirm("¿Estás seguro que deseas eliminar esta propiedad? Esta acción no se puede deshacer.")) {
@@ -17,29 +33,29 @@
         }
     </script>
 </head>
-<body class="bg-slate-50 text-slate-800 flex flex-col min-h-screen font-sans">
+<body class="bg-brandBg text-brandText flex flex-col min-h-screen font-sans">
     
     <!-- Navbar -->
-    <header class="fixed w-full top-0 z-50 bg-white/80 backdrop-blur-md border-b border-slate-200/50 shadow-sm transition-all">
+    <header class="text-white fixed w-full top-0 z-50 bg-black/90 backdrop-blur-md backdrop-blur-md border-b border-white/10 shadow-lg transition-all">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div class="flex justify-between items-center h-20">
                 <!-- Logo -->
                 <div class="flex items-center gap-3">
-                    <img src="${pageContext.request.contextPath}/assets/img/logo/Logo_Inmobix.png" alt="Inmobix Logo" class="h-10 w-auto object-contain">
-                    <span class="text-2xl font-bold bg-gradient-to-r from-blue-600 to-indigo-600 bg-clip-text text-transparent tracking-tight">Inmobix</span>
+                    <img src="${pageContext.request.contextPath}/assets/img/logo/Logo_Inmobix.png" alt="Inmobix Logo" class="h-10 w-auto object-contain brightness-0 invert">
+                    <span class="text-2xl font-bold text-white tracking-tight">Inmobix</span>
                 </div>
                 
                 <!-- Desktop Nav -->
                 <nav class="hidden md:flex items-center gap-8">
-                    <a href="${pageContext.request.contextPath}/index.jsp" class="text-sm font-semibold text-slate-600 hover:text-blue-600 transition-colors">Inicio</a>
-                    <a href="${pageContext.request.contextPath}/propiedades" class="text-sm font-semibold text-slate-600 hover:text-blue-600 transition-colors">Catálogo Público</a>
-                    <a href="${pageContext.request.contextPath}/panel" class="text-sm font-bold text-blue-600 transition-colors border-b-2 border-blue-600 py-1">Mi Panel</a>
+                    <a href="${pageContext.request.contextPath}/index.jsp" class="text-sm font-semibold text-white/80 hover:text-brandHover transition-colors">Inicio</a>
+                    <a href="${pageContext.request.contextPath}/propiedades" class="text-sm font-semibold text-white/80 hover:text-brandHover transition-colors">Catálogo Público</a>
+                    <a href="${pageContext.request.contextPath}/panel" class="text-sm font-bold text-brandHover transition-colors border-b-2 border-blue-600 py-1">Mi Panel</a>
                 </nav>
 
                 <!-- Actions -->
                 <div class="hidden md:flex items-center gap-4">
-                    <span class="text-sm font-semibold text-slate-600">Hola, ${sessionScope.usuarioLogueado.nombres}</span>
-                    <a href="${pageContext.request.contextPath}/usuario?accion=logout" class="bg-slate-800 hover:bg-slate-900 text-white px-5 py-2.5 rounded-full text-sm font-semibold shadow-md shadow-slate-800/20 transition-all hover:-translate-y-0.5">Cerrar Sesión</a>
+                    <span class="text-sm font-semibold text-white/80">Hola, ${sessionScope.usuarioLogueado.nombres}</span>
+                    <a href="${pageContext.request.contextPath}/usuario?accion=logout" class="bg-brandBtn hover:bg-brandHover text-white px-5 py-2.5 rounded-full text-sm font-semibold shadow-md shadow-slate-800/20 transition-all hover:-translate-y-0.5">Cerrar Sesión</a>
                 </div>
             </div>
         </div>
@@ -59,7 +75,7 @@
                     <a href="${pageContext.request.contextPath}/panel?seccion=propiedades" class="px-5 py-2.5 rounded-lg text-sm font-bold ${seccion != 'consultas' ? 'bg-blue-600 text-white shadow-lg' : 'bg-white text-slate-600 border'}">Mis Propiedades</a>
                     <a href="${pageContext.request.contextPath}/panel?seccion=consultas" class="px-5 py-2.5 rounded-lg text-sm font-bold ${seccion == 'consultas' ? 'bg-blue-600 text-white shadow-lg' : 'bg-white text-slate-600 border'}">Consultas</a>
                 </div>
-                <a href="${pageContext.request.contextPath}/propiedades?accion=nuevo" class="bg-blue-600 hover:bg-blue-700 text-white px-6 py-3 rounded-lg font-bold shadow-lg flex items-center gap-2 text-sm">+ Publicar</a>
+                <a href="${pageContext.request.contextPath}/propiedades?accion=nuevo" class="bg-brandBtn hover:bg-brandHover text-white px-6 py-3 rounded-lg font-bold shadow-lg flex items-center gap-2 text-sm">+ Publicar</a>
             </div>
 
             <c:if test="${seccion != 'consultas'}">
@@ -98,7 +114,7 @@
                                 <th class="px-6 py-4">Tipo / Operación</th>
                                 <th class="px-6 py-4">Ubicación</th>
                                 <th class="px-6 py-4">Precio</th>
-                                <th class="px-6 py-4 text-center">👁 Vistas</th>
+                                 <th class="px-6 py-4 text-center">Vistas</th>
                                 <th class="px-6 py-4">Estado</th>
                                 <th class="px-6 py-4 text-center">Acciones</th>
                             </tr>
@@ -121,9 +137,11 @@
                                                         <c:when test="${not empty p.fotoPrincipal}">
                                                             <img src="${pageContext.request.contextPath}/${p.fotoPrincipal}" alt="" class="w-14 h-10 object-cover rounded-lg border border-slate-200">
                                                         </c:when>
-                                                        <c:otherwise>
-                                                            <div class="w-14 h-10 bg-slate-100 rounded-lg flex items-center justify-center text-slate-400 text-lg">🏠</div>
-                                                        </c:otherwise>
+                                                         <c:otherwise>
+                                                             <div class="w-14 h-10 bg-slate-100 rounded-lg flex items-center justify-center text-slate-400">
+                                                                 <svg class="w-6 h-6 text-slate-300" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"></path></svg>
+                                                             </div>
+                                                         </c:otherwise>
                                                     </c:choose>
                                                     <div>
                                                         <div class="font-bold text-slate-800 line-clamp-1 w-40">${p.titulo}</div>
@@ -216,7 +234,7 @@
 
         </div>
     </main>
-    <footer class="bg-slate-900 text-slate-400 py-12 mt-auto"><div class="max-w-7xl mx-auto px-4 text-center">
+    <footer class="bg-brandFooter text-slate-400 py-12 mt-auto"><div class="max-w-7xl mx-auto px-4 text-center">
         <p class="text-sm">&copy; 2026 Portal Inmobiliario. Todos los derechos reservados.</p>
     </div></footer>
 </body></html>

@@ -38,10 +38,10 @@ public class ContactoServlet extends HttpServlet {
         ContactoDTO c = new ContactoDTO(0, nombre, "", email, mensaje);
 
         if (facade.guardarMensaje(c)) {
-            request.setAttribute("msg", "Mensaje enviado correctamente ✔");
+            request.setAttribute("msg", "Mensaje enviado correctamente");
             request.setAttribute("msgType", "success");
         } else {
-            request.setAttribute("msg", "Error al enviar mensaje ✘");
+            request.setAttribute("msg", "Error al enviar el mensaje");
             request.setAttribute("msgType", "error");
         }
 

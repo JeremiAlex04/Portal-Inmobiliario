@@ -9,6 +9,22 @@
     <title>Inmobix - Auditoría de Sistema</title>
     <link rel="stylesheet" href="${pageContext.request.contextPath}/assets/css/styles.css">
     <script src="https://cdn.tailwindcss.com"></script>
+        <script>
+            tailwind.config = {
+                theme: {
+                    extend: {
+                        colors: {
+                            brandHeader: '#000000',
+                            brandFooter: '#000000',
+                            brandBtn: '#000000',
+                            brandHover: '#71717A',
+                            brandBg: '#FFFFFF',
+                            brandText: '#0A0A0A'
+                        }
+                    }
+                }
+            }
+        </script>
     <script>
         function toggleDetail(id) {
             const el = document.getElementById('detail-' + id);
@@ -20,10 +36,10 @@
         }
     </script>
 </head>
-<body class="bg-slate-50 text-slate-800 flex flex-col min-h-screen font-sans">
+<body class="bg-brandBg text-brandText flex flex-col min-h-screen font-sans">
     
     <!-- Navbar -->
-    <header class="fixed w-full top-0 z-50 bg-slate-900 border-b border-slate-800 shadow-sm transition-all">
+    <header class="text-white fixed w-full top-0 z-50 bg-black/90 backdrop-blur-md border-b border-white/10 shadow-lg transition-all">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div class="flex justify-between items-center h-20">
                 <div class="flex items-center gap-3">
@@ -140,7 +156,7 @@
         </div>
     </main>
 
-    <footer class="bg-slate-950 border-t border-slate-900 text-slate-500 py-8 mt-auto">
+    <footer class="bg-brandFooter border-t border-brandFooter/50 text-slate-500 py-8 mt-auto">
         <div class="max-w-7xl mx-auto px-4 text-center">
             <p class="text-sm">&copy; 2026 Portal Inmobiliario. Todos los derechos reservados.</p>
         </div>

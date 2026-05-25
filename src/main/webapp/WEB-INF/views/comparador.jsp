@@ -9,15 +9,31 @@
     <link rel="icon" type="image/png" href="${pageContext.request.contextPath}/assets/img/logo/Logo_Inmobix.png">
     <title>Inmobix - Comparar Propiedades</title>
     <script src="https://cdn.tailwindcss.com"></script>
+        <script>
+            tailwind.config = {
+                theme: {
+                    extend: {
+                        colors: {
+                            brandHeader: '#000000',
+                            brandFooter: '#000000',
+                            brandBtn: '#000000',
+                            brandHover: '#71717A',
+                            brandBg: '#FFFFFF',
+                            brandText: '#0A0A0A'
+                        }
+                    }
+                }
+            }
+        </script>
 </head>
-<body class="bg-slate-50 text-slate-800 min-h-screen font-sans">
-    <header class="fixed w-full top-0 z-50 bg-white/80 backdrop-blur-xl border-b border-slate-200 shadow-sm">
+<body class="bg-brandBg text-brandText min-h-screen font-sans">
+    <header class="text-white fixed w-full top-0 z-50 bg-black/90 backdrop-blur-md backdrop-blur-xl border-b border-white/10 shadow-lg">
         <div class="max-w-7xl mx-auto px-4 flex justify-between items-center h-16">
             <a href="${pageContext.request.contextPath}/index.jsp" class="flex items-center gap-2">
                 <img src="${pageContext.request.contextPath}/assets/img/logo/Logo_Inmobix.png" alt="Logo" class="h-8">
                 <span class="text-xl font-bold text-slate-900">Inmobix</span>
             </a>
-            <a href="${pageContext.request.contextPath}/propiedades" class="text-sm font-bold text-blue-600 hover:text-blue-800">← Volver al catálogo</a>
+            <a href="${pageContext.request.contextPath}/propiedades" class="text-sm font-bold text-brandHover hover:text-white">← Volver al catálogo</a>
         </div>
     </header>
 
@@ -164,12 +180,18 @@
                                     <c:choose>
                                         <c:when test="${not empty p.agenteNombre}">
                                             <div class="font-bold text-slate-900">${p.agenteNombre}</div>
-                                            <c:if test="${not empty p.agenteTelefono}">
-                                                <div class="text-xs text-slate-500 mt-0.5">📞 ${p.agenteTelefono}</div>
-                                            </c:if>
-                                            <c:if test="${not empty p.agenteCorreo}">
-                                                <div class="text-[11px] text-slate-400">✉️ ${p.agenteCorreo}</div>
-                                            </c:if>
+                                             <c:if test="${not empty p.agenteTelefono}">
+                                                 <div class="text-xs text-slate-500 mt-0.5 inline-flex items-center gap-1">
+                                                     <svg class="w-3.5 h-3.5 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 5a2 2 0 012-2h3.28a1 1 0 01.94.725l.548 2.2a1 1 0 01-.321.988l-1.305.98a10.582 10.582 0 004.872 4.872l.98-1.305a1 1 0 01.988-.321l2.2.548a1 1 0 01.725.94V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z"></path></svg>
+                                                     ${p.agenteTelefono}
+                                                 </div>
+                                             </c:if>
+                                             <c:if test="${not empty p.agenteCorreo}">
+                                                 <div class="text-[11px] text-slate-400 mt-0.5 inline-flex items-center gap-1">
+                                                     <svg class="w-3.5 h-3.5 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"></path></svg>
+                                                     ${p.agenteCorreo}
+                                                 </div>
+                                             </c:if>
                                         </c:when>
                                         <c:otherwise>
                                             <span class="text-slate-400 italic">No asignado</span>
@@ -182,7 +204,7 @@
                             <td class="px-6 py-3 font-bold text-slate-600">Acción</td>
                             <c:forEach var="p" items="${propiedadesComparar}">
                                 <td class="px-6 py-3 text-center">
-                                    <a href="${pageContext.request.contextPath}/propiedades?accion=ver&id=${p.id}" class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg text-xs font-bold">Ver Detalle</a>
+                                    <a href="${pageContext.request.contextPath}/propiedades?accion=ver&id=${p.id}" class="bg-brandBtn hover:bg-brandHover text-white px-4 py-2 rounded-lg text-xs font-bold">Ver Detalle</a>
                                 </td>
                             </c:forEach>
                         </tr>

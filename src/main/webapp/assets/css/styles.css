@@ -21,3 +21,39 @@ body {
 ::-webkit-scrollbar-thumb:hover {
     background: #94a3b8;
 }
+
+/* Premium Header Navigation Hover Underline Animation */
+header nav a {
+    position: relative !important;
+    transition: color 0.3s ease !important;
+}
+
+header nav a::after {
+    content: '' !important;
+    position: absolute !important;
+    bottom: -6px !important;
+    left: 0 !important;
+    width: 0 !important;
+    height: 2px !important;
+    background-color: #FFFFFF !important;
+    transition: width 0.3s ease, background-color 0.3s ease !important;
+    border-radius: 9999px !important;
+}
+
+header nav a:hover::after {
+    width: 100% !important;
+}
+
+header nav a.text-brandHover::after {
+    background-color: #71717A !important;
+    width: 100% !important;
+}
+
+/* Button & Link Hover Scale Animation */
+.bg-brandBtn {
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1) !important;
+}
+.bg-brandBtn:hover {
+    transform: translateY(-1px) !important;
+    box-shadow: 0 10px 20px -10px rgba(0, 0, 0, 0.3) !important;
+}
