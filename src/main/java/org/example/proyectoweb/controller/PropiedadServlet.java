@@ -47,6 +47,35 @@ public class PropiedadServlet extends HttpServlet {
             request.setAttribute("listaPropiedades", lista);
             request.setAttribute("titulo_pagina", "Mis Propiedades Publicadas");
             request.getRequestDispatcher("/WEB-INF/views/propiedades.jsp").forward(request, response);
+        } else if ("editar".equals(action)) {
+            if (u == null) {
+                response.sendRedirect(request.getContextPath() + "/usuario?accion=login");
+                return;
+            }
+            try {
+                int id = Integer.parseInt(request.getParameter("id"));
+                Propiedad p = propiedadDAO.obtenerPropiedadPorId(id);
+                if (p != null && p.getIdUsuario() == u.getId()) {
+                    request.setAttribute("propiedad", p);
+                    request.getRequestDispatcher("/WEB-INF/views/registro.jsp").forward(request, response);
+                } else {
+                    response.sendRedirect(request.getContextPath() + "/propiedades?accion=mis_propiedades");
+                }
+            } catch (Exception e) {
+                response.sendRedirect(request.getContextPath() + "/propiedades?accion=mis_propiedades");
+            }
+        } else if ("eliminar".equals(action)) {
+            if (u == null) {
+                response.sendRedirect(request.getContextPath() + "/usuario?accion=login");
+                return;
+            }
+            try {
+                int id = Integer.parseInt(request.getParameter("id"));
+                propiedadDAO.eliminarPropiedad(id, u.getId());
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+            response.sendRedirect(request.getContextPath() + "/propiedades?accion=mis_propiedades");
         } else {
             String filtro = request.getParameter("filtro");
             List<Propiedad> listaPropiedades = propiedadDAO.obtenerPropiedades(filtro, null);
@@ -67,6 +96,7 @@ public class PropiedadServlet extends HttpServlet {
             return;
         }
 
+        String idStr = request.getParameter("id");
         String titulo = request.getParameter("titulo");
         String descripcion = request.getParameter("descripcion");
         String precioStr = request.getParameter("precio");
@@ -85,15 +115,27 @@ public class PropiedadServlet extends HttpServlet {
                 opFinal = "VENTA";
             }
 
-            Propiedad nuevaPropiedad = new Propiedad(0, u.getId(), titulo, descripcion, precio, ubicacion, opFinal, idTipo);
-            
-            boolean insertado = propiedadDAO.registrarPropiedad(nuevaPropiedad);
-            
-            if (insertado) {
-                response.sendRedirect(request.getContextPath() + "/propiedades?accion=mis_propiedades");
+            if (idStr != null && !idStr.isEmpty()) {
+                int id = Integer.parseInt(idStr);
+                Propiedad propiedadActualizada = new Propiedad(id, u.getId(), titulo, descripcion, precio, ubicacion, opFinal, idTipo);
+                boolean actualizado = propiedadDAO.actualizarPropiedad(propiedadActualizada);
+                if (actualizado) {
+                    response.sendRedirect(request.getContextPath() + "/propiedades?accion=mis_propiedades");
+                } else {
+                    request.setAttribute("error", "No se pudo actualizar la propiedad.");
+                    request.setAttribute("propiedad", propiedadActualizada);
+                    request.getRequestDispatcher("/WEB-INF/views/registro.jsp").forward(request, response);
+                }
             } else {
-                request.setAttribute("error", "No se pudo registrar la propiedad en la base de datos.");
-                request.getRequestDispatcher("/WEB-INF/views/registro.jsp").forward(request, response);
+                Propiedad nuevaPropiedad = new Propiedad(0, u.getId(), titulo, descripcion, precio, ubicacion, opFinal, idTipo);
+                boolean insertado = propiedadDAO.registrarPropiedad(nuevaPropiedad);
+                
+                if (insertado) {
+                    response.sendRedirect(request.getContextPath() + "/propiedades?accion=mis_propiedades");
+                } else {
+                    request.setAttribute("error", "No se pudo registrar la propiedad en la base de datos.");
+                    request.getRequestDispatcher("/WEB-INF/views/registro.jsp").forward(request, response);
+                }
             }
         } catch (Exception e) {
             request.setAttribute("error", "Error de conversión de datos: " + e.getMessage());

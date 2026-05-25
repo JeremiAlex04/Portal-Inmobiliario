@@ -74,6 +74,12 @@
                                 <p class="location">📍 <c:out value="${propiedad.ubicacion}" /></p>
                                 <p><c:out value="${propiedad.descripcion}" /></p>
                                 <div class="price">US$ <c:out value="${propiedad.precio}" /></div>
+                                <c:if test="${param.accion == 'mis_propiedades'}">
+                                    <div style="margin-top: 15px; display: flex; gap: 10px;">
+                                        <a href="${pageContext.request.contextPath}/propiedades?accion=editar&id=${propiedad.id}" class="btn btn-warning" style="flex: 1; text-align: center;">Editar</a>
+                                        <a href="${pageContext.request.contextPath}/propiedades?accion=eliminar&id=${propiedad.id}" class="btn btn-danger" style="flex: 1; text-align: center;" onclick="return confirm('¿Estás seguro de eliminar esta propiedad?');">Eliminar</a>
+                                    </div>
+                                </c:if>
                             </div>
                         </div>
                     </c:forEach>

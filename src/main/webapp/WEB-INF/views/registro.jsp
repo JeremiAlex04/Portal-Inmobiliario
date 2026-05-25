@@ -32,7 +32,7 @@
         </div>
     </header>
     <div class="form-container">
-        <h2>Ingresa los datos del inmueble</h2>
+        <h2>${not empty propiedad ? 'Editar Propiedad' : 'Ingresa los datos del inmueble'}</h2>
         <% 
             String error = (String) request.getAttribute("error");
             if(error != null) { 
@@ -41,31 +41,34 @@
         <% } %>
 
         <form action="${pageContext.request.contextPath}/propiedades" method="post">
+            <c:if test="${not empty propiedad}">
+                <input type="hidden" name="id" value="${propiedad.id}">
+            </c:if>
             <div class="form-group">
                 <label>Tipo de Operación:</label>
                 <select name="operacion" required>
-                    <option value="VENTA">Venta</option>
-                    <option value="ALQUILER">Alquiler</option>
-                    <option value="PROYECTO">Proyecto</option>
+                    <option value="VENTA" ${propiedad.operacion == 'VENTA' && propiedad.idTipoInmueble != 8 ? 'selected' : ''}>Venta</option>
+                    <option value="ALQUILER" ${propiedad.operacion == 'ALQUILER' ? 'selected' : ''}>Alquiler</option>
+                    <option value="PROYECTO" ${propiedad.idTipoInmueble == 8 ? 'selected' : ''}>Proyecto</option>
                 </select>
             </div>
             <div class="form-group">
                 <label>Título Breve:</label>
-                <input type="text" name="titulo" required placeholder="Ej. Casa de 2 pisos con jardín">
+                <input type="text" name="titulo" required placeholder="Ej. Casa de 2 pisos con jardín" value="<c:out value="${propiedad.titulo}" />">
             </div>
             <div class="form-group">
                 <label>Descripción:</label>
-                <textarea name="descripcion" rows="4" required placeholder="Describe las comodidades..."></textarea>
+                <textarea name="descripcion" rows="4" required placeholder="Describe las comodidades..."><c:out value="${propiedad.descripcion}" /></textarea>
             </div>
             <div class="form-group">
                 <label>Precio (US$):</label>
-                <input type="number" step="0.01" name="precio" required placeholder="150000.00">
+                <input type="number" step="0.01" name="precio" required placeholder="150000.00" value="${propiedad.precio}">
             </div>
             <div class="form-group">
                 <label>Ubicación:</label>
-                <input type="text" name="ubicacion" required placeholder="Ej. Lima, Miraflores">
+                <input type="text" name="ubicacion" required placeholder="Ej. Lima, Miraflores" value="<c:out value="${propiedad.ubicacion}" />">
             </div>
-            <button type="submit" class="btn">Guardar Propiedad</button>
+            <button type="submit" class="btn">${not empty propiedad ? 'Actualizar Propiedad' : 'Guardar Propiedad'}</button>
         </form>
     </div>
 </body>

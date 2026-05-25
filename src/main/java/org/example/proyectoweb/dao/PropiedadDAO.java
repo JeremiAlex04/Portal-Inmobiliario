@@ -88,4 +88,65 @@ public class PropiedadDAO {
         }
         return rowInserted;
     }
+
+    public Propiedad obtenerPropiedadPorId(int idPropiedad) {
+        String sql = "SELECT id_propiedad as id, id_usuario, titulo, descripcion, precio_dolares as precio, direccion as ubicacion, operacion, id_tipo_inmueble FROM propiedades WHERE id_propiedad = ? AND deleted_at IS NULL";
+        try (Connection conn = ConexionDB.getConnection();
+             PreparedStatement stmt = conn.prepareStatement(sql)) {
+            stmt.setInt(1, idPropiedad);
+            try (ResultSet rs = stmt.executeQuery()) {
+                if (rs.next()) {
+                    return new Propiedad(
+                            rs.getInt("id"),
+                            rs.getInt("id_usuario"),
+                            rs.getString("titulo"),
+                            rs.getString("descripcion"),
+                            rs.getBigDecimal("precio"),
+                            rs.getString("ubicacion"),
+                            rs.getString("operacion"),
+                            rs.getInt("id_tipo_inmueble")
+                    );
+                }
+            }
+        } catch (SQLException e) {
+            System.err.println("Error al obtener propiedad por id: " + e.getMessage());
+        }
+        return null;
+    }
+
+    public boolean actualizarPropiedad(Propiedad p) {
+        String sql = "UPDATE propiedades SET operacion = ?, precio_dolares = ?, direccion = ?, titulo = ?, descripcion = ?, id_tipo_inmueble = ? WHERE id_propiedad = ? AND id_usuario = ?";
+        boolean rowUpdated = false;
+        try (Connection conn = ConexionDB.getConnection();
+             PreparedStatement stmt = conn.prepareStatement(sql)) {
+
+            stmt.setString(1, p.getOperacion());
+            stmt.setBigDecimal(2, p.getPrecio());
+            stmt.setString(3, p.getUbicacion());
+            stmt.setString(4, p.getTitulo());
+            stmt.setString(5, p.getDescripcion());
+            stmt.setInt(6, p.getIdTipoInmueble());
+            stmt.setInt(7, p.getId());
+            stmt.setInt(8, p.getIdUsuario()); 
+
+            rowUpdated = stmt.executeUpdate() > 0;
+        } catch (SQLException e) {
+             System.err.println("Error al actualizar propiedad: " + e.getMessage());
+        }
+        return rowUpdated;
+    }
+
+    public boolean eliminarPropiedad(int idPropiedad, int idUsuario) {
+        String sql = "UPDATE propiedades SET deleted_at = NOW() WHERE id_propiedad = ? AND id_usuario = ?";
+        boolean rowDeleted = false;
+        try (Connection conn = ConexionDB.getConnection();
+             PreparedStatement stmt = conn.prepareStatement(sql)) {
+            stmt.setInt(1, idPropiedad);
+            stmt.setInt(2, idUsuario);
+            rowDeleted = stmt.executeUpdate() > 0;
+        } catch (SQLException e) {
+            System.err.println("Error al eliminar propiedad: " + e.getMessage());
+        }
+        return rowDeleted;
+    }
 }

@@ -6,10 +6,10 @@ import java.sql.SQLException;
 
 public class ConexionDB {
 
-    // Configuración por defecto para MySQL local en Docker
+    // Configuración para MySQL en XAMPP local
     private static final String URL = "jdbc:mysql://localhost:3306/inmobix?useSSL=false&serverTimezone=UTC&allowPublicKeyRetrieval=true";
-    private static final String USER = "mi_usuario";
-    private static final String PASSWORD = "mi_password_secreta";
+    private static final String USER = "root";
+    private static final String PASSWORD = "";
 
     public static Connection getConnection() {
         Connection conn = null;
