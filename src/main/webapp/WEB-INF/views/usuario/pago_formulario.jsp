@@ -27,12 +27,8 @@
         
 </head>
 <body class="bg-brandBg text-brandText min-h-screen font-sans">
-<header class="text-white fixed w-full top-0 z-50 bg-black/90 backdrop-blur-md backdrop-blur-xl border-b shadow-lg">
-    <div class="max-w-7xl mx-auto px-4 flex justify-between items-center h-16">
-        <a href="${pageContext.request.contextPath}/index.jsp" class="flex items-center gap-2"><img src="${pageContext.request.contextPath}/assets/img/logo/Logo_Inmobix.png" class="h-8"><span class="text-xl font-bold">Inmobix</span></a>
-        <a href="${pageContext.request.contextPath}/pagos?accion=planes" class="text-sm font-bold text-brandHover">← Planes</a>
-    </div>
-</header>
+    <c:set var="activePage" value="planes" scope="request" />
+    <jsp:include page="/WEB-INF/views/layout/header.jsp" />
 <main class="pt-24 pb-16 px-4"><div class="max-w-lg mx-auto bg-white rounded-2xl shadow-xl border p-8">
     <h2 class="text-2xl font-bold mb-2">Procesar Pago</h2>
     <p class="text-slate-500 mb-6">Plan: <strong>${planSeleccionado.nombre}</strong></p>

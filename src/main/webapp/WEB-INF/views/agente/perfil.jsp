@@ -31,42 +31,8 @@
 <body class="bg-brandBg text-brandText flex flex-col min-h-screen font-sans">
     
     <!-- Navbar Premium -->
-    <header class="text-white fixed w-full top-0 z-50 bg-black/90 backdrop-blur-md backdrop-blur-md border-b border-white/10 shadow-lg transition-all">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div class="flex justify-between items-center h-20">
-                <!-- Logo -->
-                <div class="flex items-center gap-3">
-                    <img src="${pageContext.request.contextPath}/assets/img/logo/Logo_Inmobix.png" alt="Inmobix Logo" class="h-10 w-auto object-contain brightness-0 invert">
-                    <span class="text-2xl font-bold text-white tracking-tight">Inmobix</span>
-                </div>
-                
-                <!-- Desktop Nav -->
-                <nav class="hidden md:flex items-center gap-8">
-                    <a href="${pageContext.request.contextPath}/index.jsp" class="text-sm font-semibold text-white/80 hover:text-brandHover transition-colors">Inicio</a>
-                    <a href="${pageContext.request.contextPath}/propiedades" class="text-sm font-semibold text-white/80 hover:text-brandHover transition-colors">Catálogo</a>
-                    <a href="${pageContext.request.contextPath}/propiedades?accion=nuevo" class="text-sm font-semibold text-white/80 hover:text-brandHover transition-colors">Publicar</a>
-                    <a href="${pageContext.request.contextPath}/contacto" class="text-sm font-semibold text-white/80 hover:text-brandHover transition-colors">Contacto</a>
-                </nav>
-
-                <!-- Actions -->
-                <div class="hidden md:flex items-center gap-4">
-                    <c:choose>
-                        <c:when test="${not empty sessionScope.usuarioLogueado}">
-                            <span class="text-sm font-semibold text-white/80">Hola, ${sessionScope.usuarioLogueado.nombres}</span>
-                            <c:if test="${sessionScope.usuarioLogueado.idRol == 3 || sessionScope.usuarioLogueado.idRol == 4 || sessionScope.usuarioLogueado.idRol == 5}">
-                                <a href="${pageContext.request.contextPath}/panel" class="text-sm font-semibold text-brandHover hover:text-white transition-colors">Mi Panel</a>
-                            </c:if>
-                            <a href="${pageContext.request.contextPath}/usuario?accion=logout" class="bg-brandBtn hover:bg-brandHover text-white px-5 py-2.5 rounded-full text-sm font-semibold shadow-md shadow-slate-800/20 transition-all hover:-translate-y-0.5">Cerrar Sesión</a>
-                        </c:when>
-                        <c:otherwise>
-                            <a href="${pageContext.request.contextPath}/usuario?accion=login" class="text-sm font-semibold text-white/80 hover:text-brandHover transition-colors">Iniciar sesión</a>
-                            <a href="${pageContext.request.contextPath}/usuario?accion=registro" class="bg-brandBtn hover:bg-brandHover text-white px-5 py-2.5 rounded-full text-sm font-semibold shadow-md shadow-brandBtn/20 transition-all hover:-translate-y-0.5">Regístrate</a>
-                        </c:otherwise>
-                    </c:choose>
-                </div>
-            </div>
-        </div>
-    </header>
+        <c:set var="activePage" value="panel" scope="request" />
+    <jsp:include page="/WEB-INF/views/layout/header.jsp" />
 
     <main class="flex-grow pt-20">
         <!-- Banner and Profile Info -->
@@ -120,7 +86,7 @@
                                 <div class="relative h-56 bg-gradient-to-br from-slate-200 to-slate-300 overflow-hidden">
                                     <c:choose>
                                         <c:when test="${not empty prop.fotoPrincipal}">
-                                            <img src="${pageContext.request.contextPath}/${prop.fotoPrincipal}" alt="${prop.titulo}"
+                                            <img src="${prop.getFotoPrincipalUrl(pageContext.request.contextPath)}" alt="${prop.titulo}"
                                                 class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500">
                                         </c:when>
                                         <c:otherwise>

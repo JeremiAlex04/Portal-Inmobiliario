@@ -22,7 +22,7 @@ public class ContactoServlet extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        request.getRequestDispatcher("/WEB-INF/views/contacto.jsp").forward(request, response);
+        request.getRequestDispatcher("/WEB-INF/views/public/contacto.jsp").forward(request, response);
     }
 
     @Override
@@ -45,7 +45,7 @@ public class ContactoServlet extends HttpServlet {
             request.setAttribute("msgType", "error");
         }
 
-        request.getRequestDispatcher("/WEB-INF/views/contacto.jsp")
+        request.getRequestDispatcher("/WEB-INF/views/public/contacto.jsp")
                .forward(request, response);
     }
 }

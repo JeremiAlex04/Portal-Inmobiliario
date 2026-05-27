@@ -23,10 +23,8 @@
     </script>
         </head>
 <body class="bg-brandBg text-brandText min-h-screen font-sans">
-<header class="text-white fixed w-full top-0 z-50 bg-black/90 backdrop-blur-md backdrop-blur-xl border-b shadow-lg"><div class="max-w-7xl mx-auto px-4 flex justify-between items-center h-16">
-<a href="${pageContext.request.contextPath}/index.jsp" class="flex items-center gap-2"><img src="${pageContext.request.contextPath}/assets/img/logo/Logo_Inmobix.png" class="h-8"><span class="text-xl font-bold">Inmobix</span></a>
-<div class="flex gap-4 items-center"><a href="${pageContext.request.contextPath}/panel" class="text-sm font-bold text-brandHover">Mi Panel</a><a href="${pageContext.request.contextPath}/pagos?accion=planes" class="text-sm font-semibold text-white/80">Ver Planes</a></div>
-</div></header>
+    <c:set var="activePage" value="historial_pagos" scope="request" />
+    <jsp:include page="/WEB-INF/views/layout/header.jsp" />
 <main class="pt-24 pb-16 px-4"><div class="max-w-4xl mx-auto">
 <c:if test="${param.pagoExitoso == 'true'}"><div class="mb-6 bg-emerald-50 border-l-4 border-emerald-500 p-4 rounded-r-lg flex items-center gap-2"><svg class="w-5 h-5 text-emerald-600 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7"></path></svg><p class="text-emerald-800 font-bold">Pago registrado exitosamente. Código de operación generado. Pendiente de aprobación.</p></div></c:if>
 <h1 class="text-3xl font-bold mb-8">Historial de Pagos</h1>

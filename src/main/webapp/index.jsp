@@ -6,11 +6,15 @@
 <%
     try {
         PropiedadFacade facade = new PropiedadFacade();
-        List<PropiedadDTO> destacadas = facade.listarPropiedades(0, 3);
+        List<PropiedadDTO> destacadas = facade.obtenerPropiedadesDestacadas(3);
         request.setAttribute("destacadas", destacadas);
+        request.setAttribute("listaDistritos", facade.obtenerDistritos());
+        request.setAttribute("listaTipos", facade.obtenerTiposInmueble());
     } catch (Exception e) {
         e.printStackTrace();
         request.setAttribute("destacadas", new java.util.ArrayList<PropiedadDTO>());
+        request.setAttribute("listaDistritos", new java.util.ArrayList());
+        request.setAttribute("listaTipos", new java.util.ArrayList());
     }
 %>
 <!DOCTYPE html>
@@ -22,6 +26,7 @@
         <link rel="icon" type="image/png" href="${pageContext.request.contextPath}/assets/img/logo/Logo_Inmobix.png">
         <title>Inmobix - Portal Inmobiliario</title>
         <link rel="stylesheet" href="${pageContext.request.contextPath}/assets/css/styles.css">
+        <link rel="stylesheet" href="${pageContext.request.contextPath}/assets/css/estilosadic.css">
             <script src="https://cdn.tailwindcss.com"></script>
     <script>
         tailwind.config = {
@@ -41,106 +46,16 @@
     </script>
         
         <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400..900;1,400..900&family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
-        <style>
-            .font-title {
-                font-family: 'Playfair Display', serif;
-            }
-            .font-body {
-                font-family: 'Inter', sans-serif;
-            }
-            
-            /* EMOJI CLEANUP & ANIMATIONS */
-            .reveal {
-                opacity: 0;
-                transform: translateY(40px);
-                transition: opacity 1s cubic-bezier(0.215, 0.61, 0.355, 1), transform 1s cubic-bezier(0.215, 0.61, 0.355, 1);
-            }
-            
-            .reveal.active {
-                opacity: 1;
-                transform: translateY(0);
-            }
-            
-            .reveal-stagger > * {
-                opacity: 0;
-                transform: translateY(30px);
-                transition: opacity 0.8s cubic-bezier(0.215, 0.61, 0.355, 1), transform 0.8s cubic-bezier(0.215, 0.61, 0.355, 1);
-            }
-            
-            .reveal-stagger.active > * {
-                opacity: 1;
-                transform: translateY(0);
-            }
-            
-            /* Staggering Delays */
-            .reveal-stagger.active > *:nth-child(1) { transition-delay: 100ms; }
-            .reveal-stagger.active > *:nth-child(2) { transition-delay: 250ms; }
-            .reveal-stagger.active > *:nth-child(3) { transition-delay: 400ms; }
-            
-            /* Typing Cursor Blink */
-            @keyframes blink {
-                50% { border-color: transparent; }
-            }
-            .typing-cursor {
-                border-right: 2px solid #FFFFFF;
-                animation: blink 0.75s step-end infinite;
-                white-space: nowrap;
-            }
-            .typing-cursor::before {
-                content: '\200B';
-            }
-        </style>
+
+
         <script src="${pageContext.request.contextPath}/assets/js/main.js" defer></script>
     </head>
 
     <body class="bg-brandBg text-brandText flex flex-col min-h-screen font-body">
 
         <!-- Navbar Premium con Glassmorphism -->
-        <header
-            class="text-white fixed w-full top-0 z-50 bg-black/90 backdrop-blur-md border-b border-white/10 shadow-lg transition-all">
-            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-                <div class="flex justify-between items-center h-20">
-                    <!-- Logo -->
-                    <div class="flex items-center gap-3">
-                        <img src="${pageContext.request.contextPath}/assets/img/logo/Logo_Inmobix.png"
-                            alt="Inmobix Logo" class="h-10 w-auto object-contain brightness-0 invert">
-                        <span
-                            class="text-2xl font-bold text-white tracking-tight">Inmobix</span>
-                    </div>
-
-                    <!-- Desktop Nav -->
-                    <nav class="hidden md:flex items-center gap-8">
-                        <a href="${pageContext.request.contextPath}/index.jsp"
-                            class="text-sm font-semibold text-brandHover transition-colors">Inicio</a>
-                        <a href="${pageContext.request.contextPath}/propiedades"
-                            class="text-sm font-semibold text-white/80 hover:text-brandHover transition-colors">Catálogo</a>
-                        <a href="${pageContext.request.contextPath}/pagos?accion=planes"
-                            class="text-sm font-semibold text-white/80 hover:text-brandHover transition-colors">Planes</a>
-                        <a href="${pageContext.request.contextPath}/propiedades?accion=nuevo"
-                            class="text-sm font-semibold text-white/80 hover:text-brandHover transition-colors">Publicar</a>
-                        <a href="${pageContext.request.contextPath}/contacto"
-                            class="text-sm font-semibold text-white/80 hover:text-brandHover transition-colors">Contacto</a>
-                    </nav>
-
-                    <!-- Actions -->
-                    <div class="hidden md:flex items-center gap-4">
-                        <c:choose>
-                            <c:when test="${not empty sessionScope.usuarioLogueado}">
-                                <span class="text-sm font-semibold text-white/90">Hola, ${sessionScope.usuarioLogueado.nombres}</span>
-                                <c:if test="${sessionScope.usuarioLogueado.idRol == 3 || sessionScope.usuarioLogueado.idRol == 4 || sessionScope.usuarioLogueado.idRol == 5}">
-                                    <a href="${pageContext.request.contextPath}/panel" class="text-sm font-semibold text-brandHover hover:text-white transition-colors">Mi Panel</a>
-                                </c:if>
-                                <a href="${pageContext.request.contextPath}/usuario?accion=logout" class="bg-brandBtn hover:bg-brandHover text-white px-5 py-2.5 rounded-full text-sm font-semibold shadow-md shadow-brandBtn/20 transition-all hover:-translate-y-0.5">Cerrar Sesión</a>
-                            </c:when>
-                            <c:otherwise>
-                                <a href="${pageContext.request.contextPath}/usuario?accion=login" class="text-sm font-semibold text-white/80 hover:text-brandHover transition-colors">Iniciar sesión</a>
-                                <a href="${pageContext.request.contextPath}/usuario?accion=registro" class="bg-brandBtn hover:bg-brandHover text-white px-5 py-2.5 rounded-full text-sm font-semibold shadow-md shadow-brandBtn/20 transition-all hover:-translate-y-0.5">Regístrate</a>
-                            </c:otherwise>
-                        </c:choose>
-                    </div>
-                </div>
-            </div>
-        </header>
+            <c:set var="activePage" value="inicio" scope="request" />
+    <jsp:include page="/WEB-INF/views/layout/header.jsp" />
 
         <!-- Hero Section -->
         <main class="flex-grow pt-20">
@@ -154,26 +69,69 @@
                     </div>
                 </div>
 
-                <div
-                    class="relative z-10 w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col md:w-2/3 lg:w-1/2 items-start text-left">
-                    <span
-                        class="px-4 py-1.5 rounded-full bg-white/10 border border-white/20 text-white text-xs font-semibold tracking-wide mb-6 backdrop-blur-sm">Encuentra tu próximo hogar</span>
-                    <h1
-                        class="font-title text-3xl sm:text-4xl md:text-6xl lg:text-7xl font-light text-white leading-tight mb-6 tracking-tight">
-                        El lugar perfecto <br /> <span id="typed-text" class="typing-cursor italic text-zinc-300"></span>
-                    </h1>
-                    <p class="text-lg md:text-xl text-slate-300 mb-10 max-w-lg leading-relaxed">
-                        Descubre propiedades exclusivas en las mejores zonas del Perú. Comprar, alquilar o vender nunca fue tan fácil y seguro.
-                    </p>
-                    <div class="flex flex-wrap items-center gap-4">
-                        <a href="${pageContext.request.contextPath}/propiedades"
-                            class="bg-brandBtn hover:bg-brandHover text-white px-8 py-4 rounded-full font-bold text-lg shadow-xl transition-all hover:-translate-y-1">
-                            Explorar Catálogo
-                        </a>
-                        <a href="${pageContext.request.contextPath}/propiedades?accion=nuevo"
-                            class="bg-white/10 hover:bg-white/20 backdrop-blur-md border border-white/20 text-white px-8 py-4 rounded-full font-bold text-lg transition-all hover:-translate-y-1">
-                            Publicar Inmueble
-                        </a>
+                <div class="relative z-10 w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col items-start text-left gap-10">
+                    <div class="max-w-2xl">
+                        <span class="px-4 py-1.5 rounded-full bg-white/10 border border-white/20 text-white text-xs font-semibold tracking-wide mb-6 backdrop-blur-sm inline-block">Encuentra tu próximo hogar</span>
+                        <h1 class="font-title text-3xl sm:text-4xl md:text-6xl lg:text-7xl font-light text-white leading-tight mb-6 tracking-tight">
+                            El lugar perfecto <br /> <span id="typed-text" class="typing-cursor italic text-zinc-300"></span>
+                        </h1>
+                        <p class="text-lg md:text-xl text-slate-300 max-w-lg leading-relaxed">
+                            Descubre propiedades exclusivas en las mejores zonas del Perú. Comprar, alquilar o vender nunca fue tan fácil y seguro.
+                        </p>
+                    </div>
+
+                    <!-- Buscador Inteligente Premium -->
+                    <div class="w-full max-w-4xl bg-black/45 backdrop-blur-md border border-white/15 rounded-3xl p-6 shadow-2xl transition-all hover:border-white/25">
+                        <form action="${pageContext.request.contextPath}/propiedades" method="get" class="flex flex-col gap-4">
+                            <!-- Pestañas Compra / Alquiler -->
+                            <div class="flex items-center gap-2 border-b border-white/10 pb-4">
+                                <input type="hidden" name="operacion" id="search-operacion" value="VENTA" />
+                                <button type="button" onclick="setSearchOperacion('VENTA')" id="btn-tab-venta" class="px-6 py-2 rounded-full text-xs font-bold bg-white text-black shadow-md transition-all duration-300 hover:scale-105">Comprar</button>
+                                <button type="button" onclick="setSearchOperacion('ALQUILER')" id="btn-tab-alquiler" class="px-6 py-2 rounded-full text-xs font-bold text-white/80 hover:text-white hover:bg-white/10 transition-all duration-300 hover:scale-105">Alquilar</button>
+                            </div>
+
+                            <!-- Columnas del Buscador -->
+                            <div class="grid grid-cols-1 md:grid-cols-12 gap-4 items-end">
+                                <!-- Ubicación / Distrito -->
+                                <div class="md:col-span-6 relative">
+                                    <label class="block text-[10px] font-black text-zinc-300 uppercase tracking-widest mb-1.5">¿Dónde deseas buscar?</label>
+                                    <div class="relative">
+                                        <div class="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-zinc-400">
+                                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"></path></svg>
+                                        </div>
+                                        <input type="text" name="q" id="search-keyword" autocomplete="off" placeholder="Escribe el distrito o provincia..." class="w-full bg-white/10 border border-white/10 text-white rounded-xl pl-10 pr-4 py-3.5 text-sm focus:outline-none focus:border-white/35 focus:bg-white/15 transition-all" />
+                                        <!-- Sugerencias Inteligentes -->
+                                        <div id="suggestions-box" class="hidden absolute left-0 right-0 top-full mt-2 bg-zinc-950/95 border border-white/15 rounded-2xl shadow-2xl overflow-hidden max-h-60 overflow-y-auto z-50 backdrop-blur-lg">
+                                            <!-- Cargado vía JS -->
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- Tipo de Propiedad -->
+                                <div class="md:col-span-4">
+                                    <label class="block text-[10px] font-black text-zinc-300 uppercase tracking-widest mb-1.5">Tipo de Inmueble</label>
+                                    <div class="relative">
+                                        <select name="tipo" class="w-full bg-white/10 border border-white/10 text-white rounded-xl px-4 py-3.5 text-sm focus:outline-none focus:border-white/35 transition-all appearance-none cursor-pointer">
+                                            <option value="" class="bg-zinc-900 text-white">Todos los tipos</option>
+                                            <c:forEach var="t" items="${listaTipos}">
+                                                <option value="${t.nombre}" class="bg-zinc-900 text-white">${t.nombre}</option>
+                                            </c:forEach>
+                                        </select>
+                                        <div class="absolute inset-y-0 right-0 pr-3.5 flex items-center pointer-events-none text-zinc-400">
+                                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- Botón Buscar -->
+                                <div class="md:col-span-2">
+                                    <button type="submit" class="w-full bg-white hover:bg-zinc-200 text-black font-black py-3.5 rounded-xl text-sm transition-all hover:scale-105 flex items-center justify-center gap-2 shadow-lg shadow-white/5">
+                                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg>
+                                        Buscar
+                                    </button>
+                                </div>
+                            </div>
+                        </form>
                     </div>
                 </div>
             </div>
@@ -198,7 +156,7 @@
                             <div class="relative h-64 overflow-hidden bg-slate-100">
                                 <c:choose>
                                     <c:when test="${not empty p.fotoPrincipal}">
-                                        <img src="${pageContext.request.contextPath}/${p.fotoPrincipal}" alt="${p.titulo}" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500">
+                                        <img src="${p.getFotoPrincipalUrl(pageContext.request.contextPath)}" alt="${p.titulo}" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500">
                                     </c:when>
                                     <c:otherwise>
                                         <div class="w-full h-full flex items-center justify-center text-slate-300">
@@ -412,8 +370,76 @@
                 </div>
             </div>
         </footer>
-        <!-- Script de Transiciones y Efectos de Lujo -->
-        
-    </body>
 
-    </html>
+        <!-- Script Autocomplete del Buscador Inteligente -->
+        <script>
+            // Exponer distritos de la base de datos a JS
+            const availableDistricts = [
+                <c:forEach var="d" items="${listaDistritos}" varStatus="status">
+                    "${d.nombre}"${not status.last ? ',' : ''}
+                </c:forEach>
+            ];
+
+            function setSearchOperacion(op) {
+                document.getElementById('search-operacion').value = op;
+                const btnVenta = document.getElementById('btn-tab-venta');
+                const btnAlquiler = document.getElementById('btn-tab-alquiler');
+                if (op === 'VENTA') {
+                    btnVenta.className = 'px-6 py-2 rounded-full text-xs font-bold bg-white text-black shadow-md transition-all duration-300 hover:scale-105';
+                    btnAlquiler.className = 'px-6 py-2 rounded-full text-xs font-bold text-white/80 hover:text-white hover:bg-white/10 transition-all duration-300 hover:scale-105';
+                } else {
+                    btnAlquiler.className = 'px-6 py-2 rounded-full text-xs font-bold bg-white text-black shadow-md transition-all duration-300 hover:scale-105';
+                    btnVenta.className = 'px-6 py-2 rounded-full text-xs font-bold text-white/80 hover:text-white hover:bg-white/10 transition-all duration-300 hover:scale-105';
+                }
+            }
+
+            document.addEventListener('DOMContentLoaded', () => {
+                const searchInput = document.getElementById('search-keyword');
+                const suggestionsBox = document.getElementById('suggestions-box');
+
+                if (!searchInput || !suggestionsBox) return;
+
+                searchInput.addEventListener('input', () => {
+                    const val = searchInput.value.toLowerCase().trim();
+                    if (!val || val.length < 2) {
+                        suggestionsBox.classList.add('hidden');
+                        return;
+                    }
+
+                    // Filtrar distritos que contengan la entrada
+                    const filtered = availableDistricts.filter(d => d.toLowerCase().includes(val)).slice(0, 5);
+
+                    if (filtered.length === 0) {
+                        suggestionsBox.classList.add('hidden');
+                        return;
+                    }
+
+                    suggestionsBox.innerHTML = '';
+                    filtered.forEach(d => {
+                        const div = document.createElement('div');
+                        div.className = 'px-4 py-3 hover:bg-white/10 cursor-pointer text-sm border-b border-white/5 last:border-b-0 transition-colors text-left text-white';
+                        
+                        // Separar distrito de provincia
+                        const cleanName = d.split(' (')[0];
+                        div.innerHTML = `<span class="font-bold">${cleanName}</span> <span class="text-zinc-400 text-xs">${d.includes('(') ? '(' + d.split(' (')[1] : ''}</span>`;
+                        
+                        div.addEventListener('click', () => {
+                            searchInput.value = cleanName;
+                            suggestionsBox.classList.add('hidden');
+                        });
+                        suggestionsBox.appendChild(div);
+                    });
+
+                    suggestionsBox.classList.remove('hidden');
+                });
+
+                // Cerrar sugerencias si se hace clic fuera
+                document.addEventListener('click', (e) => {
+                    if (!searchInput.contains(e.target) && !suggestionsBox.contains(e.target)) {
+                        suggestionsBox.classList.add('hidden');
+                    }
+                });
+            });
+        </script>
+    </body>
+</html>

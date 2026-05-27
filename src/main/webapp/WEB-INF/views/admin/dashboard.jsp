@@ -30,29 +30,9 @@
 <body class="bg-brandBg text-brandText flex flex-col min-h-screen font-sans">
     
     <!-- Navbar -->
-    <header class="text-white fixed w-full top-0 z-50 bg-black/90 backdrop-blur-md border-b border-white/10 shadow-lg transition-all">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div class="flex justify-between items-center h-20">
-                <div class="flex items-center gap-3">
-                    <img src="${pageContext.request.contextPath}/assets/img/logo/Logo_Inmobix.png" alt="Inmobix Logo" class="h-10 w-auto object-contain brightness-0 invert">
-                    <span class="text-2xl font-bold text-white tracking-tight">Inmobix Admin</span>
-                </div>
-                
-                <nav class="hidden md:flex items-center gap-8">
-                    <a href="${pageContext.request.contextPath}/admin?accion=dashboard" class="text-sm font-bold text-white border-b-2 border-white py-1 transition-colors">Dashboard</a>
-                    <a href="${pageContext.request.contextPath}/admin?accion=usuarios" class="text-sm font-semibold text-slate-300 hover:text-white transition-colors">Usuarios</a>
-                    <a href="${pageContext.request.contextPath}/admin?accion=propiedades" class="text-sm font-semibold text-slate-300 hover:text-white transition-colors">Propiedades</a>
-                    <a href="${pageContext.request.contextPath}/admin?accion=ubicaciones" class="text-sm font-semibold text-slate-300 hover:text-white transition-colors">Ubicaciones</a>
-                    <a href="${pageContext.request.contextPath}/admin?accion=auditoria" class="text-sm font-semibold text-slate-300 hover:text-white transition-colors">Auditoría</a>
-                </nav>
-
-                <div class="hidden md:flex items-center gap-4">
-                    <span class="text-sm font-semibold text-slate-300">Admin: ${sessionScope.usuarioLogueado.nombres}</span>
-                    <a href="${pageContext.request.contextPath}/usuario?accion=logout" class="bg-red-600 hover:bg-red-700 text-white px-5 py-2.5 rounded-full text-sm font-semibold shadow-md shadow-red-600/20 transition-all hover:-translate-y-0.5">Cerrar Sesión</a>
-                </div>
-            </div>
-        </div>
-    </header>
+        <c:set var="activePage" value="dashboard" scope="request" />
+    <c:set var="isAdminArea" value="true" scope="request" />
+    <jsp:include page="/WEB-INF/views/layout/header.jsp" />
 
     <main class="flex-grow pt-28 pb-16 px-4">
         <div class="max-w-7xl mx-auto">

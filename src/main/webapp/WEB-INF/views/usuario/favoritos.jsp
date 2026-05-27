@@ -31,24 +31,8 @@
 <body class="bg-brandBg text-brandText flex flex-col min-h-screen font-sans">
     
     <!-- Navbar -->
-    <header class="text-white fixed w-full top-0 z-50 bg-black/90 backdrop-blur-md backdrop-blur-xl border-b border-white/10 shadow-lg">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div class="flex justify-between items-center h-20">
-                <a href="${pageContext.request.contextPath}/index.jsp" class="flex items-center gap-3">
-                    <img src="${pageContext.request.contextPath}/assets/img/logo/Logo_Inmobix.png" alt="Logo" class="h-10 w-auto object-contain brightness-0 invert">
-                    <span class="text-2xl font-bold text-slate-900">Inmobix</span>
-                </a>
-                <nav class="hidden md:flex items-center gap-6">
-                    <a href="${pageContext.request.contextPath}/propiedades" class="text-sm font-semibold text-white/80 hover:text-brandHover">Propiedades</a>
-                    <a href="${pageContext.request.contextPath}/favorito?accion=listar" class="text-sm font-bold text-red-500 border-b-2 border-red-500 py-1 inline-flex items-center gap-1">
-                        <svg class="w-4 h-4 text-red-500 fill-current" viewBox="0 0 24 24"><path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"></path></svg>
-                        Mis Favoritos
-                    </a>
-                    <a href="${pageContext.request.contextPath}/usuario?accion=logout" class="bg-red-600 hover:bg-red-700 text-white px-5 py-2.5 rounded-full text-sm font-semibold shadow-md transition-all">Cerrar Sesión</a>
-                </nav>
-            </div>
-        </div>
-    </header>
+        <c:set var="activePage" value="favoritos" scope="request" />
+    <jsp:include page="/WEB-INF/views/layout/header.jsp" />
 
     <main class="flex-grow pt-28 pb-16 px-4">
         <div class="max-w-7xl mx-auto">
@@ -76,7 +60,7 @@
                         <div class="relative h-48 bg-gradient-to-br from-slate-200 to-slate-300 overflow-hidden">
                             <c:choose>
                                 <c:when test="${not empty p.fotoPrincipal}">
-                                    <img src="${pageContext.request.contextPath}/${p.fotoPrincipal}" alt="${p.titulo}" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500">
+                                    <img src="${p.getFotoPrincipalUrl(pageContext.request.contextPath)}" alt="${p.titulo}" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500">
                                 </c:when>
                                 <c:otherwise>
                                      <div class="w-full h-full flex items-center justify-center text-slate-400">

@@ -81,7 +81,7 @@ public class AdminServlet extends HttpServlet {
                 // Últimas 5 propiedades publicadas
                 request.setAttribute("ultimasPropiedades", propiedadFacade.listarPropiedades(0, 5));
 
-                request.getRequestDispatcher("/WEB-INF/views/admin_dashboard.jsp").forward(request, response);
+                request.getRequestDispatcher("/WEB-INF/views/admin/dashboard.jsp").forward(request, response);
                 break;
 
             // ---- USUARIOS: Listado con búsqueda ----
@@ -96,7 +96,7 @@ public class AdminServlet extends HttpServlet {
                 } else {
                     request.setAttribute("listaUsuarios", usuarioFacade.listarUsuarios());
                 }
-                request.getRequestDispatcher("/WEB-INF/views/admin_usuarios.jsp").forward(request, response);
+                request.getRequestDispatcher("/WEB-INF/views/admin/usuarios.jsp").forward(request, response);
                 break;
 
             // ---- USUARIOS: Eliminar ----
@@ -157,7 +157,7 @@ public class AdminServlet extends HttpServlet {
                 } else {
                     request.setAttribute("listaPropiedades", propiedadFacade.listarPropiedades(0, 1000));
                 }
-                request.getRequestDispatcher("/WEB-INF/views/admin_propiedades.jsp").forward(request, response);
+                request.getRequestDispatcher("/WEB-INF/views/admin/propiedades.jsp").forward(request, response);
                 break;
 
             // ---- PROPIEDADES: Cambiar estado ----
@@ -199,7 +199,7 @@ public class AdminServlet extends HttpServlet {
                     request.setAttribute("listaPadres", ubicacionFacade.listarUbicaciones("PROVINCIA"));
                 }
 
-                request.getRequestDispatcher("/WEB-INF/views/admin_ubicaciones.jsp").forward(request, response);
+                request.getRequestDispatcher("/WEB-INF/views/admin/ubicaciones.jsp").forward(request, response);
                 break;
 
             // ---- UBICACIONES: Eliminar ----
@@ -213,7 +213,7 @@ public class AdminServlet extends HttpServlet {
             // ---- AUDITORIA: Panel de logs ----
             case "auditoria":
                 request.setAttribute("listaEventos", auditoriaFacade.listarEventos());
-                request.getRequestDispatcher("/WEB-INF/views/admin_auditoria.jsp").forward(request, response);
+                request.getRequestDispatcher("/WEB-INF/views/admin/auditoria.jsp").forward(request, response);
                 break;
 
             default:

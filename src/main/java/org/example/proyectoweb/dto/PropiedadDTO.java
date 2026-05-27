@@ -48,6 +48,7 @@ public class PropiedadDTO {
     private String tour360Url;
     private String fechaPublicacion;
     private String fechaExpiracion;
+    private boolean destacada;
 
     public PropiedadDTO() {
     }
@@ -313,6 +314,22 @@ public class PropiedadDTO {
     public String getFotoPrincipal() { return fotoPrincipal; }
     public void setFotoPrincipal(String fotoPrincipal) { this.fotoPrincipal = fotoPrincipal; }
 
+    public String getFotoPrincipalUrl(String contextPath) {
+        if (fotoPrincipal == null || fotoPrincipal.isEmpty()) {
+            return null;
+        }
+        if (fotoPrincipal.startsWith("http://") || fotoPrincipal.startsWith("https://")) {
+            return fotoPrincipal;
+        }
+        String path = contextPath;
+        if (path == null) path = "";
+        String file = fotoPrincipal;
+        if (file.startsWith("/")) {
+            file = file.substring(1);
+        }
+        return path + "/" + file;
+    }
+
     public int getNumeroVistas() { return numeroVistas; }
     public void setNumeroVistas(int numeroVistas) { this.numeroVistas = numeroVistas; }
 
@@ -337,4 +354,7 @@ public class PropiedadDTO {
 
     public String getFechaExpiracion() { return fechaExpiracion; }
     public void setFechaExpiracion(String fechaExpiracion) { this.fechaExpiracion = fechaExpiracion; }
+
+    public boolean isDestacada() { return destacada; }
+    public void setDestacada(boolean destacada) { this.destacada = destacada; }
 }

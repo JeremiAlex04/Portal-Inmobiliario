@@ -52,7 +52,7 @@ public class FavoritoServlet extends HttpServlet {
             case "listar":
             default:
                 request.setAttribute("listaFavoritos", favoritoFacade.listarFavoritos(usuario.getIdUsuario()));
-                request.getRequestDispatcher("/WEB-INF/views/mis_favoritos.jsp").forward(request, response);
+                request.getRequestDispatcher("/WEB-INF/views/usuario/favoritos.jsp").forward(request, response);
                 break;
         }
     }

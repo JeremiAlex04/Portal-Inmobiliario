@@ -35,58 +35,8 @@
         <body class="bg-brandBg text-brandText flex flex-col min-h-screen font-sans" data-context-path="${pageContext.request.contextPath}">
 
             <!-- Navbar Premium con Glassmorphism -->
-            <header
-                class="text-white fixed w-full top-0 z-50 bg-black/90 backdrop-blur-md backdrop-blur-md border-b border-white/10 shadow-lg transition-all">
-                <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-                    <div class="flex justify-between items-center h-20">
-                        <!-- Logo -->
-                        <div class="flex items-center gap-3">
-                            <img src="${pageContext.request.contextPath}/assets/img/logo/Logo_Inmobix.png"
-                                alt="Inmobix Logo" class="h-10 w-auto object-contain brightness-0 invert">
-                            <span
-                                class="text-2xl font-bold text-white tracking-tight">Inmobix</span>
-                        </div>
-
-                        <!-- Desktop Nav -->
-                        <nav class="hidden md:flex items-center gap-8">
-                            <a href="${pageContext.request.contextPath}/index.jsp"
-                                class="text-sm font-semibold text-white/80 hover:text-brandHover transition-colors">Inicio</a>
-                            <a href="${pageContext.request.contextPath}/propiedades"
-                                class="text-sm font-semibold text-brandHover transition-colors">Catálogo</a>
-                            <a href="${pageContext.request.contextPath}/pagos?accion=planes"
-                                class="text-sm font-semibold text-white/80 hover:text-brandHover transition-colors">Planes</a>
-                            <a href="${pageContext.request.contextPath}/propiedades?accion=nuevo"
-                                class="text-sm font-semibold text-white/80 hover:text-brandHover transition-colors">Publicar</a>
-                            <c:if test="${not empty sessionScope.usuarioLogueado}">
-                                 <a href="${pageContext.request.contextPath}/favorito?accion=listar"
-                                     class="text-sm font-semibold text-red-500 hover:text-red-600 transition-colors inline-flex items-center gap-1">
-                                     <svg class="w-4 h-4 text-red-500 fill-current" viewBox="0 0 24 24"><path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"></path></svg>
-                                     Favoritos
-                                 </a>
-                            </c:if>
-                            <a href="${pageContext.request.contextPath}/contacto"
-                                class="text-sm font-semibold text-white/80 hover:text-brandHover transition-colors">Contacto</a>
-                        </nav>
-
-                        <!-- Actions -->
-                        <div class="hidden md:flex items-center gap-4">
-                            <c:choose>
-                                <c:when test="${not empty sessionScope.usuarioLogueado}">
-                                    <span class="text-sm font-semibold text-white/80">Hola, ${sessionScope.usuarioLogueado.nombres}</span>
-                                    <c:if test="${sessionScope.usuarioLogueado.idRol == 3 || sessionScope.usuarioLogueado.idRol == 4 || sessionScope.usuarioLogueado.idRol == 5}">
-                                        <a href="${pageContext.request.contextPath}/panel" class="text-sm font-semibold text-brandHover hover:text-white transition-colors">Mi Panel</a>
-                                    </c:if>
-                                    <a href="${pageContext.request.contextPath}/usuario?accion=logout" class="bg-brandBtn hover:bg-brandHover text-white px-5 py-2.5 rounded-full text-sm font-semibold shadow-md shadow-slate-800/20 transition-all hover:-translate-y-0.5">Cerrar Sesión</a>
-                                </c:when>
-                                <c:otherwise>
-                                    <a href="${pageContext.request.contextPath}/usuario?accion=login" class="text-sm font-semibold text-white/80 hover:text-brandHover transition-colors">Iniciar sesión</a>
-                                    <a href="${pageContext.request.contextPath}/usuario?accion=registro" class="bg-brandBtn hover:bg-brandHover text-white px-5 py-2.5 rounded-full text-sm font-semibold shadow-md shadow-brandBtn/20 transition-all hover:-translate-y-0.5">Regístrate</a>
-                                </c:otherwise>
-                            </c:choose>
-                        </div>
-                    </div>
-                </div>
-            </header>
+                <c:set var="activePage" value="catalogo" scope="request" />
+    <jsp:include page="/WEB-INF/views/layout/header.jsp" />
 
             <main class="flex-grow pt-28 pb-12">
                 <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -166,12 +116,31 @@
                         </div>
                     </form>
 
-                    <!-- Contador de resultados -->
-                    <c:if test="${totalResultados != null}">
-                        <div class="mb-6 text-sm font-semibold text-slate-500">
-                            Se encontraron <span class="text-slate-900 font-black">${totalResultados}</span> propiedades
+                    <!-- Contador de resultados y Selector de Vista -->
+                    <div class="flex justify-between items-center mb-6">
+                        <c:if test="${totalResultados != null}">
+                            <div class="text-sm font-semibold text-slate-500">
+                                Se encontraron <span class="text-slate-900 font-black">${totalResultados}</span> propiedades
+                            </div>
+                        </c:if>
+                        <c:if test="${totalResultados == null}">
+                            <div></div>
+                        </c:if>
+                        
+                        <!-- Controladores de vista Cuadrícula/Lista -->
+                        <div class="flex items-center bg-slate-100 p-1 rounded-xl border border-slate-200 gap-1">
+                            <button type="button" id="btn-view-grid" class="p-2 rounded-lg text-black bg-white shadow-sm transition-all" title="Vista Cuadrícula (Vertical)">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z" />
+                                </svg>
+                            </button>
+                            <button type="button" id="btn-view-list" class="p-2 rounded-lg text-slate-600 hover:text-black transition-all" title="Vista Lista (Horizontal)">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
+                                </svg>
+                            </button>
                         </div>
-                    </c:if>
+                    </div>
 
                     <c:choose>
                         <c:when test="${empty listaPropiedades}">
@@ -195,16 +164,16 @@
                             </div>
                         </c:when>
                         <c:otherwise>
-                            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                            <div id="propiedades-container" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
                                 <c:forEach var="propiedad" items="${listaPropiedades}">
                                     <!-- Card -->
                                     <div
-                                        class="group bg-white rounded-2xl shadow-sm hover:shadow-xl border border-slate-200 overflow-hidden transition-all duration-300 hover:-translate-y-1 flex flex-col">
+                                        class="propiedad-card group bg-white rounded-2xl shadow-sm hover:shadow-xl border border-slate-200 overflow-hidden transition-all duration-300 hover:-translate-y-1 flex flex-col">
                                         <!-- Imagen con foto principal Sprint 2 -->
-                                        <div class="relative h-56 bg-gradient-to-br from-slate-200 to-slate-300 overflow-hidden">
+                                        <div class="propiedad-img-container relative h-56 bg-gradient-to-br from-slate-200 to-slate-300 overflow-hidden">
                                             <c:choose>
                                                 <c:when test="${not empty propiedad.fotoPrincipal}">
-                                                    <img src="${pageContext.request.contextPath}/${propiedad.fotoPrincipal}" alt="${propiedad.titulo}"
+                                                    <img src="${propiedad.getFotoPrincipalUrl(pageContext.request.contextPath)}" alt="${propiedad.titulo}"
                                                         class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500">
                                                 </c:when>
                                                  <c:otherwise>
@@ -232,7 +201,7 @@
                                                  </c:choose>
                                              </c:if>
                                         </div>
-                                        <div class="p-6 flex-grow flex flex-col">
+                                        <div class="propiedad-body p-6 flex-grow flex flex-col">
                                             <h3 class="text-xl font-bold text-slate-900 line-clamp-1 mb-2">
                                                 <c:out value="${propiedad.titulo}" />
                                             </h3>

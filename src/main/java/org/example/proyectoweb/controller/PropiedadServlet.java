@@ -117,11 +117,11 @@ public class PropiedadServlet extends HttpServlet {
                     UsuarioDTO usuario = (UsuarioDTO) request.getSession().getAttribute("usuarioLogueado");
                     if (usuario == null) {
                         request.setAttribute("error", "Por favor, inicia sesión para publicar una propiedad.");
-                        request.getRequestDispatcher("/WEB-INF/views/login.jsp").forward(request, response);
+                        request.getRequestDispatcher("/WEB-INF/views/public/login.jsp").forward(request, response);
                         return;
                     }
                     cargarCatalogos(request);
-                    request.getRequestDispatcher("/WEB-INF/views/registro.jsp").forward(request, response);
+                    request.getRequestDispatcher("/WEB-INF/views/agente/registro.jsp").forward(request, response);
                     break;
                 }
 
@@ -144,7 +144,7 @@ public class PropiedadServlet extends HttpServlet {
                         List<PropiedadFotoDTO> galeria = galeriaDAO.obtenerFotos(idVer);
                         request.setAttribute("galeriaFotos", galeria);
                         request.setAttribute("propiedad", pVer);
-                        request.getRequestDispatcher("/WEB-INF/views/detalle_propiedad.jsp").forward(request, response);
+                        request.getRequestDispatcher("/WEB-INF/views/public/detalle_propiedad.jsp").forward(request, response);
                     } else {
                         response.sendError(HttpServletResponse.SC_NOT_FOUND, "Propiedad no encontrada");
                     }
@@ -154,7 +154,7 @@ public class PropiedadServlet extends HttpServlet {
                     UsuarioDTO usuario = (UsuarioDTO) request.getSession().getAttribute("usuarioLogueado");
                     if (usuario == null) {
                         request.setAttribute("error", "Por favor, inicia sesión para editar una propiedad.");
-                        request.getRequestDispatcher("/WEB-INF/views/login.jsp").forward(request, response);
+                        request.getRequestDispatcher("/WEB-INF/views/public/login.jsp").forward(request, response);
                         return;
                     }
                     int idEditar = Integer.parseInt(request.getParameter("id"));
@@ -175,7 +175,7 @@ public class PropiedadServlet extends HttpServlet {
                     // Sprint 3: Cargar galería para edición
                     request.setAttribute("galeriaFotos", galeriaDAO.obtenerFotos(idEditar));
                     cargarCatalogos(request);
-                    request.getRequestDispatcher("/WEB-INF/views/registro.jsp").forward(request, response);
+                    request.getRequestDispatcher("/WEB-INF/views/agente/registro.jsp").forward(request, response);
                     break;
                 }
 
@@ -183,7 +183,7 @@ public class PropiedadServlet extends HttpServlet {
                     UsuarioDTO sessionUser = (UsuarioDTO) request.getSession().getAttribute("usuarioLogueado");
                     if (sessionUser == null) {
                         request.setAttribute("error", "Por favor, inicia sesión para eliminar una propiedad.");
-                        request.getRequestDispatcher("/WEB-INF/views/login.jsp").forward(request, response);
+                        request.getRequestDispatcher("/WEB-INF/views/public/login.jsp").forward(request, response);
                         return;
                     }
                     int idEliminar = Integer.parseInt(request.getParameter("id"));
@@ -268,7 +268,7 @@ public class PropiedadServlet extends HttpServlet {
                     request.setAttribute("currentPage", page);
                     request.setAttribute("totalPages", totalPages);
 
-                    request.getRequestDispatcher("/WEB-INF/views/propiedades.jsp").forward(request, response);
+                    request.getRequestDispatcher("/WEB-INF/views/public/propiedades.jsp").forward(request, response);
                     break;
             }
         } catch (Exception e) {
@@ -287,7 +287,7 @@ public class PropiedadServlet extends HttpServlet {
             UsuarioDTO usuario = (UsuarioDTO) request.getSession().getAttribute("usuarioLogueado");
             if (usuario == null) {
                 request.setAttribute("error", "Sesión inválida o expirada. Por favor, inicia sesión.");
-                request.getRequestDispatcher("/WEB-INF/views/login.jsp").forward(request, response);
+                request.getRequestDispatcher("/WEB-INF/views/public/login.jsp").forward(request, response);
                 return;
             }
             PropiedadDTO propiedad = new PropiedadDTO();
@@ -364,7 +364,7 @@ public class PropiedadServlet extends HttpServlet {
                 request.setAttribute("error", imgError.getMessage());
                 request.setAttribute("propiedad", propiedad);
                 cargarCatalogos(request);
-                request.getRequestDispatcher("/WEB-INF/views/registro.jsp").forward(request, response);
+                request.getRequestDispatcher("/WEB-INF/views/agente/registro.jsp").forward(request, response);
                 return;
             }
 
@@ -373,7 +373,7 @@ public class PropiedadServlet extends HttpServlet {
                 request.setAttribute("error", "Por políticas de negocio, el precio de Venta debe ser mayor a 10,000.");
                 request.setAttribute("propiedad", propiedad);
                 cargarCatalogos(request);
-                request.getRequestDispatcher("/WEB-INF/views/registro.jsp").forward(request, response);
+                request.getRequestDispatcher("/WEB-INF/views/agente/registro.jsp").forward(request, response);
                 return;
             }
 
@@ -402,7 +402,7 @@ public class PropiedadServlet extends HttpServlet {
                     request.setAttribute("error", "Límite de publicaciones alcanzado (" + limit + " activo/s). Por favor, actualiza tu plan en la sección Suscripciones.");
                     request.setAttribute("propiedad", propiedad);
                     cargarCatalogos(request);
-                    request.getRequestDispatcher("/WEB-INF/views/registro.jsp").forward(request, response);
+                    request.getRequestDispatcher("/WEB-INF/views/agente/registro.jsp").forward(request, response);
                     return;
                 }
                 propiedad.setIdUsuarioAgente(idAgente);
@@ -460,13 +460,13 @@ public class PropiedadServlet extends HttpServlet {
                 request.setAttribute("error", "No se pudo guardar la propiedad en la base de datos. Verifica los datos.");
                 request.setAttribute("propiedad", propiedad);
                 cargarCatalogos(request);
-                request.getRequestDispatcher("/WEB-INF/views/registro.jsp").forward(request, response);
+                request.getRequestDispatcher("/WEB-INF/views/agente/registro.jsp").forward(request, response);
             }
         } catch (Exception e) {
             e.printStackTrace();
             request.setAttribute("error", "Error de formato de datos: " + e.getMessage());
             cargarCatalogos(request);
-            request.getRequestDispatcher("/WEB-INF/views/registro.jsp").forward(request, response);
+            request.getRequestDispatcher("/WEB-INF/views/agente/registro.jsp").forward(request, response);
         }
     }
 }

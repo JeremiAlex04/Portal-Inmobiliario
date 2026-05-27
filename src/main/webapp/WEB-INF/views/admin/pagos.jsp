@@ -23,10 +23,9 @@
     </script>
         </head>
 <body class="bg-brandBg text-brandText min-h-screen font-sans">
-<header class="text-white fixed w-full top-0 z-50 bg-black/90 backdrop-blur-md backdrop-blur-xl border-b shadow-lg"><div class="max-w-7xl mx-auto px-4 flex justify-between items-center h-16">
-<a href="${pageContext.request.contextPath}/admin" class="flex items-center gap-2"><img src="${pageContext.request.contextPath}/assets/img/logo/Logo_Inmobix.png" class="h-8"><span class="text-xl font-bold">Inmobix Admin</span></a>
-<a href="${pageContext.request.contextPath}/admin" class="text-sm font-bold text-brandHover">← Dashboard</a>
-</div></header>
+    <c:set var="activePage" value="pagos" scope="request" />
+    <c:set var="isAdminArea" value="true" scope="request" />
+    <jsp:include page="/WEB-INF/views/layout/header.jsp" />
 <main class="pt-24 pb-16 px-4"><div class="max-w-6xl mx-auto">
 <h1 class="text-3xl font-bold mb-6">Gestión de Pagos</h1>
 <form action="${pageContext.request.contextPath}/pagos" method="get" class="bg-white rounded-xl shadow border p-4 mb-6 flex gap-3 items-end">

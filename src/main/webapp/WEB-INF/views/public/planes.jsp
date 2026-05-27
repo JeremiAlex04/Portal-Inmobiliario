@@ -28,19 +28,8 @@
         
 </head>
 <body class="bg-brandBg text-brandText min-h-screen font-sans">
-    <header class="text-white fixed w-full top-0 z-50 bg-black/90 backdrop-blur-md backdrop-blur-xl border-b border-white/10 shadow-lg">
-        <div class="max-w-7xl mx-auto px-4 flex justify-between items-center h-16">
-            <a href="${pageContext.request.contextPath}/index.jsp" class="flex items-center gap-2">
-                <img src="${pageContext.request.contextPath}/assets/img/logo/Logo_Inmobix.png" alt="Logo" class="h-8 brightness-0 invert">
-                <span class="text-xl font-bold text-white">Inmobix</span>
-            </a>
-            <div class="flex items-center gap-4">
-                <a href="${pageContext.request.contextPath}/propiedades" class="text-sm font-semibold text-white/80 hover:text-brandHover">Catálogo</a>
-                <a href="${pageContext.request.contextPath}/pagos?accion=historial" class="text-sm font-semibold text-brandHover">Mis Pagos</a>
-                <a href="${pageContext.request.contextPath}/usuario?accion=logout" class="bg-brandBtn hover:bg-brandHover text-white px-4 py-2 rounded-full text-sm font-bold">Salir</a>
-            </div>
-        </div>
-    </header>
+        <c:set var="activePage" value="planes" scope="request" />
+    <jsp:include page="/WEB-INF/views/layout/header.jsp" />
 
     <main class="pt-24 pb-16 px-4">
         <div class="max-w-5xl mx-auto text-center">

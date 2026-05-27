@@ -1,6 +1,6 @@
 -- ============================================================
 --  InmobiX - Portal Inmobiliario Perú
---  Base de Datos MySQL - Esquema Simplificado (Nivel Semi-Senior)
+--  Base de Datos MySQL
 --  Versión: 2.0
 -- ============================================================
 
@@ -205,18 +205,18 @@ CREATE TABLE propiedad (
 -- Datos de Prueba: 10 Propiedades de Catálogo
 INSERT INTO propiedad (
     id_usuario_agente, id_tipo_inmueble, id_operacion, id_distrito, partida_sunarp, titulo, descripcion, direccion, 
-    area_total_m2, area_techada_m2, num_dormitorios, num_banos, num_cocheras, anio_construccion, moneda_base, precio, bono_mi_vivienda, bono_verde, estado
+    area_total_m2, area_techada_m2, num_dormitorios, num_banos, num_cocheras, anio_construccion, moneda_base, precio, bono_mi_vivienda, bono_verde, foto_principal, estado
 ) VALUES 
-(1, 1, 1, 1, '11002233', 'Casa Moderna de Estreno cerca al Malecón', 'Hermosa casa de 2 pisos con jardín interno, amplia terraza y finos acabados en zona residencial tranquila, a 3 cuadras de los parques.', 'Av. Pardo 1234', 250.00, 200.00, 4, 4, 2, 2023, 'USD', 450000.00, 0, 0, 'ACTIVO'),
-(1, 2, 2, 2, '11223344', 'Departamento Amoblado Flat con vista panorámica', 'Lujoso departamento completamente amoblado en el piso 8. Cuenta con vista espectacular a la ciudad, gimnasio, piscina y seguridad 24/7.', 'Av. Javier Prado Oeste 789', 110.00, 110.00, 2, 2, 1, 2018, 'PEN', 3500.00, 0, 0, 'ACTIVO'),
-(1, 2, 1, 3, '11445566', 'Departamento Proyecto Ecológico y Familiar', 'Moderno departamento ideal para familias. Excelente iluminación natural, áreas comunes ecológicas y pet friendly. Califica a bonos del estado.', 'Jr. El Cortijo 456', 80.00, 80.00, 3, 2, 1, 2024, 'PEN', 280000.00, 1, 1, 'ACTIVO'),
-(3, 3, 1, 4, '22001100', 'Terreno Ideal para Proyecto Inmobiliario', 'Terreno plano de 500m2 con habilitación urbana completa. Zonificación RDM. Excelente ubicación para proyecto multifamiliar.', 'Av. La Molina 890', 500.00, 0.00, 0, 0, 0, 0, 'USD', 320000.00, 0, 0, 'ACTIVO'),
-(3, 1, 1, 6, '22112233', 'Casa Amplia con Piscina en San Borja', 'Elegante casa de 3 pisos con piscina, jardín, sala de cine y acabados de lujo. Ubicada en zona exclusiva con seguridad privada.', 'Av. San Borja Sur 567', 350.00, 280.00, 5, 5, 3, 2019, 'USD', 780000.00, 0, 0, 'ACTIVO'),
-(1, 2, 2, 7, '33001122', 'Departamento Bohemio en Barranco', 'Acogedor departamento con balcón y vista al mar. A pocas cuadras del Puente de los Suspiros. Ideal para artistas y creativos.', 'Jr. Cajamarca 234', 75.00, 75.00, 1, 1, 0, 2015, 'PEN', 2800.00, 0, 0, 'ACTIVO'),
-(3, 2, 1, 8, '33112233', 'Departamento Nuevo en Jesús María', 'Departamento de estreno en edificio con ascensor. Cocina equipada, closets empotrados y áreas comunes modernas.', 'Av. Brasil 1567', 90.00, 85.00, 3, 2, 1, 2025, 'PEN', 350000.00, 1, 0, 'ACTIVO'),
-(1, 4, 2, 5, '44001122', 'Local Comercial en el Centro de Lima', 'Amplio local comercial en esquina con alto tránsito peatonal. Ideal para restaurante, tienda o academia. Con licencia de funcionamiento.', 'Jr. de la Unión 800', 120.00, 120.00, 0, 2, 0, 1990, 'PEN', 8500.00, 0, 0, 'ACTIVO'),
-(3, 1, 1, 13, '55001122', 'Casa Económica cerca a la Playa', 'Casa de playa renovada con 3 dormitorios. Terraza con vista al mar, garaje para 2 autos. Perfecta para familia joven.', 'Av. Defensores del Morro 456', 180.00, 140.00, 3, 2, 2, 2010, 'USD', 195000.00, 0, 0, 'ACTIVO'),
-(1, 2, 1, 12, '55112233', 'Departamento en San Miguel con Club House', 'Departamento con vista a parque interior, club house con gimnasio, piscina y zona BBQ. Excelente para inversión o vivienda.', 'Av. La Marina 2345', 70.00, 65.00, 2, 1, 1, 2024, 'PEN', 245000.00, 1, 1, 'ACTIVO');
+(1, 1, 1, 1, '11002233', 'Casa Moderna de Estreno cerca al Malecón', 'Hermosa casa de 2 pisos con jardín interno, amplia terraza y finos acabados en zona residencial tranquila, a 3 cuadras de los parques.', 'Av. Pardo 1234', 250.00, 200.00, 4, 4, 2, 2023, 'USD', 450000.00, 0, 0, 'https://images.unsplash.com/photo-1600585154340-be6161a56a0c?fm=jpg&q=80&w=1200', 'ACTIVO'),
+(1, 2, 2, 2, '11223344', 'Departamento Amoblado Flat con vista panorámica', 'Lujoso departamento completamente amoblado en el piso 8. Cuenta con vista espectacular a la ciudad, gimnasio, piscina y seguridad 24/7.', 'Av. Javier Prado Oeste 789', 110.00, 110.00, 2, 2, 1, 2018, 'PEN', 3500.00, 0, 0, 'https://images.unsplash.com/photo-1522708323590-d24dbb6b0267?fm=jpg&q=80&w=1200', 'ACTIVO'),
+(1, 2, 1, 3, '11445566', 'Departamento Proyecto Ecológico y Familiar', 'Moderno departamento ideal para familias. Excelente iluminación natural, áreas comunes ecológicas y pet friendly. Califica a bonos del estado.', 'Jr. El Cortijo 456', 80.00, 80.00, 3, 2, 1, 2024, 'PEN', 280000.00, 1, 1, 'https://images.unsplash.com/photo-1502672260266-1c1ef2d93688?fm=jpg&q=80&w=1200', 'ACTIVO'),
+(3, 3, 1, 4, '22001100', 'Terreno Ideal para Proyecto Inmobiliario', 'Terreno plano de 500m2 con habilitación urbana completa. Zonificación RDM. Excelente ubicación para proyecto multifamiliar.', 'Av. La Molina 890', 500.00, 0.00, 0, 0, 0, 0, 'USD', 320000.00, 0, 0, 'https://images.unsplash.com/photo-1500382017468-9049fed747ef?fm=jpg&q=80&w=1200', 'ACTIVO'),
+(3, 1, 1, 6, '22112233', 'Casa Amplia con Piscina en San Borja', 'Elegante casa de 3 pisos con piscina, jardín, sala de cine y acabados de lujo. Ubicada en zona exclusiva con seguridad privada.', 'Av. San Borja Sur 567', 350.00, 280.00, 5, 5, 3, 2019, 'USD', 780000.00, 0, 0, 'https://images.unsplash.com/photo-1512917774080-9991f1c4c750?fm=jpg&q=80&w=1200', 'ACTIVO'),
+(1, 2, 2, 7, '33001122', 'Departamento Bohemio en Barranco', 'Acogedor departamento con balcón y vista al mar. A pocas cuadras del Puente de los Suspiros. Ideal para artistas y creativos.', 'Jr. Cajamarca 234', 75.00, 75.00, 1, 1, 0, 2015, 'PEN', 2800.00, 0, 0, 'https://images.unsplash.com/photo-1560448204-e02f11c3d0e2?fm=jpg&q=80&w=1200', 'ACTIVO'),
+(3, 2, 1, 8, '33112233', 'Departamento Nuevo en Jesús María', 'Departamento de estreno en edificio con ascensor. Cocina equipada, closets empotrados y áreas comunes modernas.', 'Av. Brasil 1567', 90.00, 85.00, 3, 2, 1, 2025, 'PEN', 350000.00, 1, 0, 'https://images.unsplash.com/photo-1560185007-cde436f6a4d0?fm=jpg&q=80&w=1200', 'ACTIVO'),
+(1, 4, 2, 5, '44001122', 'Local Comercial en el Centro de Lima', 'Amplio local comercial en esquina con alto tránsito peatonal. Ideal para restaurante, tienda o academia. Con licencia de funcionamiento.', 'Jr. de la Unión 800', 120.00, 120.00, 0, 2, 0, 1990, 'PEN', 8500.00, 0, 0, 'https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?fm=jpg&q=80&w=1200', 'ACTIVO'),
+(3, 1, 1, 13, '55001122', 'Casa Económica cerca a la Playa', 'Casa de playa renovada con 3 dormitorios. Terraza con vista al mar, garaje para 2 autos. Perfecta para familia joven.', 'Av. Defensores del Morro 456', 180.00, 140.00, 3, 2, 2, 2010, 'USD', 195000.00, 0, 0, 'https://images.unsplash.com/photo-1499793983690-e29da59ef1c2?fm=jpg&q=80&w=1200', 'ACTIVO'),
+(1, 2, 1, 12, '55112233', 'Departamento en San Miguel con Club House', 'Departamento con vista a parque interior, club house con gimnasio, piscina y zona BBQ. Excelente para inversión o vivienda.', 'Av. La Marina 2345', 70.00, 65.00, 2, 1, 1, 2024, 'PEN', 245000.00, 1, 1, 'https://images.unsplash.com/photo-1545324418-cc1a3fa10c00?fm=jpg&q=80&w=1200', 'ACTIVO');
 
 -- ============================================================
 -- BLOQUE 5: TIPO DE CAMBIO

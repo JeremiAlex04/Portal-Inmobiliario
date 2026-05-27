@@ -43,6 +43,6 @@ public class ComparadorServlet extends HttpServlet {
         }
 
         request.setAttribute("propiedadesComparar", propiedades);
-        request.getRequestDispatcher("/WEB-INF/views/comparador.jsp").forward(request, response);
+        request.getRequestDispatcher("/WEB-INF/views/public/comparador.jsp").forward(request, response);
     }
 }

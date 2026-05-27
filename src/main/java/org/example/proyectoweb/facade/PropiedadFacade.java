@@ -160,4 +160,8 @@ public class PropiedadFacade {
     public int contarPropiedadesActivas(int idUsuario) {
         return propiedadDAO.contarPropiedadesActivas(idUsuario);
     }
+
+    public List<PropiedadDTO> obtenerPropiedadesDestacadas(int limit) {
+        return propiedadDAO.obtenerPropiedadesDestacadas(limit);
+    }
 }

@@ -94,42 +94,8 @@
 <body class="bg-[#f8f8f6] text-brandText flex flex-col min-h-screen" style="font-family:'Inter',sans-serif;">
 
     <!-- Navbar Premium -->
-    <header class="text-white fixed w-full top-0 z-50 bg-black/90 backdrop-blur-md border-b border-white/10 shadow-lg transition-all">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div class="flex justify-between items-center h-20">
-                <div class="flex items-center gap-3">
-                    <img src="${pageContext.request.contextPath}/assets/img/logo/Logo_Inmobix.png"
-                        alt="Inmobix Logo" class="h-10 w-auto object-contain brightness-0 invert">
-                    <span class="text-2xl font-bold text-white tracking-tight">Inmobix</span>
-                </div>
-                <nav class="hidden md:flex items-center gap-8">
-                    <a href="${pageContext.request.contextPath}/index.jsp"
-                        class="text-sm font-semibold text-white/80 hover:text-brandHover transition-colors">Inicio</a>
-                    <a href="${pageContext.request.contextPath}/propiedades"
-                        class="text-sm font-semibold text-white/80 hover:text-brandHover transition-colors">Catálogo</a>
-                    <a href="${pageContext.request.contextPath}/propiedades?accion=nuevo"
-                        class="text-sm font-semibold text-brandHover transition-colors">Publicar</a>
-                    <a href="${pageContext.request.contextPath}/contacto"
-                        class="text-sm font-semibold text-white/80 hover:text-brandHover transition-colors">Contacto</a>
-                </nav>
-                <div class="hidden md:flex items-center gap-4">
-                    <c:choose>
-                        <c:when test="${not empty sessionScope.usuarioLogueado}">
-                            <span class="text-sm font-semibold text-white/80">Hola, ${sessionScope.usuarioLogueado.nombres}</span>
-                            <c:if test="${sessionScope.usuarioLogueado.idRol == 3 || sessionScope.usuarioLogueado.idRol == 4 || sessionScope.usuarioLogueado.idRol == 5}">
-                                <a href="${pageContext.request.contextPath}/panel" class="text-sm font-semibold text-brandHover hover:text-white transition-colors">Mi Panel</a>
-                            </c:if>
-                            <a href="${pageContext.request.contextPath}/usuario?accion=logout" class="bg-brandBtn hover:bg-brandHover text-white px-5 py-2.5 rounded-full text-sm font-semibold shadow-md shadow-slate-800/20 transition-all hover:-translate-y-0.5">Cerrar Sesión</a>
-                        </c:when>
-                        <c:otherwise>
-                            <a href="${pageContext.request.contextPath}/usuario?accion=login" class="text-sm font-semibold text-white/80 hover:text-brandHover transition-colors">Iniciar sesión</a>
-                            <a href="${pageContext.request.contextPath}/usuario?accion=registro" class="bg-brandBtn hover:bg-brandHover text-white px-5 py-2.5 rounded-full text-sm font-semibold shadow-md shadow-brandBtn/20 transition-all hover:-translate-y-0.5">Regístrate</a>
-                        </c:otherwise>
-                    </c:choose>
-                </div>
-            </div>
-        </div>
-    </header>
+        <c:set var="activePage" value="publicar" scope="request" />
+    <jsp:include page="/WEB-INF/views/layout/header.jsp" />
 
     <main class="flex-grow pt-28 pb-16 px-4">
         <div class="w-full max-w-5xl mx-auto">
@@ -582,7 +548,7 @@
                         <c:if test="${propiedad != null && not empty propiedad.fotoPrincipal}">
                             <div class="mb-6 p-4 bg-slate-50 rounded-xl border border-slate-200">
                                 <p class="text-xs text-slate-500 mb-2 font-semibold">Foto actual:</p>
-                                <img src="${pageContext.request.contextPath}/${propiedad.fotoPrincipal}" alt="Foto actual"
+                                <img src="${propiedad.getFotoPrincipalUrl(pageContext.request.contextPath)}" alt="Foto actual"
                                     class="w-40 h-28 object-cover rounded-xl border border-slate-200 shadow-sm">
                             </div>
                         </c:if>
@@ -625,7 +591,7 @@
                                     <div class="flex flex-wrap gap-3 mb-4">
                                         <c:forEach var="foto" items="${galeriaFotos}">
                                             <div class="relative group">
-                                                <img src="${pageContext.request.contextPath}/${foto.rutaArchivo}" class="w-24 h-20 object-cover rounded-lg border">
+                                                <img src="${foto.getRutaArchivoUrl(pageContext.request.contextPath)}" class="w-24 h-20 object-cover rounded-lg border">
                                                 <form action="${pageContext.request.contextPath}/galeria" method="post" class="absolute -top-2 -right-2 hidden group-hover:block">
                                                     <input type="hidden" name="accion" value="eliminar">
                                                     <input type="hidden" name="idFoto" value="${foto.id}">
