@@ -1,218 +1,211 @@
-# InmobiX: Portal de Gestión y Comparación Inmobiliaria
-## Proyecto de Ingeniería de Software - Arquitectura Empresarial por Capas
+# InmobiX — Portal Inmobiliario
+**Proyecto Académico · Arquitectura MVC por Capas · Jakarta EE**
 
-InmobiX es una plataforma web autogestionada diseñada bajo el estándar **Jakarta EE** que implementa el patrón arquitectónico **Modelo-Vista-Controlador (MVC)**. El sistema promueve el desacoplamiento de responsabilidades mediante capas lógicas bien definidas, garantizando alta cohesión y bajo acoplamiento para el mercado inmobiliario peruano.
-
----
-
-## 🏛️ 1. Introducción y Fundamentos Arquitectónicos
-
-El proyecto destaca por incorporar las siguientes características diferenciadoras de negocio y diseño:
-*   **Jerarquía Geográfica Indexada**: Estructuración relacional de la división político-administrativa peruana (**Departamento $\rightarrow$ Provincia $\rightarrow$ Distrito**) para búsquedas geográficas de precisión.
-*   **Esquema Bimonetario Transaccional**: Modelo dinámico de persistencia de tipos de cambio que permite búsquedas bimonetarias homogéneas con conversión automática de divisas en la capa de datos.
-*   **Persistencia e Infraestructura Aislada**: Cero dependencia de microservicios o APIs de pago/nube de terceros, permitiendo la total autonomía de despliegue en entornos locales y académicos controlados.
+Plataforma web para la publicación, búsqueda y comparación de inmuebles en el mercado peruano. Implementa el patrón MVC con separación estricta de responsabilidades mediante capas desacopladas.
 
 ---
 
-## 🛠️ 2. Especificación del Stack y Alternativas Locales
+## 1. Stack Tecnológico
 
-### 2.1 Stack Tecnológico Principal
-*   **Backend**: Java Jakarta EE 10, Apache Tomcat 10.x (Contenedor de Servlets), JDBC (MySQL 8.x) para persistencia sin dependencias de frameworks ORM externos.
-*   **Frontend**: JSP con JSTL 3.x, Expression Language (EL) para enlace de variables, JSF (Jakarta Server Faces 4.0) para el ciclo de vida de Consultas, Tailwind CSS para estilos responsivos, JS Vanilla y Leaflet.js.
+| Componente | Tecnología |
+| :--- | :--- |
+| **Lenguaje** | Java 17 + Jakarta EE 10 |
+| **Servidor** | Apache Tomcat 10.x |
+| **Base de Datos** | MySQL 8.x con JDBC nativo |
+| **Vistas** | JSP + JSTL 3.x + Expression Language |
+| **Estilos** | Tailwind CSS |
+| **Mapas** | Leaflet.js + OpenStreetMap |
+| **Gráficos** | Chart.js |
+| **Build** | Maven Wrapper |
 
-### 2.2 Estrategias de Desacoplamiento de Servicios Externos
+### Alternativas a servicios externos
 
-| Servicio de Producción | Alternativa Académica Local Implementada | Mecanismo de Control / Capa |
+| Servicio restringido | Solución local |
+| :--- | :--- |
+| OAuth / Login social | Autenticación con hash de contraseña y sesiones HTTP |
+| Google Maps API | Leaflet.js con tiles de OpenStreetMap |
+| Pasarelas de pago | Simulación de transacciones en BD |
+| Cloud Storage | Directorio local uploads/propiedades/ |
+
+---
+
+## 2. Arquitectura MVC por Capas
+
+| Capa | Paquete | Función |
 | :--- | :--- | :--- |
-| **Proveedores Identity (OAuth)** | Autenticación basada en sesiones HTTP nativas y hash criptográfico local. | Filtros de Servlet (`jakarta.servlet.Filter`) para interceptación de rutas. |
-| **Google Maps / Mapbox API** | Integración de la biblioteca open-source `Leaflet.js` consumiendo mapas de OpenStreetMap. | Coordenadas decimales (latitud/longitud) almacenadas en base de datos. |
-| **Pasarelas Comerciales (Culqi)** | Registro, auditoría e historial transaccional simulado en base de datos. | Códigos de operación transaccionales autogenerados aleatoriamente. |
-| **Servicios de Almacenamiento (S3)**| Servidor de archivos locales en el directorio virtualizado `/uploads/propiedades/`. | Persistencia de rutas relativas limpias en DTOs. |
-
-### 2.3 Capas de la Arquitectura MVC
-
-| Capa Arquitectónica | Ubicación y Paquetes | Responsabilidad en el Flujo de Datos | Restricciones de Implementación |
-| :--- | :--- | :--- | :--- |
-| **Vista (View)** | `/src/main/webapp/WEB-INF/views/` | Interfaz gráfica y enlace declarativo mediante Expression Language (EL). | Prohibido el uso de scriptlets (`<% ... %>`). Exclusividad de JSTL. |
-| **Controlador (Controller)** | `org.example.proyectoweb.controller` | Servlets que interpretan la petición HTTP (`request`), controlan sesiones e invocan servicios. | Nula comunicación directa con los DAOs. Dependencia exclusiva de Facades. |
-| **Fachada (Facade)** | `org.example.proyectoweb.facade` | Orquestación transaccional y aplicación de reglas de negocio consolidadas. | Oculta la complejidad de la capa de persistencia ante los controladores. |
-| **Acceso a Datos (DAO)** | `org.example.proyectoweb.dao` | Consultas CRUD parametrizadas mediante JDBC y control de transacciones. | Uso obligatorio de `PreparedStatement` para mitigar inyección de SQL. |
-| **Objeto de Datos (DTO)** | `org.example.proyectoweb.dto` | Representación tipada de entidades de datos sin lógica de comportamiento. | Clases planas (POJO) con getters, setters y constructores. |
+| **Vista** | webapp/WEB-INF/views/ | Renderiza HTML con JSTL y EL. Sin scriptlets. |
+| **Controlador** | controller/ | Servlets que reciben peticiones HTTP y gestionan sesiones. |
+| **Fachada** | facade/ | Orquesta DAOs y aplica reglas de negocio. |
+| **DAO** | dao/ | Ejecuta consultas SQL con PreparedStatement. |
+| **DTO** | dto/ | Objetos planos para transportar datos entre capas. |
+| **Utilidades** | util/ | Clase ConexionDB para gestión de conexiones JDBC. |
 
 ---
 
-## 🔄 3. Flujo de Información y Diagramas del Sistema
+## 3. Diagramas del Sistema
 
-### 3.1 Flujo del Ciclo de Vida del Request (Secuencia)
-Este diagrama ilustra la transmisión de la petición del cliente y cómo es procesada a través de las capas desacopladas del patrón MVC:
+### 3.1 Flujo de una operación MVC
+
+Secuencia completa desde que el usuario envía un formulario hasta que recibe la respuesta renderizada:
 
 ```mermaid
 sequenceDiagram
     autonumber
     actor Usuario
-    participant JSP as "Vista (JSP / JSTL / EL)"
-    participant Servlet as "Controlador (Servlet)"
-    participant DTO as "Objeto de Transferencia (DTO)"
-    participant Facade as "Capa de Fachada (Facade)"
-    participant DAO as "Acceso a Datos (DAO)"
-    participant DB as "Base de Datos (MySQL)"
+    participant V as Vista JSP
+    participant C as Servlet
+    participant D as DTO
+    participant F as Facade
+    participant A as DAO
+    participant B as MySQL
 
-    Usuario->>JSP: Desencadena evento POST / GET (Envío de Formulario)
-    JSP->>Servlet: Transmite petición HTTP con carga útil (Parámetros)
-    Servlet->>Servlet: Valida tipos de datos y campos obligatorios
-    Servlet->>DTO: Setea valores en instancia DTO
-    Servlet->>Facade: Invoca método del servicio (ej. crearPropiedad)
-    Facade->>Facade: Aplica reglas de negocio (ej. límite de propiedades)
-    Facade->>DAO: Invoca método CRUD correspondiente
-    DAO->>DB: Ejecuta consulta SQL parametrizada (PreparedStatement)
-    DB-->>DAO: Retorna filas afectadas / identificadores generados
-    DAO-->>Facade: Retorna estado de persistencia
-    Facade-->>Servlet: Retorna resultado/confirmación de negocio
-    Servlet->>Servlet: Inserta mensaje en Request (request.setAttribute)
-    Servlet->>JSP: Despacha flujo mediante RequestDispatcher.forward()
-    JSP-->>Usuario: Renderiza HTML dinámico con JSTL/EL
+    Usuario->>V: Envía formulario POST
+    V->>C: Petición HTTP con parámetros
+    C->>C: Valida campos obligatorios
+    C->>D: Crea instancia DTO con datos
+    C->>F: Invoca lógica de negocio
+    F->>F: Valida reglas de negocio
+    F->>A: Invoca método CRUD
+    A->>B: Ejecuta PreparedStatement
+    B-->>A: Retorna resultado
+    A-->>F: Retorna estado
+    F-->>C: Retorna confirmación
+    C->>V: forward con atributos en request
+    V-->>Usuario: Renderiza HTML con JSTL/EL
 ```
 
-### 3.2 Flujo de Normalización en el Buscador Inteligente
-Esquema de normalización de cadenas de búsqueda para conciliar las sugerencias autocompletadas del cliente con el catálogo físico de la base de datos:
+### 3.2 Infraestructura y viaje de la información
 
-```mermaid
-graph TD
-    A["Navegador: Ingresa 'Miraflores (Lima)'"] -->|Petición GET /propiedades| B[PropiedadServlet]
-    B -->|buscarPropiedadesAvanzado| C[PropiedadFacade]
-    C -->|buscarPropiedades| D[PropiedadDAO]
-    D -->|cleanKeyword| E["Filtro cleanKeyword: Remueve paréntesis 'Miraflores'"]
-    E -->|PreparedStatement: LIKE %Miraflores%| F[(MySQL DB)]
-    F -->|Registros Coincidentes| D
-    D -->|Instancia DTOs + Resuelve URLs de Fotos| C
-    C -->|Retorna List de DTOs| B
-    B -->|Despacha a Vista (forward)| G[propiedades.jsp]
-    G -->|EL: getFotoPrincipalUrl| H[Renderiza tarjetas con imágenes resueltas]
-```
-
-### 3.3 Arquitectura Física e Infraestructura del Sistema
-Diagrama de secuencia físico que detalla la transferencia de información y comunicación de sockets entre los componentes de la red e infraestructura del sistema:
+Comunicación física entre los componentes del sistema durante una petición con carga de imagen:
 
 ```mermaid
 sequenceDiagram
     autonumber
-    participant Cliente as "Navegador Cliente (Browser)"
-    participant Servidor as "Tomcat 10 (Web Container)"
-    participant App as "Aplicación Java (Servlets/MVC)"
-    participant Disco as "Sistema de Archivos (uploads/)"
-    participant Conex as "JDBC (ConexionDB)"
-    participant BD as "Motor MySQL (Puerto 3306)"
+    participant Nav as Navegador
+    participant Tom as Tomcat 10
+    participant App as App Java MVC
+    participant Fs as uploads/propiedades/
+    participant Jdbc as ConexionDB
+    participant Db as MySQL 3306
 
-    Cliente->>Servidor: Petición HTTP (Puerto 8080)
-    Servidor->>App: Enruta petición al Servlet
-    
-    alt Persistencia de Archivos Físicos (Imágenes)
-        App->>Disco: Escribe archivo en ruta 'uploads/propiedades/'
-        Disco-->>App: Retorna confirmación de ruta relativa
+    Nav->>Tom: Petición HTTP puerto 8080
+    Tom->>App: Enruta al Servlet correspondiente
+
+    alt Carga de imagen
+        App->>Fs: Guarda archivo físico
+        Fs-->>App: Retorna ruta relativa
     end
-    
-    App->>Conex: Solicita conexión (ConexionDB.getConexion())
-    Conex->>BD: Abre socket TCP/IP en puerto 3306
-    BD-->>Conex: Retorna conexión física activa
-    Conex-->>App: Retorna objeto Connection
-    
-    App->>BD: Ejecuta sentencia SQL (PreparedStatement)
-    BD-->>App: Retorna conjunto de resultados (ResultSet)
-    
-    App->>Conex: Libera recursos en bloque 'finally' (close)
-    
-    App->>Servidor: Transmite request y response compilado al JSP (forward)
-    Servidor->>Cliente: Envía respuesta HTTP (HTML/CSS/JS compilado)
+
+    App->>Jdbc: Solicita conexión
+    Jdbc->>Db: Abre socket TCP puerto 3306
+    Db-->>Jdbc: Conexión activa
+    Jdbc-->>App: Objeto Connection
+
+    App->>Db: Ejecuta SQL parametrizado
+    Db-->>App: Retorna ResultSet
+
+    App->>Jdbc: Cierra recursos en finally
+
+    App->>Tom: forward al JSP
+    Tom->>Nav: Respuesta HTTP con HTML compilado
+```
+
+### 3.3 Flujo del buscador inteligente
+
+Normalización de la cadena de búsqueda autocompletada antes de consultar la base de datos:
+
+```mermaid
+graph TD
+    A["Buscador: Miraflores Lima"] -->|GET /propiedades| B[PropiedadServlet]
+    B --> C[PropiedadFacade]
+    C --> D[PropiedadDAO]
+    D --> E["cleanKeyword extrae solo Miraflores"]
+    E --> F[(MySQL)]
+    F --> D
+    D --> C
+    C --> B
+    B --> G[propiedades.jsp]
+    G --> H["Renderiza tarjetas con imágenes"]
 ```
 
 ---
 
-## 📁 4. Estructura Orgánica del Proyecto
-
-La jerarquía física de archivos sigue los estándares de organización y encapsulamiento Java EE:
+## 4. Estructura de Carpetas
 
 ```text
 Portal-Inmobiliario/
 ├── src/main/java/org/example/proyectoweb/
-│   ├── bean/              # Managed Beans de JSF (ej. ConsultaBean.java)
-│   ├── controller/        # Servlets de Control (ej. PropiedadServlet.java)
-│   ├── dao/               # Clases de acceso a datos JDBC (ej. PropiedadDAO.java)
-│   ├── dto/               # Modelos de Intercambio (ej. PropiedadDTO.java)
-│   ├── facade/            # Fachadas de negocio (ej. PropiedadFacade.java)
-│   └── util/              # Conexión DB y utilidades generales
+│   ├── bean/              # Managed Beans JSF
+│   ├── controller/        # Servlets HTTP
+│   ├── dao/               # Acceso a datos JDBC
+│   ├── dto/               # Objetos de transferencia
+│   ├── facade/            # Lógica de negocio
+│   └── util/              # ConexionDB y utilidades
 ├── src/main/webapp/
-│   ├── WEB-INF/
-│   │   ├── views/         # Vistas protegidas por seguridad
-│   │   │   ├── admin/     # Consola del administrador
-│   │   │   ├── agente/    # Creación/edición y panel del Agente
-│   │   │   ├── layout/    # Navbar común (header.jsp)
-│   │   │   ├── public/    # Catálogo público, comparador y detalles
-│   │   │   └── usuario/   # Perfil y favoritos del comprador
-│   │   └── web.xml        # Descriptor de Despliegue
-│   ├── assets/            # Archivos estáticos (CSS, JS, logos)
-│   ├── index.jsp          # Página de aterrizaje
-│   ├── confirmacion.xhtml # Vista de confirmación JSF
-│   └── nuevaConsulta.xhtml# Formulario de consultas JSF
-├── inmobix_db.sql         # Script SQL de la Base de Datos
-└── pom.xml                # Configuración de Maven
+│   ├── WEB-INF/views/
+│   │   ├── admin/         # Panel de administración
+│   │   ├── agente/        # Panel y registro del agente
+│   │   ├── layout/        # Componente header.jsp
+│   │   ├── public/        # Catálogo, detalle, comparador
+│   │   └── usuario/       # Favoritos del comprador
+│   ├── assets/            # CSS, JS, logos
+│   ├── index.jsp          # Página de inicio
+│   └── *.xhtml            # Vistas JSF
+├── inmobix_db.sql         # Script de base de datos
+└── pom.xml                # Dependencias Maven
 ```
 
 ---
 
-## 📋 5. Roles, Permisos y Planes Comerciales
+## 5. Roles y Permisos
 
-### 5.1 Matriz de Funcionalidades por Rol
-El sistema restringe el acceso de negocio a nivel de controlador mediante el uso de sesiones HTTP (`sessionScope`):
-
-| Funcionalidad / Caso de Uso | Usuario Regular | Agente Inmobiliario | Administrador |
+| Funcionalidad | Usuario | Agente | Admin |
 | :--- | :---: | :---: | :---: |
-| Búsqueda, catálogo y detalles del inmueble | ✔ | ✔ | ✔ |
-| Visualización cartográfica interactiva (Leaflet.js) | ✔ | ✔ | ✔ |
-| Persistencia en favoritos | ✔ | ✔ | ❌ |
-| Comparación técnica de fichas | ✔ | ✔ | ❌ |
-| Envío de leads / Consultas directas | ✔ | ❌ | ❌ |
-| Publicación y mantenimiento de catálogo propio | ❌ | ✔ | ✔ (Global) |
-| Visualización de métricas y gráficos de rendimiento | ❌ | ✔ | ❌ |
-| Gestión comercial (Adquisición de planes) | ❌ | ✔ | ❌ |
-| Auditoría, seguridad y moderación global | ❌ | ❌ | ✔ |
-| Mantenimiento de catálogos y ubicaciones | ❌ | ❌ | ✔ |
+| Buscar y ver propiedades | ✔ | ✔ | ✔ |
+| Ver mapa interactivo | ✔ | ✔ | ✔ |
+| Guardar favoritos | ✔ | ✔ | — |
+| Comparar inmuebles | ✔ | ✔ | — |
+| Enviar consultas | ✔ | — | — |
+| Publicar propiedades | — | ✔ | ✔ |
+| Ver analytics y gráficos | — | ✔ | — |
+| Contratar planes | — | ✔ | — |
+| Moderar usuarios y contenido | — | — | ✔ |
+| Gestionar ubicaciones | — | — | ✔ |
 
-### 5.2 Planes de Publicación y Límites de Suscripción (RF-07)
+### Planes de Publicación
 
-| Dimensión del Plan | Plan Gratuito | Plan Básico | Plan Premium |
-| :--- | :---: | :---: | :---: |
-| **Costo Mensual** | S/. 0 | S/. 50 | S/. 150 |
-| **Límite de Propiedades Activas**| 1 propiedad | 5 propiedades | 20 propiedades |
-| **Vigencia del Anuncio** | 30 días | 60 días | Ilimitado |
-| **Límite de Carga de Imágenes** | 3 fotos | 10 fotos | 30 fotos |
-| **Visibilidad en Listado** | Estándar | Regular | Destacado (Badge) |
-| **Acceso a Analytics** | Estadísticas básicas | Gráficos históricos | Insights avanzados |
+| Plan | Costo | Propiedades | Fotos | Destacado |
+| :--- | :---: | :---: | :---: | :---: |
+| Gratuito | S/. 0 | 1 | 3 | No |
+| Básico | S/. 50/mes | 5 | 10 | No |
+| Premium | S/. 150/mes | 20 | 30 | Sí |
 
 ---
 
-## 🖼️ 6. Evidencias Gráficas Recomendadas (Capturas de Pantalla)
+## 6. Evidencias Visuales Sugeridas
 
-*Para complementar de manera visual la sustentación de este proyecto técnico, se sugiere incorporar capturas del sistema en funcionamiento:*
+Para la sustentación académica se recomienda incluir capturas de:
 
-1.  **Página de Inicio con Buscador Inteligente**: Captura del buscador con la caja de sugerencias interactiva filtrando un distrito en tiempo real (ej. "Miraflores (Lima)").
-2.  **Catálogo de Búsqueda Avanzada**: Vista del catálogo filtrando por múltiples rangos de precio bimonetarios y devolviendo las propiedades con sus portadas cargadas.
-3.  **Ficha de Detalle e Integración Cartográfica**: Detalle de un inmueble mostrando la renderización interactiva del mapa de Leaflet.js y la galería de imágenes secundarias.
-4.  **Comparador Técnico**: Tabla interactiva comparando dos o más inmuebles, mostrando el cálculo del precio por metro cuadrado y el sombreado cromático de diferencias.
-5.  **Dashboard del Agente (Analytics)**: Visualización de las métricas de rendimiento y el gráfico de visitas histórico renderizado con Chart.js.
+1. **Página de inicio** — Buscador inteligente con autocompletado de distritos.
+2. **Catálogo con filtros** — Resultados filtrados por precio, tipo y distrito.
+3. **Detalle del inmueble** — Galería de fotos y mapa Leaflet.js.
+4. **Comparador** — Tabla comparativa con precio por m² resaltado.
+5. **Panel del agente** — Gráfico de vistas con Chart.js.
+6. **Panel de administración** — Dashboard con gestión de usuarios y propiedades.
 
 ---
 
-## 🚀 7. Compilación y Despliegue
+## 7. Compilación y Despliegue
 
-### Compilar Proyecto
 ```bash
+# Compilar
 ./mvnw.cmd compile
+
+# Base de datos
+# 1. Iniciar MySQL en puerto 3306
+# 2. Importar inmobix_db.sql
+
+# Despliegue
+# Desplegar WAR en Tomcat 10+ con contexto /proyectoweb
+# Acceder en http://localhost:8080/proyectoweb
 ```
-
-### Inicialización del Esquema Relacional
-1.  Verifique el servicio MySQL local activo (puerto 3306).
-2.  Ejecute `inmobix_db.sql` en su cliente de base de datos para levantar el esquema, las vistas y los datos semilla parametrizados.
-
-### Despliegue de Aplicación
-1.  Configure Apache Tomcat 10+ apuntando el directorio compilado al contexto `/proyectoweb` o raíz `/`.
-2.  Inicie el servidor y acceda desde `http://localhost:8080/proyectoweb`.
