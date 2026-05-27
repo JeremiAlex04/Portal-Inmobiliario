@@ -43,7 +43,7 @@ sequenceDiagram
     participant DTO as "Objeto de Transferencia (DTO)"
     participant Facade as "Capa de Mediación (Facade)"
     participant DAO as "Acceso a Datos (DAO)"
-    database DB as "Base de Datos (MySQL)"
+    participant DB as "Base de Datos (MySQL)"
 
     Usuario->>JSP: Envía formulario (POST/GET)
     JSP->>Servlet: Petición HTTP
@@ -68,12 +68,47 @@ graph TD
     B -->|buscarPropiedadesAvanzado| C[PropiedadFacade]
     C -->|buscarPropiedades| D[PropiedadDAO]
     D -->|cleanKeyword| E["cleanKeyword: 'Miraflores'"]
-    E -->|LIKE %Miraflores%| F[("MySQL DB")]
+    E -->|LIKE %Miraflores%| F[(MySQL DB)]
     F -->|Resultados SQL| D
     D -->|Instancia DTOs + Foto URLs| C
     C -->|List DTOs| B
     B -->|forward| G[propiedades.jsp]
     G -->|getFotoPrincipalUrl| H[Renderiza tarjetas con imágenes]
+```
+
+### 2.3 Infraestructura y Viaje de la Información (Secuencia)
+Este diagrama detalla cómo se comunican los componentes de la infraestructura física (Navegador, Tomcat, Filesystem, MySQL) y cómo viaja la información entre ellos:
+
+```mermaid
+sequenceDiagram
+    autonumber
+    participant Cliente as "Navegador Cliente (Browser)"
+    participant Servidor as "Tomcat 10 (Web Container)"
+    participant App as "Aplicación Java (Servlets/MVC)"
+    participant Disco as "Sistema de Archivos (uploads/)"
+    participant Conex as "JDBC (ConexionDB)"
+    participant BD as "Motor MySQL (Puerto 3306)"
+
+    Cliente->>Servidor: Envía petición HTTP (GET/POST con parámetros o imágenes)
+    Servidor->>App: Enruta request al Servlet correspondiente
+    
+    alt Guardar Imagen Local (uploads)
+        App->>Disco: Escribe archivo de imagen física (uploads/propiedades/)
+        Disco-->>App: Confirma almacenamiento de ruta relativa
+    end
+    
+    App->>Conex: Solicita conexión (ConexionDB.getConexion())
+    Conex->>BD: Abre socket TCP/IP (puerto 3306)
+    BD-->>Conex: Retorna conexión activa
+    Conex-->>App: Retorna objeto Connection
+    
+    App->>BD: Ejecuta consulta SQL parametrizada (PreparedStatement)
+    BD-->>App: Retorna ResultSet con datos crudos
+    
+    App->>Conex: Cierra recursos (Connection, Statement, ResultSet) en bloque finally
+    
+    App->>Servidor: Transmite request y response compilado al JSP (forward)
+    Servidor->>Cliente: Envía respuesta HTTP (HTML/CSS/JS procesado)
 ```
 
 ---
