@@ -172,7 +172,11 @@ public class UsuarioDAO {
             } else if ("correo".equals(filtro)) {
                 stmt.setString(1, "%" + valorFiltro + "%");
             } else if ("rol".equals(filtro)) {
-                stmt.setInt(1, Integer.parseInt(valorFiltro));
+                try {
+                    stmt.setInt(1, Integer.parseInt(valorFiltro));
+                } catch (NumberFormatException e) {
+                    stmt.setInt(1, -1); // ID inexistente para retornar lista vacía en vez de crash
+                }
             }
 
             try (ResultSet rs = stmt.executeQuery()) {

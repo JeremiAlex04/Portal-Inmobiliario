@@ -84,7 +84,14 @@ public class UsuarioServlet extends HttpServlet {
             u.setPasswordHash(password); // El DAO se encarga de hashear
             
             if (idRolStr != null && !idRolStr.isEmpty()) {
-                u.setIdRol(Integer.parseInt(idRolStr));
+                int requestedRol = Integer.parseInt(idRolStr);
+                if (requestedRol == 2 || requestedRol == 3) {
+                    u.setIdRol(requestedRol);
+                } else {
+                    u.setIdRol(2); // Forzar a Comprador por seguridad
+                }
+            } else {
+                u.setIdRol(2);
             }
 
             boolean ok = usuarioFacade.registrarUsuario(u);

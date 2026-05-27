@@ -100,7 +100,7 @@
                                         <form action="${pageContext.request.contextPath}/admin" method="GET" class="flex items-center gap-2">
                                             <input type="hidden" name="accion" value="cambiar_rol">
                                             <input type="hidden" name="id" value="${u.idUsuario}">
-                                            <select name="rol" onchange="this.form.submit()" class="bg-slate-50 border border-slate-200 text-slate-700 text-xs rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2" ${u.idUsuario == sessionScope.usuarioLogueado.idUsuario ? 'disabled' : ''}>
+                                            <select name="rol" onchange="if(confirm('¿Estás seguro de cambiar el rol de este usuario?')) { this.form.submit(); } else { location.reload(); }" class="bg-slate-50 border border-slate-200 text-slate-700 text-xs rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2" ${u.idUsuario == sessionScope.usuarioLogueado.idUsuario ? 'disabled' : ''}>
                                                 <option value="2" ${u.idRol == 2 ? 'selected' : ''}>COMPRADOR</option>
                                                 <option value="3" ${u.idRol == 3 ? 'selected' : ''}>AGENTE</option>
                                                 <option value="4" ${u.idRol == 4 ? 'selected' : ''}>CONSTRUCTORA</option>
@@ -144,6 +144,11 @@
                                     </td>
                                 </tr>
                             </c:forEach>
+                            <c:if test="${empty listaUsuarios}">
+                                <tr>
+                                    <td colspan="6" class="px-6 py-12 text-center text-slate-500 italic">No se encontraron usuarios que coincidan con la búsqueda o filtros.</td>
+                                </tr>
+                            </c:if>
                         </tbody>
                     </table>
                 </div>
@@ -157,7 +162,7 @@
         <div class="bg-white rounded-3xl shadow-2xl w-full max-w-md overflow-hidden transform transition-all">
             <div class="bg-slate-900 px-8 py-6 flex justify-between items-center">
                 <h3 id="modalUsuarioTitle" class="text-xl font-bold text-white">Registrar Nuevo Usuario</h3>
-                <button onclick="cerrarModal()" class="text-slate-400 hover:text-white transition-colors">
+                <button onclick="cerrarModalUsuario()" class="text-slate-400 hover:text-white transition-colors">
                     <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" /></svg>
                 </button>
             </div>
@@ -193,7 +198,7 @@
                 </div>
 
                 <div class="pt-4 flex gap-3">
-                    <button type="button" onclick="cerrarModal()" class="flex-1 border border-slate-200 text-slate-700 hover:text-black hover:border-black hover:bg-black/5 font-bold py-4 rounded-xl transition-all">Cancelar</button>
+                    <button type="button" onclick="cerrarModalUsuario()" class="flex-1 border border-slate-200 text-slate-700 hover:text-black hover:border-black hover:bg-black/5 font-bold py-4 rounded-xl transition-all">Cancelar</button>
                     <button type="submit" class="flex-1 bg-brandBtn hover:bg-brandHover text-white font-bold py-4 rounded-xl shadow-lg shadow-brandBtn/20 transition-all">Guardar</button>
                 </div>
             </form>

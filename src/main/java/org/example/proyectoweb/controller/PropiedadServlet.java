@@ -120,6 +120,10 @@ public class PropiedadServlet extends HttpServlet {
                         request.getRequestDispatcher("/WEB-INF/views/public/login.jsp").forward(request, response);
                         return;
                     }
+                    if (usuario.getIdRol() != 3 && usuario.getIdRol() != 4 && usuario.getIdRol() != 5) {
+                        response.sendError(HttpServletResponse.SC_FORBIDDEN, "Acceso denegado. Se requiere cuenta de Agente o Constructora.");
+                        return;
+                    }
                     cargarCatalogos(request);
                     request.getRequestDispatcher("/WEB-INF/views/agente/registro.jsp").forward(request, response);
                     break;
@@ -288,6 +292,10 @@ public class PropiedadServlet extends HttpServlet {
             if (usuario == null) {
                 request.setAttribute("error", "Sesión inválida o expirada. Por favor, inicia sesión.");
                 request.getRequestDispatcher("/WEB-INF/views/public/login.jsp").forward(request, response);
+                return;
+            }
+            if (usuario.getIdRol() != 3 && usuario.getIdRol() != 4 && usuario.getIdRol() != 5) {
+                response.sendError(HttpServletResponse.SC_FORBIDDEN, "No tienes permiso para realizar esta acción.");
                 return;
             }
             PropiedadDTO propiedad = new PropiedadDTO();

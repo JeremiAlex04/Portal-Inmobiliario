@@ -51,7 +51,7 @@
 <c:if test="${p.estado == 'PENDIENTE'}">
 <form action="${pageContext.request.contextPath}/pagos" method="post" class="inline-flex gap-1">
 <input type="hidden" name="accion" value="cambiarEstado"><input type="hidden" name="idPago" value="${p.id}">
-<button name="nuevoEstado" value="APROBADO" class="bg-emerald-600 text-white px-3 py-1 rounded text-xs font-bold hover:bg-emerald-700">Aprobar</button>
-<button name="nuevoEstado" value="RECHAZADO" class="bg-red-600 text-white px-3 py-1 rounded text-xs font-bold hover:bg-red-700">Rechazar</button>
+<button name="nuevoEstado" value="APROBADO" onclick="return confirm('¿Estás seguro de APROBAR este pago? Esta acción activará los beneficios del plan.');" class="bg-emerald-600 text-white px-3 py-1 rounded text-xs font-bold hover:bg-emerald-700">Aprobar</button>
+<button name="nuevoEstado" value="RECHAZADO" onclick="return confirm('¿Estás seguro de RECHAZAR este pago? El plan no se activará.');" class="bg-red-600 text-white px-3 py-1 rounded text-xs font-bold hover:bg-red-700">Rechazar</button>
 </form></c:if></td>
 </tr></c:forEach></tbody></table></div></div></main></body></html>

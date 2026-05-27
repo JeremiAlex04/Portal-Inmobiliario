@@ -69,12 +69,16 @@ public class AdminServlet extends HttpServlet {
                 int totalPropiedades = propiedadFacade.contarPropiedades(null, null, null);
                 int propActivas = usuarioFacade.contarPropiedadesActivas();
                 int propVendidas = usuarioFacade.contarPropiedadesVendidas();
+                int propPausadas = usuarioFacade.contarPropiedadesPausadas();
+                int propBorradores = usuarioFacade.contarPropiedadesBorradores();
 
                 request.setAttribute("totalUsuarios", totalUsuarios);
                 request.setAttribute("totalAgentes", totalAgentes);
                 request.setAttribute("totalPropiedades", totalPropiedades);
                 request.setAttribute("propActivas", propActivas);
                 request.setAttribute("propVendidas", propVendidas);
+                request.setAttribute("propPausadas", propPausadas);
+                request.setAttribute("propBorradores", propBorradores);
 
                 // Últimos 5 usuarios registrados
                 request.setAttribute("ultimosUsuarios", usuarioFacade.listarUsuarios());

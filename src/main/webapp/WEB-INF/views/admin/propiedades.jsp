@@ -110,12 +110,12 @@
                                         <form action="${pageContext.request.contextPath}/admin" method="GET" class="flex items-center gap-2">
                                             <input type="hidden" name="accion" value="cambiar_estado_prop">
                                             <input type="hidden" name="id" value="${p.id}">
-                                            <select name="estado" onchange="this.form.submit()" class="bg-slate-50 border border-slate-200 text-slate-700 text-xs rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2">
+                                            <select name="estado" onchange="if(confirm('¿Estás seguro de cambiar el estado de publicación de este inmueble?')) { this.form.submit(); } else { location.reload(); }" class="bg-slate-50 border border-slate-200 text-slate-700 text-xs rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2">
                                                 <option value="ACTIVO" ${p.estado == 'ACTIVO' ? 'selected' : ''}>Disponible (Activo)</option>
-                                                <option value="INACTIVO" ${p.estado == 'INACTIVO' ? 'selected' : ''}>Oculto (Inactivo)</option>
+                                                <option value="PAUSADO" ${p.estado == 'PAUSADO' ? 'selected' : ''}>Oculto (Pausado)</option>
                                                 <option value="VENDIDO" ${p.estado == 'VENDIDO' ? 'selected' : ''}>Vendido</option>
-                                                <option value="ALQUILADO" ${p.estado == 'ALQUILADO' ? 'selected' : ''}>Alquilado</option>
-                                                <option value="RECHAZADO" ${p.estado == 'RECHAZADO' ? 'selected' : ''}>Rechazado (Spam)</option>
+                                                <option value="BORRADOR" ${p.estado == 'BORRADOR' ? 'selected' : ''}>Borrador (Edición)</option>
+                                                <option value="ELIMINADO" ${p.estado == 'ELIMINADO' ? 'selected' : ''}>Eliminado</option>
                                             </select>
                                         </form>
                                     </td>

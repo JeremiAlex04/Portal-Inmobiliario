@@ -19,7 +19,7 @@ public class PropiedadDAO {
         List<PropiedadDTO> lista = new ArrayList<>();
 
         StringBuilder sql = new StringBuilder(
-                "SELECT v.*, p.descripcion, p.foto_principal, p.numero_vistas, p.destacada, p.area_total_m2 " +
+                "SELECT v.*, p.descripcion, p.foto_principal, p.numero_vistas, p.destacada, p.area_total_m2, p.fecha_publicacion " +
                         "FROM v_propiedades_bimonetarias v " +
                         "INNER JOIN propiedad p ON v.id_propiedad = p.id_propiedad " +
                         "WHERE 1=1 ");
@@ -82,6 +82,7 @@ public class PropiedadDAO {
                     try { p.setTipoCambioVenta(rs.getBigDecimal("tipo_cambio_venta")); } catch(Exception ignored) {}
                     try { p.setDestacada(rs.getBoolean("destacada")); } catch(Exception ignored) {}
                     try { p.setAreaTotalM2(rs.getBigDecimal("area_total_m2")); } catch(Exception ignored) {}
+                    try { p.setFechaPublicacion(rs.getString("fecha_publicacion")); } catch(Exception ignored) {}
 
                     p.setUbicacion(rs.getString("distrito") + ", " + rs.getString("provincia"));
                     p.setPrecio(rs.getBigDecimal("precio_usd"));
