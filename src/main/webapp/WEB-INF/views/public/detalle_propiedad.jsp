@@ -85,74 +85,305 @@
                 </div>
             </div>
 
-            <!-- Galería de Fotos Premium (Mosaico Estilo Urbania) -->
-            <div class="grid grid-cols-1 md:grid-cols-4 gap-2 h-72 md:h-[28rem] rounded-2xl overflow-hidden relative group mb-8 shadow-lg border border-slate-100 bg-slate-100">
-                <!-- Imagen Principal (Izquierda, ocupa 2 columnas y 2 filas) -->
-                <div class="col-span-1 md:col-span-2 md:row-span-2 relative overflow-hidden bg-slate-200 h-full">
-                    <c:choose>
-                        <c:when test="${not empty propiedad.fotoPrincipal}">
-                            <img id="heroImg" src="${propiedad.getFotoPrincipalUrl(pageContext.request.contextPath)}" alt="${propiedad.titulo}" class="w-full h-full object-cover cursor-pointer hover:scale-[1.02] transition-transform duration-500" onclick="const lightboxImg = document.getElementById('lightboxImg'); const lightbox = document.getElementById('lightbox'); if (lightboxImg && lightbox) { lightboxImg.src = this.src; lightbox.classList.remove('hidden'); }">
-                        </c:when>
-                        <c:otherwise>
-                            <img id="heroImg" src="${pageContext.request.contextPath}/assets/img/logo/Logo_Inmobix.png" alt="${propiedad.titulo}" class="w-full h-full object-contain p-12 bg-slate-100 cursor-pointer">
-                        </c:otherwise>
-                    </c:choose>
-                    
-                    <!-- Badge de Marca / Anunciante -->
-                    <div class="absolute top-4 left-4 bg-white/95 backdrop-blur px-3.5 py-2 rounded-xl flex items-center gap-2 shadow-md border border-slate-100 z-10 select-none">
-                        <img src="${pageContext.request.contextPath}/assets/img/logo/Logo_Inmobix.png" alt="Logo" class="h-4.5 w-auto object-contain">
-                        <span class="text-[10px] font-extrabold text-black uppercase tracking-wider">${propiedad.agenteNombre}</span>
+            <!-- Galería de Fotos Premium Dinámica (Mosaico Estilo Urbania Adaptativo) -->
+            <c:set var="cantFotosSecundarias" value="${galeriaFotos.size()}" />
+            <c:choose>
+                <%-- Caso 0: Solo la foto principal --%>
+                <c:when test="${cantFotosSecundarias == 0}">
+                    <div class="h-72 md:h-[28rem] rounded-2xl overflow-hidden relative group mb-8 shadow-lg border border-slate-100 bg-slate-100">
+                        <div class="w-full h-full relative overflow-hidden bg-slate-200">
+                            <c:choose>
+                                <c:when test="${not empty propiedad.fotoPrincipal}">
+                                    <img id="heroImg" src="${propiedad.getFotoPrincipalUrl(pageContext.request.contextPath)}" alt="${propiedad.titulo}" class="w-full h-full object-cover cursor-pointer hover:scale-[1.02] transition-transform duration-500" onclick="const lightboxImg = document.getElementById('lightboxImg'); const lightbox = document.getElementById('lightbox'); if (lightboxImg && lightbox) { lightboxImg.src = this.src; lightbox.classList.remove('hidden'); }">
+                                </c:when>
+                                <c:otherwise>
+                                    <img id="heroImg" src="${pageContext.request.contextPath}/assets/img/logo/Logo_Inmobix.png" alt="${propiedad.titulo}" class="w-full h-full object-contain p-12 bg-slate-100 cursor-pointer">
+                                </c:otherwise>
+                            </c:choose>
+                            
+                            <!-- Badge de Marca / Anunciante -->
+                            <div class="absolute top-4 left-4 bg-white/95 backdrop-blur px-3.5 py-2 rounded-xl flex items-center gap-2 shadow-md border border-slate-100 z-10 select-none">
+                                <img src="${pageContext.request.contextPath}/assets/img/logo/Logo_Inmobix.png" alt="Logo" class="h-4.5 w-auto object-contain">
+                                <span class="text-[10px] font-extrabold text-black uppercase tracking-wider">${propiedad.agenteNombre}</span>
+                            </div>
+                            
+                            <!-- Cápsulas flotantes de datos -->
+                            <div class="absolute bottom-4 left-4 flex flex-wrap items-center gap-2 z-10 select-none">
+                                <span class="px-3 py-1.5 bg-black/80 backdrop-blur-md text-white rounded-xl text-[11px] font-bold inline-flex items-center gap-1.5 shadow-md border border-white/10">
+                                    <svg xmlns="http://www.w3.org/2000/svg" class="h-3.5 w-3.5 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                                    </svg>
+                                    1 foto
+                                </span>
+                                <c:if test="${not empty propiedad.tour360Url}">
+                                    <span class="px-3 py-1.5 bg-black/80 backdrop-blur-md text-white rounded-xl text-[11px] font-bold inline-flex items-center gap-1.5 shadow-md border border-white/10">
+                                        <svg xmlns="http://www.w3.org/2000/svg" class="h-3.5 w-3.5 text-red-500 animate-pulse" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+                                        </svg>
+                                        360° Tour
+                                    </span>
+                                </c:if>
+                                <span class="px-3 py-1.5 bg-black/80 backdrop-blur-md text-white rounded-xl text-[11px] font-bold inline-flex items-center gap-1.5 shadow-md border border-white/10">
+                                    <svg class="w-3.5 h-3.5 text-white/80" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"></path></svg>
+                                    ${propiedad.numeroVistas} vistas
+                                </span>
+                            </div>
+                        </div>
                     </div>
-                    
-                    <!-- Cápsulas flotantes de datos -->
-                    <div class="absolute bottom-4 left-4 flex flex-wrap items-center gap-2 z-10 select-none">
-                        <span class="px-3 py-1.5 bg-black/80 backdrop-blur-md text-white rounded-xl text-[11px] font-bold inline-flex items-center gap-1.5 shadow-md border border-white/10">
-                            <svg xmlns="http://www.w3.org/2000/svg" class="h-3.5 w-3.5 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                </c:when>
+
+                <%-- Caso 1: Foto principal + 1 foto secundaria --%>
+                <c:when test="${cantFotosSecundarias == 1}">
+                    <div class="grid grid-cols-1 md:grid-cols-4 gap-2 h-72 md:h-[28rem] rounded-2xl overflow-hidden relative group mb-8 shadow-lg border border-slate-100 bg-slate-100">
+                        <!-- Foto Principal (ocupa 3 de 4 columnas) -->
+                        <div class="col-span-1 md:col-span-3 relative overflow-hidden bg-slate-200 h-full">
+                            <c:choose>
+                                <c:when test="${not empty propiedad.fotoPrincipal}">
+                                    <img id="heroImg" src="${propiedad.getFotoPrincipalUrl(pageContext.request.contextPath)}" alt="${propiedad.titulo}" class="w-full h-full object-cover cursor-pointer hover:scale-[1.02] transition-transform duration-500" onclick="const lightboxImg = document.getElementById('lightboxImg'); const lightbox = document.getElementById('lightbox'); if (lightboxImg && lightbox) { lightboxImg.src = this.src; lightbox.classList.remove('hidden'); }">
+                                </c:when>
+                                <c:otherwise>
+                                    <img id="heroImg" src="${pageContext.request.contextPath}/assets/img/logo/Logo_Inmobix.png" alt="${propiedad.titulo}" class="w-full h-full object-contain p-12 bg-slate-100 cursor-pointer">
+                                </c:otherwise>
+                            </c:choose>
+                            
+                            <!-- Badge de Marca / Anunciante -->
+                            <div class="absolute top-4 left-4 bg-white/95 backdrop-blur px-3.5 py-2 rounded-xl flex items-center gap-2 shadow-md border border-slate-100 z-10 select-none">
+                                <img src="${pageContext.request.contextPath}/assets/img/logo/Logo_Inmobix.png" alt="Logo" class="h-4.5 w-auto object-contain">
+                                <span class="text-[10px] font-extrabold text-black uppercase tracking-wider">${propiedad.agenteNombre}</span>
+                            </div>
+                            
+                            <!-- Cápsulas flotantes de datos -->
+                            <div class="absolute bottom-4 left-4 flex flex-wrap items-center gap-2 z-10 select-none">
+                                <span class="px-3 py-1.5 bg-black/80 backdrop-blur-md text-white rounded-xl text-[11px] font-bold inline-flex items-center gap-1.5 shadow-md border border-white/10">
+                                    <svg xmlns="http://www.w3.org/2000/svg" class="h-3.5 w-3.5 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                                    </svg>
+                                    2 fotos
+                                </span>
+                                <c:if test="${not empty propiedad.tour360Url}">
+                                    <span class="px-3 py-1.5 bg-black/80 backdrop-blur-md text-white rounded-xl text-[11px] font-bold inline-flex items-center gap-1.5 shadow-md border border-white/10">
+                                        <svg xmlns="http://www.w3.org/2000/svg" class="h-3.5 w-3.5 text-red-500 animate-pulse" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+                                        </svg>
+                                        360° Tour
+                                    </span>
+                                </c:if>
+                                <span class="px-3 py-1.5 bg-black/80 backdrop-blur-md text-white rounded-xl text-[11px] font-bold inline-flex items-center gap-1.5 shadow-md border border-white/10">
+                                    <svg class="w-3.5 h-3.5 text-white/80" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"></path></svg>
+                                    ${propiedad.numeroVistas} vistas
+                                </span>
+                            </div>
+                        </div>
+                        
+                        <!-- 1 Foto Secundaria (ocupa 1 de 4 columnas, altura completa) -->
+                        <div class="hidden md:block col-span-1 relative overflow-hidden bg-slate-200 h-full">
+                            <img src="${galeriaFotos.get(0).getRutaArchivoUrl(pageContext.request.contextPath)}" alt="Foto 1" class="w-full h-full object-cover cursor-pointer hover:scale-105 transition-transform duration-500 gallery-thumb" onclick="cambiarFotoPrincipal(this.src)">
+                        </div>
+
+                        <!-- Botón flotante para ver en grande -->
+                        <button type="button" onclick="const hero = document.getElementById('heroImg'); if(hero) { const lightboxImg = document.getElementById('lightboxImg'); const lightbox = document.getElementById('lightbox'); if (lightboxImg && lightbox) { lightboxImg.src = hero.src; lightbox.classList.remove('hidden'); } }" class="absolute bottom-4 right-4 bg-white hover:bg-slate-100 text-black px-4 py-2.5 rounded-xl text-xs font-bold shadow-lg border border-slate-200 flex items-center gap-1.5 transition-all duration-300">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
                             </svg>
-                            ${galeriaFotos.size() + 1} fotos
-                        </span>
-                        <c:if test="${not empty propiedad.tour360Url}">
-                            <span class="px-3 py-1.5 bg-black/80 backdrop-blur-md text-white rounded-xl text-[11px] font-bold inline-flex items-center gap-1.5 shadow-md border border-white/10">
-                                <svg xmlns="http://www.w3.org/2000/svg" class="h-3.5 w-3.5 text-red-500 animate-pulse" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
-                                </svg>
-                                360° Tour
-                            </span>
-                        </c:if>
-                        <span class="px-3 py-1.5 bg-black/80 backdrop-blur-md text-white rounded-xl text-[11px] font-bold inline-flex items-center gap-1.5 shadow-md border border-white/10">
-                            <svg class="w-3.5 h-3.5 text-white/80" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"></path></svg>
-                            ${propiedad.numeroVistas} vistas
-                        </span>
+                            Ver todas las fotos
+                        </button>
                     </div>
-                </div>
- 
-                <!-- Fotos Secundarias (Derecha, 2 cuadrículas x 2 filas) -->
-                <c:forEach begin="0" end="3" var="i">
-                    <c:set var="fotoExistente" value="${galeriaFotos.size() > i ? galeriaFotos.get(i) : null}" />
-                    <c:choose>
-                        <c:when test="${not empty fotoExistente}">
-                            <div class="hidden md:block col-span-1 row-span-1 relative overflow-hidden bg-slate-200 h-full">
-                                <img src="${fotoExistente.getRutaArchivoUrl(pageContext.request.contextPath)}" alt="Foto ${i+1}" class="w-full h-full object-cover cursor-pointer hover:scale-105 transition-transform duration-500 gallery-thumb" onclick="cambiarFotoPrincipal(this.src)">
-                            </div>
-                        </c:when>
-                        <c:otherwise>
-                            <div class="hidden md:flex col-span-1 row-span-1 items-center justify-center bg-slate-50 border border-slate-200/40">
-                                <img src="${pageContext.request.contextPath}/assets/img/logo/Logo_Inmobix.png" alt="Inmobix Logo" class="h-8 w-auto opacity-10 object-contain">
-                            </div>
-                        </c:otherwise>
-                    </c:choose>
-                </c:forEach>
+                </c:when>
 
-                <!-- Botón flotante para ver en grande -->
-                <button type="button" onclick="const hero = document.getElementById('heroImg'); if(hero) { const lightboxImg = document.getElementById('lightboxImg'); const lightbox = document.getElementById('lightbox'); if (lightboxImg && lightbox) { lightboxImg.src = hero.src; lightbox.classList.remove('hidden'); } }" class="absolute bottom-4 right-4 bg-white hover:bg-slate-100 text-black px-4 py-2.5 rounded-xl text-xs font-bold shadow-lg border border-slate-200 flex items-center gap-1.5 transition-all duration-300">
-                    <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
-                    </svg>
-                    Ver todas las fotos
-                </button>
-            </div>
+                <%-- Caso 2: Foto principal + 2 fotos secundarias --%>
+                <c:when test="${cantFotosSecundarias == 2}">
+                    <div class="grid grid-cols-1 md:grid-cols-4 gap-2 h-72 md:h-[28rem] rounded-2xl overflow-hidden relative group mb-8 shadow-lg border border-slate-100 bg-slate-100">
+                        <!-- Foto Principal (ocupa 2 de 4 columnas) -->
+                        <div class="col-span-1 md:col-span-2 relative overflow-hidden bg-slate-200 h-full">
+                            <c:choose>
+                                <c:when test="${not empty propiedad.fotoPrincipal}">
+                                    <img id="heroImg" src="${propiedad.getFotoPrincipalUrl(pageContext.request.contextPath)}" alt="${propiedad.titulo}" class="w-full h-full object-cover cursor-pointer hover:scale-[1.02] transition-transform duration-500" onclick="const lightboxImg = document.getElementById('lightboxImg'); const lightbox = document.getElementById('lightbox'); if (lightboxImg && lightbox) { lightboxImg.src = this.src; lightbox.classList.remove('hidden'); }">
+                                </c:when>
+                                <c:otherwise>
+                                    <img id="heroImg" src="${pageContext.request.contextPath}/assets/img/logo/Logo_Inmobix.png" alt="${propiedad.titulo}" class="w-full h-full object-contain p-12 bg-slate-100 cursor-pointer">
+                                </c:otherwise>
+                            </c:choose>
+                            
+                            <!-- Badge de Marca / Anunciante -->
+                            <div class="absolute top-4 left-4 bg-white/95 backdrop-blur px-3.5 py-2 rounded-xl flex items-center gap-2 shadow-md border border-slate-100 z-10 select-none">
+                                <img src="${pageContext.request.contextPath}/assets/img/logo/Logo_Inmobix.png" alt="Logo" class="h-4.5 w-auto object-contain">
+                                <span class="text-[10px] font-extrabold text-black uppercase tracking-wider">${propiedad.agenteNombre}</span>
+                            </div>
+                            
+                            <!-- Cápsulas flotantes de datos -->
+                            <div class="absolute bottom-4 left-4 flex flex-wrap items-center gap-2 z-10 select-none">
+                                <span class="px-3 py-1.5 bg-black/80 backdrop-blur-md text-white rounded-xl text-[11px] font-bold inline-flex items-center gap-1.5 shadow-md border border-white/10">
+                                    <svg xmlns="http://www.w3.org/2000/svg" class="h-3.5 w-3.5 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                                    </svg>
+                                    3 fotos
+                                </span>
+                                <c:if test="${not empty propiedad.tour360Url}">
+                                    <span class="px-3 py-1.5 bg-black/80 backdrop-blur-md text-white rounded-xl text-[11px] font-bold inline-flex items-center gap-1.5 shadow-md border border-white/10">
+                                        <svg xmlns="http://www.w3.org/2000/svg" class="h-3.5 w-3.5 text-red-500 animate-pulse" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+                                        </svg>
+                                        360° Tour
+                                    </span>
+                                </c:if>
+                                <span class="px-3 py-1.5 bg-black/80 backdrop-blur-md text-white rounded-xl text-[11px] font-bold inline-flex items-center gap-1.5 shadow-md border border-white/10">
+                                    <svg class="w-3.5 h-3.5 text-white/80" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"></path></svg>
+                                    ${propiedad.numeroVistas} vistas
+                                </span>
+                            </div>
+                        </div>
+                        
+                        <!-- 2 Fotos Secundarias (ocupan 1 columna cada una, altura completa) -->
+                        <div class="hidden md:block col-span-1 relative overflow-hidden bg-slate-200 h-full">
+                            <img src="${galeriaFotos.get(0).getRutaArchivoUrl(pageContext.request.contextPath)}" alt="Foto 1" class="w-full h-full object-cover cursor-pointer hover:scale-105 transition-transform duration-500 gallery-thumb" onclick="cambiarFotoPrincipal(this.src)">
+                        </div>
+                        <div class="hidden md:block col-span-1 relative overflow-hidden bg-slate-200 h-full">
+                            <img src="${galeriaFotos.get(1).getRutaArchivoUrl(pageContext.request.contextPath)}" alt="Foto 2" class="w-full h-full object-cover cursor-pointer hover:scale-105 transition-transform duration-500 gallery-thumb" onclick="cambiarFotoPrincipal(this.src)">
+                        </div>
+
+                        <!-- Botón flotante para ver en grande -->
+                        <button type="button" onclick="const hero = document.getElementById('heroImg'); if(hero) { const lightboxImg = document.getElementById('lightboxImg'); const lightbox = document.getElementById('lightbox'); if (lightboxImg && lightbox) { lightboxImg.src = hero.src; lightbox.classList.remove('hidden'); } }" class="absolute bottom-4 right-4 bg-white hover:bg-slate-100 text-black px-4 py-2.5 rounded-xl text-xs font-bold shadow-lg border border-slate-200 flex items-center gap-1.5 transition-all duration-300">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                            </svg>
+                            Ver todas las fotos
+                        </button>
+                    </div>
+                </c:when>
+
+                <%-- Caso 3: Foto principal + 3 fotos secundarias --%>
+                <c:when test="${cantFotosSecundarias == 3}">
+                    <div class="grid grid-cols-1 md:grid-cols-4 gap-2 h-72 md:h-[28rem] rounded-2xl overflow-hidden relative group mb-8 shadow-lg border border-slate-100 bg-slate-100">
+                        <!-- Foto Principal (ocupa 2 de 4 columnas, altura completa) -->
+                        <div class="col-span-1 md:col-span-2 relative overflow-hidden bg-slate-200 h-full">
+                            <c:choose>
+                                <c:when test="${not empty propiedad.fotoPrincipal}">
+                                    <img id="heroImg" src="${propiedad.getFotoPrincipalUrl(pageContext.request.contextPath)}" alt="${propiedad.titulo}" class="w-full h-full object-cover cursor-pointer hover:scale-[1.02] transition-transform duration-500" onclick="const lightboxImg = document.getElementById('lightboxImg'); const lightbox = document.getElementById('lightbox'); if (lightboxImg && lightbox) { lightboxImg.src = this.src; lightbox.classList.remove('hidden'); }">
+                                </c:when>
+                                <c:otherwise>
+                                    <img id="heroImg" src="${pageContext.request.contextPath}/assets/img/logo/Logo_Inmobix.png" alt="${propiedad.titulo}" class="w-full h-full object-contain p-12 bg-slate-100 cursor-pointer">
+                                </c:otherwise>
+                            </c:choose>
+                            
+                            <!-- Badge de Marca / Anunciante -->
+                            <div class="absolute top-4 left-4 bg-white/95 backdrop-blur px-3.5 py-2 rounded-xl flex items-center gap-2 shadow-md border border-slate-100 z-10 select-none">
+                                <img src="${pageContext.request.contextPath}/assets/img/logo/Logo_Inmobix.png" alt="Logo" class="h-4.5 w-auto object-contain">
+                                <span class="text-[10px] font-extrabold text-black uppercase tracking-wider">${propiedad.agenteNombre}</span>
+                            </div>
+                            
+                            <!-- Cápsulas flotantes de datos -->
+                            <div class="absolute bottom-4 left-4 flex flex-wrap items-center gap-2 z-10 select-none">
+                                <span class="px-3 py-1.5 bg-black/80 backdrop-blur-md text-white rounded-xl text-[11px] font-bold inline-flex items-center gap-1.5 shadow-md border border-white/10">
+                                    <svg xmlns="http://www.w3.org/2000/svg" class="h-3.5 w-3.5 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                                    </svg>
+                                    4 fotos
+                                </span>
+                                <c:if test="${not empty propiedad.tour360Url}">
+                                    <span class="px-3 py-1.5 bg-black/80 backdrop-blur-md text-white rounded-xl text-[11px] font-bold inline-flex items-center gap-1.5 shadow-md border border-white/10">
+                                        <svg xmlns="http://www.w3.org/2000/svg" class="h-3.5 w-3.5 text-red-500 animate-pulse" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+                                        </svg>
+                                        360° Tour
+                                    </span>
+                                </c:if>
+                                <span class="px-3 py-1.5 bg-black/80 backdrop-blur-md text-white rounded-xl text-[11px] font-bold inline-flex items-center gap-1.5 shadow-md border border-white/10">
+                                    <svg class="w-3.5 h-3.5 text-white/80" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"></path></svg>
+                                    ${propiedad.numeroVistas} vistas
+                                </span>
+                            </div>
+                        </div>
+
+                        <!-- Foto Secundaria 1 (ocupa 1 de 4 columnas, altura completa) -->
+                        <div class="hidden md:block col-span-1 relative overflow-hidden bg-slate-200 h-full">
+                            <img src="${galeriaFotos.get(0).getRutaArchivoUrl(pageContext.request.contextPath)}" alt="Foto 1" class="w-full h-full object-cover cursor-pointer hover:scale-105 transition-transform duration-500 gallery-thumb" onclick="cambiarFotoPrincipal(this.src)">
+                        </div>
+
+                        <!-- 2 Fotos Secundarias en la última columna (apiladas en 2 filas) -->
+                        <div class="hidden md:grid col-span-1 grid-rows-2 gap-2 h-full">
+                            <div class="relative overflow-hidden bg-slate-200 h-full">
+                                <img src="${galeriaFotos.get(1).getRutaArchivoUrl(pageContext.request.contextPath)}" alt="Foto 2" class="w-full h-full object-cover cursor-pointer hover:scale-105 transition-transform duration-500 gallery-thumb" onclick="cambiarFotoPrincipal(this.src)">
+                            </div>
+                            <div class="relative overflow-hidden bg-slate-200 h-full">
+                                <img src="${galeriaFotos.get(2).getRutaArchivoUrl(pageContext.request.contextPath)}" alt="Foto 3" class="w-full h-full object-cover cursor-pointer hover:scale-105 transition-transform duration-500 gallery-thumb" onclick="cambiarFotoPrincipal(this.src)">
+                            </div>
+                        </div>
+
+                        <!-- Botón flotante para ver en grande -->
+                        <button type="button" onclick="const hero = document.getElementById('heroImg'); if(hero) { const lightboxImg = document.getElementById('lightboxImg'); const lightbox = document.getElementById('lightbox'); if (lightboxImg && lightbox) { lightboxImg.src = hero.src; lightbox.classList.remove('hidden'); } }" class="absolute bottom-4 right-4 bg-white hover:bg-slate-100 text-black px-4 py-2.5 rounded-xl text-xs font-bold shadow-lg border border-slate-200 flex items-center gap-1.5 transition-all duration-300">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                            </svg>
+                            Ver todas las fotos
+                        </button>
+                    </div>
+                </c:when>
+
+                <%-- Caso 4 o más fotos secundarias: Mosaico estándar de 5 fotos --%>
+                <c:otherwise>
+                    <div class="grid grid-cols-1 md:grid-cols-4 gap-2 h-72 md:h-[28rem] rounded-2xl overflow-hidden relative group mb-8 shadow-lg border border-slate-100 bg-slate-100">
+                        <!-- Foto Principal (ocupa 2 columnas y 2 filas) -->
+                        <div class="col-span-1 md:col-span-2 md:row-span-2 relative overflow-hidden bg-slate-200 h-full">
+                            <c:choose>
+                                <c:when test="${not empty propiedad.fotoPrincipal}">
+                                    <img id="heroImg" src="${propiedad.getFotoPrincipalUrl(pageContext.request.contextPath)}" alt="${propiedad.titulo}" class="w-full h-full object-cover cursor-pointer hover:scale-[1.02] transition-transform duration-500" onclick="const lightboxImg = document.getElementById('lightboxImg'); const lightbox = document.getElementById('lightbox'); if (lightboxImg && lightbox) { lightboxImg.src = this.src; lightbox.classList.remove('hidden'); }">
+                                </c:when>
+                                <c:otherwise>
+                                    <img id="heroImg" src="${pageContext.request.contextPath}/assets/img/logo/Logo_Inmobix.png" alt="${propiedad.titulo}" class="w-full h-full object-contain p-12 bg-slate-100 cursor-pointer">
+                                </c:otherwise>
+                            </c:choose>
+                            
+                            <!-- Badge de Marca / Anunciante -->
+                            <div class="absolute top-4 left-4 bg-white/95 backdrop-blur px-3.5 py-2 rounded-xl flex items-center gap-2 shadow-md border border-slate-100 z-10 select-none">
+                                <img src="${pageContext.request.contextPath}/assets/img/logo/Logo_Inmobix.png" alt="Logo" class="h-4.5 w-auto object-contain">
+                                <span class="text-[10px] font-extrabold text-black uppercase tracking-wider">${propiedad.agenteNombre}</span>
+                            </div>
+                            
+                            <!-- Cápsulas flotantes de datos -->
+                            <div class="absolute bottom-4 left-4 flex flex-wrap items-center gap-2 z-10 select-none">
+                                <span class="px-3 py-1.5 bg-black/80 backdrop-blur-md text-white rounded-xl text-[11px] font-bold inline-flex items-center gap-1.5 shadow-md border border-white/10">
+                                    <svg xmlns="http://www.w3.org/2000/svg" class="h-3.5 w-3.5 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                                    </svg>
+                                    ${cantFotosSecundarias + 1} fotos
+                                </span>
+                                <c:if test="${not empty propiedad.tour360Url}">
+                                    <span class="px-3 py-1.5 bg-black/80 backdrop-blur-md text-white rounded-xl text-[11px] font-bold inline-flex items-center gap-1.5 shadow-md border border-white/10">
+                                        <svg xmlns="http://www.w3.org/2000/svg" class="h-3.5 w-3.5 text-red-500 animate-pulse" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+                                        </svg>
+                                        360° Tour
+                                    </span>
+                                </c:if>
+                                <span class="px-3 py-1.5 bg-black/80 backdrop-blur-md text-white rounded-xl text-[11px] font-bold inline-flex items-center gap-1.5 shadow-md border border-white/10">
+                                    <svg class="w-3.5 h-3.5 text-white/80" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"></path></svg>
+                                    ${propiedad.numeroVistas} vistas
+                                </span>
+                            </div>
+                        </div>
+
+                        <!-- 4 Fotos Secundarias (Derecha, 2 cuadrículas x 2 filas) -->
+                        <c:forEach begin="0" end="3" var="i">
+                            <div class="hidden md:block col-span-1 row-span-1 relative overflow-hidden bg-slate-200 h-full">
+                                <img src="${galeriaFotos.get(i).getRutaArchivoUrl(pageContext.request.contextPath)}" alt="Foto ${i+1}" class="w-full h-full object-cover cursor-pointer hover:scale-105 transition-transform duration-500 gallery-thumb" onclick="cambiarFotoPrincipal(this.src)">
+                            </div>
+                        </c:forEach>
+
+                        <!-- Botón flotante para ver en grande -->
+                        <button type="button" onclick="const hero = document.getElementById('heroImg'); if(hero) { const lightboxImg = document.getElementById('lightboxImg'); const lightbox = document.getElementById('lightbox'); if (lightboxImg && lightbox) { lightboxImg.src = hero.src; lightbox.classList.remove('hidden'); } }" class="absolute bottom-4 right-4 bg-white hover:bg-slate-100 text-black px-4 py-2.5 rounded-xl text-xs font-bold shadow-lg border border-slate-200 flex items-center gap-1.5 transition-all duration-300">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                            </svg>
+                            Ver todas las fotos
+                        </button>
+                    </div>
+                </c:otherwise>
+            </c:choose>
 
             <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
                 <!-- Detalles Principales -->
