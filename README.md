@@ -18,15 +18,6 @@ Plataforma web para la publicación, búsqueda y comparación de inmuebles en el
 | **Gráficos** | Chart.js |
 | **Build** | Maven Wrapper |
 
-### Alternativas a servicios externos
-
-| Servicio restringido | Solución local |
-| :--- | :--- |
-| OAuth / Login social | Autenticación con hash de contraseña y sesiones HTTP |
-| Google Maps API | Leaflet.js con tiles de OpenStreetMap |
-| Pasarelas de pago | Simulación de transacciones en BD |
-| Cloud Storage | Directorio local uploads/propiedades/ |
-
 ---
 
 ## 2. Arquitectura MVC por Capas
@@ -172,13 +163,6 @@ Portal-Inmobiliario/
 | Moderar usuarios y contenido | — | — | ✔ |
 | Gestionar ubicaciones | — | — | ✔ |
 
-### Planes de Publicación
-
-| Plan | Costo | Propiedades | Fotos | Destacado |
-| :--- | :---: | :---: | :---: | :---: |
-| Gratuito | S/. 0 | 1 | 3 | No |
-| Básico | S/. 50/mes | 5 | 10 | No |
-| Premium | S/. 150/mes | 20 | 30 | Sí |
 
 ---
 
