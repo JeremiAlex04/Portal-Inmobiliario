@@ -174,7 +174,7 @@
             <!-- ============================================ -->
             <!--             WIZARD FORM                      -->
             <!-- ============================================ -->
-            <form id="wizard-form" action="${pageContext.request.contextPath}/propiedades" method="post" enctype="multipart/form-data">
+            <form id="wizard-form" action="${pageContext.request.contextPath}/propiedades" method="post">
                 <input type="hidden" name="id" value="${propiedad != null ? propiedad.id : ''}">
 
                 <!-- ============================== -->
@@ -540,73 +540,61 @@
                 <div class="wizard-panel" data-panel="5" style="display: none;">
                     <div class="bg-white rounded-2xl shadow-sm border border-slate-100 p-8 md:p-10">
                         <div class="mb-8">
-                            <h2 class="text-2xl font-light text-slate-900 mb-1" style="font-family:'Playfair Display',serif;">Sube la foto de tu propiedad</h2>
-                            <p class="text-slate-400 text-sm">Una buena foto principal aumenta significativamente las visitas.</p>
+                            <h2 class="text-2xl font-light text-slate-900 mb-1" style="font-family:'Playfair Display',serif;">Imágenes de tu propiedad</h2>
+                            <p class="text-slate-400 text-sm">Ingresa las direcciones URL de las imágenes de tu inmueble. Puedes usar enlaces de Unsplash u otros repositorios de imágenes.</p>
                         </div>
 
-                        <!-- Current Photo (edit mode) -->
-                        <c:if test="${propiedad != null && not empty propiedad.fotoPrincipal}">
-                            <div class="mb-6 p-4 bg-slate-50 rounded-xl border border-slate-200">
-                                <p class="text-xs text-slate-500 mb-2 font-semibold">Foto actual:</p>
-                                <img src="${propiedad.getFotoPrincipalUrl(pageContext.request.contextPath)}" alt="Foto actual"
-                                    class="w-40 h-28 object-cover rounded-xl border border-slate-200 shadow-sm">
-                            </div>
-                        </c:if>
-
-                        <!-- Drag & Drop Zone -->
-                        <div id="drop-zone" class="border-2 border-dashed border-slate-300 hover:border-black rounded-2xl p-10 text-center cursor-pointer transition-all duration-300 group bg-slate-50/50 hover:bg-slate-50">
-                            <div class="flex flex-col items-center gap-4">
-                                <div class="w-16 h-16 rounded-full bg-white border border-slate-200 flex items-center justify-center shadow-sm group-hover:scale-110 transition-transform">
-                                    <svg class="w-8 h-8 text-slate-400 group-hover:text-black transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
-                                    </svg>
+                        <!-- Foto Principal -->
+                        <div class="mb-8">
+                            <label class="block text-sm font-bold text-slate-700 mb-2">Foto Principal (URL)</label>
+                            <input type="url" name="fotoPrincipalUrl" id="fotoPrincipalInput" 
+                                placeholder="Ej: https://images.unsplash.com/photo-..." 
+                                value="${propiedad != null ? propiedad.fotoPrincipal : ''}"
+                                class="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-black transition-all">
+                            <!-- Live Preview for Main Photo -->
+                            <div id="main-preview-container" class="mt-4 ${propiedad != null && not empty propiedad.fotoPrincipal ? '' : 'hidden'}">
+                                <span class="text-xs text-slate-400 block mb-1">Vista Previa Foto Principal:</span>
+                                <div class="relative inline-block">
+                                    <img id="main-preview-img" src="${propiedad != null ? propiedad.getFotoPrincipalUrl(pageContext.request.contextPath) : ''}" 
+                                        alt="Vista previa principal" class="w-48 h-32 object-cover rounded-xl border border-slate-200 shadow-sm">
                                 </div>
+                            </div>
+                        </div>
+
+                        <!-- Galería de Fotos Dinámica -->
+                        <div class="mb-8 border-t border-slate-100 pt-6">
+                            <div class="flex justify-between items-center mb-4">
                                 <div>
-                                    <p class="text-sm font-semibold text-slate-600">Arrastra tu imagen aquí o <span class="text-black underline">haz clic para seleccionar</span></p>
-                                    <p class="text-xs text-slate-400 mt-1">JPG, PNG o WebP — máx. 2 MB</p>
+                                    <h3 class="text-base font-bold text-slate-800">Galería de Fotos (Opcional)</h3>
+                                    <p class="text-xs text-slate-400">Agrega URLs de imágenes secundarias para el carrusel de detalles.</p>
                                 </div>
-                            </div>
-                            <input type="file" name="fotoPrincipal" id="fotoPrincipalInput" accept=".jpg,.jpeg,.png,.webp"
-                                class="hidden">
-                        </div>
-
-                        <!-- Preview -->
-                        <div id="imgPreview" class="mt-4 hidden">
-                            <div class="relative inline-block">
-                                <img id="previewImg" src="" alt="Preview" class="w-48 h-32 object-cover rounded-xl border border-slate-200 shadow-sm">
-                                <button type="button" id="removePreview" class="absolute -top-2 -right-2 bg-red-500 text-white w-6 h-6 rounded-full flex items-center justify-center shadow-md hover:bg-red-600 transition-colors">
-                                    <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M6 18L18 6M6 6l12 12"></path></svg>
+                                <button type="button" id="btn-add-gallery-url" 
+                                    class="bg-black hover:bg-zinc-800 text-white text-xs font-bold px-4 py-2 rounded-lg transition-all flex items-center gap-1 shadow-sm">
+                                    <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path></svg>
+                                    Agregar Foto
                                 </button>
                             </div>
-                        </div>
 
-                        <!-- Gallery (edit mode only) -->
-                        <c:if test="${not empty propiedad.id}">
-                            <div class="bg-slate-50 rounded-xl p-6 mt-8 border border-slate-200">
-                                <h3 class="text-base font-bold text-slate-800 mb-4 flex items-center gap-2">
-                                    <svg class="w-5 h-5 text-slate-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 9a2 2 0 012-2h.93a2 2 0 001.664-.89l.812-1.22A2 2 0 0110.07 4h3.86a2 2 0 011.664.89l.812 1.22A2 2 0 0018.07 7H19a2 2 0 012 2v9a2 2 0 01-2 2H5a2 2 0 01-2-2V9z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 13a3 3 0 11-6 0 3 3 0 016 0z"></path></svg>
-                                    Galería de Fotos (máx. 5)
-                                </h3>
-                                <c:if test="${not empty galeriaFotos}">
-                                    <div class="flex flex-wrap gap-3 mb-4">
-                                        <c:forEach var="foto" items="${galeriaFotos}">
-                                            <div class="relative group">
-                                                <img src="${foto.getRutaArchivoUrl(pageContext.request.contextPath)}" class="w-24 h-20 object-cover rounded-lg border">
-                                                <form action="${pageContext.request.contextPath}/galeria" method="post" class="absolute -top-2 -right-2 hidden group-hover:block">
-                                                    <input type="hidden" name="accion" value="eliminar">
-                                                    <input type="hidden" name="idFoto" value="${foto.id}">
-                                                    <input type="hidden" name="idPropiedad" value="${propiedad.id}">
-                                                    <button class="bg-red-500 text-white w-6 h-6 rounded-full flex items-center justify-center shadow hover:bg-red-600 transition-colors" title="Eliminar">
-                                                        <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M6 18L18 6M6 6l12 12"></path></svg>
-                                                    </button>
-                                                </form>
-                                                <c:if test="${foto.esPrincipal}"><span class="absolute bottom-0 left-0 right-0 bg-black text-white text-[10px] text-center font-bold rounded-b-lg py-0.5">Principal</span></c:if>
-                                            </div>
-                                        </c:forEach>
+                            <div id="galeria-urls-container" class="space-y-4">
+                                <!-- Pre-populated inputs if editing -->
+                                <c:forEach var="foto" items="${galeriaFotos}" varStatus="status">
+                                    <div class="gallery-url-row flex flex-col gap-2 p-3 bg-slate-50 rounded-xl border border-slate-200">
+                                        <div class="flex gap-2 items-center">
+                                            <span class="text-xs font-bold text-slate-400 min-w-[20px]">${status.index + 1}</span>
+                                            <input type="url" name="fotoGaleriaUrl" placeholder="https://example.com/imagen.jpg" 
+                                                value="${foto.rutaArchivo}" 
+                                                class="flex-1 bg-white border border-slate-200 rounded-lg px-3 py-2 text-xs focus:outline-none focus:border-black transition-all gallery-url-input">
+                                            <button type="button" class="btn-remove-gallery-url text-red-500 hover:text-red-700 p-2 rounded-lg hover:bg-red-50 transition-colors" title="Eliminar">
+                                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path></svg>
+                                            </button>
+                                        </div>
+                                        <div class="gallery-preview-wrapper ${not empty foto.rutaArchivo ? '' : 'hidden'}">
+                                            <img src="${foto.getRutaArchivoUrl(pageContext.request.contextPath)}" class="w-24 h-16 object-cover rounded-lg border shadow-sm">
+                                        </div>
                                     </div>
-                                </c:if>
+                                </c:forEach>
                             </div>
-                        </c:if>
+                        </div>
 
                         <!-- Summary Preview -->
                         <div class="mt-8 p-6 bg-slate-50 rounded-xl border border-slate-200">

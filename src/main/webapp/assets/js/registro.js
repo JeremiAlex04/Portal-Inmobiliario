@@ -355,65 +355,107 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
     // =====================================================
-    //  DRAG & DROP PHOTO UPLOAD
+    //  DYNAMIC PHOTO URLS INPUTS & PREVIEW
     // =====================================================
-    const dropZone = document.getElementById('drop-zone');
-    const fileInput = document.getElementById('fotoPrincipalInput');
-    const previewContainer = document.getElementById('imgPreview');
-    const previewImg = document.getElementById('previewImg');
-    const removeBtn = document.getElementById('removePreview');
+    const fotoPrincipalInput = document.getElementById('fotoPrincipalInput');
+    const mainPreviewContainer = document.getElementById('main-preview-container');
+    const mainPreviewImg = document.getElementById('main-preview-img');
 
-    if (dropZone && fileInput) {
-        dropZone.addEventListener('click', () => {
-            fileInput.click();
-        });
+    function updateMainPreview() {
+        if (!fotoPrincipalInput) return;
+        const url = fotoPrincipalInput.value.trim();
+        if (url && (url.startsWith('http://') || url.startsWith('https://'))) {
+            mainPreviewImg.src = url;
+            mainPreviewContainer.classList.remove('hidden');
+        } else {
+            mainPreviewContainer.classList.add('hidden');
+        }
+    }
 
-        ['dragenter', 'dragover'].forEach(evt => {
-            dropZone.addEventListener(evt, (e) => {
-                e.preventDefault();
-                e.stopPropagation();
-                dropZone.classList.add('drag-active');
-            });
-        });
+    if (fotoPrincipalInput) {
+        fotoPrincipalInput.addEventListener('input', updateMainPreview);
+        fotoPrincipalInput.addEventListener('change', updateMainPreview);
+        // Initial run in edit mode
+        updateMainPreview();
+    }
 
-        ['dragleave', 'drop'].forEach(evt => {
-            dropZone.addEventListener(evt, (e) => {
-                e.preventDefault();
-                e.stopPropagation();
-                dropZone.classList.remove('drag-active');
-            });
-        });
+    const galeriaContainer = document.getElementById('galeria-urls-container');
+    const btnAddGalleryUrl = document.getElementById('btn-add-gallery-url');
 
-        dropZone.addEventListener('drop', (e) => {
-            const files = e.dataTransfer.files;
-            if (files.length > 0) {
-                fileInput.files = files;
-                showPreview(files[0]);
-            }
-        });
-
-        fileInput.addEventListener('change', () => {
-            if (fileInput.files.length > 0) {
-                showPreview(fileInput.files[0]);
-            }
-        });
-
-        if (removeBtn) {
-            removeBtn.addEventListener('click', () => {
-                fileInput.value = '';
-                if (previewContainer) previewContainer.classList.add('hidden');
+    function updateRowNumbers() {
+        if (galeriaContainer) {
+            galeriaContainer.querySelectorAll('.gallery-url-row').forEach((row, idx) => {
+                const numSpan = row.querySelector('.row-number') || row.querySelector('span');
+                if (numSpan) {
+                    numSpan.textContent = idx + 1;
+                    numSpan.className = 'text-xs font-bold text-slate-400 min-w-[20px] row-number';
+                }
             });
         }
     }
 
-    function showPreview(file) {
-        if (!file || !previewImg || !previewContainer) return;
-        const reader = new FileReader();
-        reader.onload = (e) => {
-            previewImg.src = e.target.result;
-            previewContainer.classList.remove('hidden');
-        };
-        reader.readAsDataURL(file);
+    function attachRowListeners(row, input, removeBtn) {
+        const previewWrapper = row.querySelector('.gallery-preview-wrapper');
+        const previewImg = previewWrapper.querySelector('img');
+
+        function updatePreview() {
+            const url = input.value.trim();
+            if (url && (url.startsWith('http://') || url.startsWith('https://'))) {
+                previewImg.src = url;
+                previewWrapper.classList.remove('hidden');
+            } else {
+                previewWrapper.classList.add('hidden');
+            }
+        }
+
+        if (input) {
+            input.addEventListener('input', updatePreview);
+            input.addEventListener('change', updatePreview);
+            // Initial preview in edit mode
+            updatePreview();
+        }
+
+        if (removeBtn) {
+            removeBtn.addEventListener('click', () => {
+                row.remove();
+                updateRowNumbers();
+            });
+        }
+    }
+
+    if (btnAddGalleryUrl && galeriaContainer) {
+        btnAddGalleryUrl.addEventListener('click', () => {
+            const index = galeriaContainer.querySelectorAll('.gallery-url-row').length + 1;
+            
+            const newRow = document.createElement('div');
+            newRow.className = 'gallery-url-row flex flex-col gap-2 p-3 bg-slate-50 rounded-xl border border-slate-200';
+            newRow.innerHTML = `
+                <div class="flex gap-2 items-center">
+                    <span class="text-xs font-bold text-slate-400 min-w-[20px] row-number">${index}</span>
+                    <input type="url" name="fotoGaleriaUrl" placeholder="https://example.com/imagen.jpg" 
+                        class="flex-1 bg-white border border-slate-200 rounded-lg px-3 py-2 text-xs focus:outline-none focus:border-black transition-all gallery-url-input">
+                    <button type="button" class="btn-remove-gallery-url text-red-500 hover:text-red-700 p-2 rounded-lg hover:bg-red-50 transition-colors" title="Eliminar">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path></svg>
+                    </button>
+                </div>
+                <div class="gallery-preview-wrapper hidden">
+                    <img src="" class="w-24 h-16 object-cover rounded-lg border shadow-sm">
+                </div>
+            `;
+            galeriaContainer.appendChild(newRow);
+            
+            const input = newRow.querySelector('.gallery-url-input');
+            const removeBtn = newRow.querySelector('.btn-remove-gallery-url');
+            
+            attachRowListeners(newRow, input, removeBtn);
+        });
+
+        // Attach listeners to any existing rows (loaded in edit mode)
+        galeriaContainer.querySelectorAll('.gallery-url-row').forEach(row => {
+            const input = row.querySelector('.gallery-url-input');
+            const removeBtn = row.querySelector('.btn-remove-gallery-url');
+            attachRowListeners(row, input, removeBtn);
+        });
     }
 
     // =====================================================

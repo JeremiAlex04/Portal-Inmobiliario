@@ -39,11 +39,17 @@
     <main class="flex-grow pt-28 pb-16 px-4">
         <div class="max-w-7xl mx-auto">
             
-            <div class="mb-8 flex justify-between items-center">
+            <div class="mb-8 flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
                 <div>
                     <h1 class="text-3xl font-bold text-slate-900 tracking-tight">Moderación de Propiedades</h1>
                     <p class="text-slate-500 mt-2">Gestiona, aprueba, rechaza o elimina cualquier publicación inmobiliaria.</p>
                 </div>
+                <a href="${pageContext.request.contextPath}/propiedades?accion=nuevo" class="bg-brandBtn hover:bg-brandHover text-white px-6 py-3 rounded-xl font-bold shadow-lg shadow-brandBtn/20 transition-all hover:-translate-y-0.5 flex items-center gap-2">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+                        <path fill-rule="evenodd" d="M10 3a1 1 0 011 1v5h5a1 1 0 110 2h-5v5a1 1 0 11-2 0v-5H4a1 1 0 110-2h5V4a1 1 0 011-1z" clip-rule="evenodd" />
+                    </svg>
+                    Nueva Propiedad
+                </a>
             </div>
 
             <!-- Barra de búsqueda -->
@@ -122,6 +128,7 @@
                                     <td class="px-6 py-4">
                                         <div class="flex justify-center gap-2">
                                              <a href="${pageContext.request.contextPath}/propiedades?accion=ver&id=${p.id}" target="_blank" class="text-xs font-bold px-3 py-1.5 rounded-lg border border-slate-200 text-slate-700 hover:text-black hover:border-black hover:bg-black/5 transition-all">Ver Detalles</a>
+                                             <a href="${pageContext.request.contextPath}/propiedades?accion=editar&id=${p.id}" class="text-xs font-bold px-3 py-1.5 rounded-lg border border-slate-200 text-blue-600 hover:text-blue-800 hover:border-blue-300 hover:bg-blue-50 transition-all">Editar</a>
                                             <button onclick="confirmarEliminacion('${pageContext.request.contextPath}/admin?accion=eliminar_prop&id=${p.id}')" class="text-xs font-bold px-3 py-1.5 rounded-lg bg-red-50 text-red-600 hover:bg-red-100 transition-colors">Eliminar</button>
                                         </div>
                                     </td>

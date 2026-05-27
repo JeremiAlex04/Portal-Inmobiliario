@@ -166,16 +166,23 @@ Portal-Inmobiliario/
 
 ---
 
-## 6. Evidencias Visuales Sugeridas
+## 6. Evidencias Visuales del Avance
 
-Para la sustentación académica se recomienda incluir capturas de:
+A continuación se presentan las capturas de pantalla que sustentan la funcionalidad operativa del sistema:
 
 1. **Página de inicio** — Buscador inteligente con autocompletado de distritos.
+   ![Página de Inicio](./capturas_avance2/Pagina_Inicial.png)
 2. **Catálogo con filtros** — Resultados filtrados por precio, tipo y distrito.
-3. **Detalle del inmueble** — Galería de fotos y mapa Leaflet.js.
-4. **Comparador** — Tabla comparativa con precio por m² resaltado.
-5. **Panel del agente** — Gráfico de vistas con Chart.js.
-6. **Panel de administración** — Dashboard con gestión de usuarios y propiedades.
+   ![Catálogo con Filtros](./capturas_avance2/catalogo_filtros.png)
+3. **Detalle del inmueble** — Galería de fotos, descripción y mapa.
+   ![Detalle del Inmueble 1](./capturas_avance2/detalle_inmueble_1.png)
+   ![Detalle del Inmueble 2](./capturas_avance2/detalle_inmueble_2.png)
+4. **Comparador** — Tabla comparativa con especificaciones y precios.
+   ![Comparador](./capturas_avance2/comparador.png)
+5. **Panel del agente** — Gráfico de visitas y control de publicaciones.
+   ![Panel del Agente](./capturas_avance2/panel_agente.png)
+6. **Panel de administración** — Dashboard con gestión de usuarios, propiedades y auditoría.
+   ![Panel de Administración](./capturas_avance2/panel_admin.png)
 
 ---
 

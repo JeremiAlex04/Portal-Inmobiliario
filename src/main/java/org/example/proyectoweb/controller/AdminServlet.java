@@ -154,12 +154,12 @@ public class AdminServlet extends HttpServlet {
                 String tipoProp = request.getParameter("tipoInmueble");
 
                 if ((keyProp != null && !keyProp.trim().isEmpty()) || (operacion != null && !operacion.isEmpty()) || (tipoProp != null && !tipoProp.isEmpty())) {
-                    request.setAttribute("listaPropiedades", propiedadFacade.buscarPropiedades(keyProp, operacion, tipoProp, 0, 1000));
+                    request.setAttribute("listaPropiedades", propiedadFacade.buscarPropiedadesAdmin(keyProp, operacion, tipoProp, 0, 1000));
                     request.setAttribute("busquedaActual", keyProp);
                     request.setAttribute("operacionActual", operacion);
                     request.setAttribute("tipoActual", tipoProp);
                 } else {
-                    request.setAttribute("listaPropiedades", propiedadFacade.listarPropiedades(0, 1000));
+                    request.setAttribute("listaPropiedades", propiedadFacade.listarPropiedadesAdmin(0, 1000));
                 }
                 request.getRequestDispatcher("/WEB-INF/views/admin/propiedades.jsp").forward(request, response);
                 break;

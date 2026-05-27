@@ -33,10 +33,12 @@
                             class="text-sm font-semibold ${activePage == 'inicio' ? 'text-brandHover' : 'text-white/80 hover:text-brandHover'} transition-colors">Inicio</a>
                         <a href="${pageContext.request.contextPath}/propiedades"
                             class="text-sm font-semibold ${activePage == 'catalogo' ? 'text-brandHover' : 'text-white/80 hover:text-brandHover'} transition-colors">Catálogo</a>
-                        <a href="${pageContext.request.contextPath}/pagos?accion=planes"
-                            class="text-sm font-semibold ${activePage == 'planes' ? 'text-brandHover' : 'text-white/80 hover:text-brandHover'} transition-colors">Planes</a>
-                        <a href="${pageContext.request.contextPath}/propiedades?accion=nuevo"
-                            class="text-sm font-semibold ${activePage == 'publicar' ? 'text-brandHover' : 'text-white/80 hover:text-brandHover'} transition-colors">Publicar</a>
+                        <c:if test="${empty sessionScope.usuarioLogueado || sessionScope.usuarioLogueado.idRol != 2}">
+                            <a href="${pageContext.request.contextPath}/pagos?accion=planes"
+                                class="text-sm font-semibold ${activePage == 'planes' ? 'text-brandHover' : 'text-white/80 hover:text-brandHover'} transition-colors">Planes</a>
+                            <a href="${pageContext.request.contextPath}/propiedades?accion=nuevo"
+                                class="text-sm font-semibold ${activePage == 'publicar' ? 'text-brandHover' : 'text-white/80 hover:text-brandHover'} transition-colors">Publicar</a>
+                        </c:if>
                         <c:if test="${not empty sessionScope.usuarioLogueado}">
                              <a href="${pageContext.request.contextPath}/favorito?accion=listar"
                                  class="text-sm font-semibold ${activePage == 'favoritos' ? 'text-brandHover' : 'text-white/80 hover:text-brandHover'} transition-colors inline-flex items-center gap-1">

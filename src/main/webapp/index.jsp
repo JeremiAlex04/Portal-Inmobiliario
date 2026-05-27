@@ -287,6 +287,7 @@
             </section>
 
             <!-- Call to Action -->
+            <c:if test="${empty sessionScope.usuarioLogueado || sessionScope.usuarioLogueado.idRol != 2}">
             <section class="reveal max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pb-24">
                 <div class="bg-black text-white rounded-3xl p-12 text-center shadow-2xl relative overflow-hidden flex flex-col items-center">
                     <div class="absolute -right-20 -top-20 w-80 h-80 rounded-full bg-zinc-800 opacity-20 filter blur-3xl"></div>
@@ -303,6 +304,7 @@
                     </div>
                 </div>
             </section>
+            </c:if>
         </main>
 
         <!-- Footer -->

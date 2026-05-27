@@ -25,11 +25,6 @@ import java.util.Set;
 import java.util.UUID;
 
 @WebServlet(name = "PropiedadServlet", urlPatterns = { "/propiedades" })
-@MultipartConfig(
-    fileSizeThreshold = 1024 * 1024,       // 1 MB
-    maxFileSize       = 2 * 1024 * 1024,   // 2 MB
-    maxRequestSize    = 5 * 1024 * 1024    // 5 MB total
-)
 public class PropiedadServlet extends HttpServlet {
 
     private PropiedadFacade propiedadFacade;
@@ -57,48 +52,9 @@ public class PropiedadServlet extends HttpServlet {
     }
 
     // =========================================================
-    // Utilidad: procesar imagen subida
     // =========================================================
-    private String procesarImagen(HttpServletRequest request) throws IOException, ServletException {
-        Part filePart = request.getPart("fotoPrincipal");
-        if (filePart == null || filePart.getSize() == 0) {
-            return null; // No se subió imagen
-        }
-
-        // Validar tamaño (2 MB)
-        if (filePart.getSize() > 2 * 1024 * 1024) {
-            throw new ServletException("La imagen no puede superar los 2 MB.");
-        }
-
-        // Obtener nombre y extensión
-        String fileName = Paths.get(filePart.getSubmittedFileName()).getFileName().toString();
-        String extension = "";
-        int dot = fileName.lastIndexOf('.');
-        if (dot > 0) {
-            extension = fileName.substring(dot + 1).toLowerCase();
-        }
-
-        // Validar extensión
-        if (!EXTENSIONES_PERMITIDAS.contains(extension)) {
-            throw new ServletException("Formato no permitido. Use: jpg, jpeg, png o webp.");
-        }
-
-        // Generar nombre único
-        String nuevoNombre = UUID.randomUUID().toString() + "." + extension;
-
-        // Crear directorio de uploads si no existe
-        String uploadPath = getServletContext().getRealPath("/uploads/propiedades");
-        File uploadDir = new File(uploadPath);
-        if (!uploadDir.exists()) {
-            uploadDir.mkdirs();
-        }
-
-        // Guardar archivo
-        filePart.write(uploadPath + File.separator + nuevoNombre);
-
-        // Retornar ruta relativa para la BD
-        return "uploads/propiedades/" + nuevoNombre;
-    }
+    // Utilidad: Las imágenes físicas fueron reemplazadas por URLs dinámicas
+    // =========================================================
 
     // =========================================================
     // GET — Navegación, listado, búsqueda, detalle
@@ -362,19 +318,12 @@ public class PropiedadServlet extends HttpServlet {
             }
             propiedad.setTour360Url(request.getParameter("tour360Url"));
 
-            // Sprint 2: Procesar imagen
-            try {
-                String rutaFoto = procesarImagen(request);
-                if (rutaFoto != null) {
-                    propiedad.setFotoPrincipal(rutaFoto);
-                }
-            } catch (ServletException imgError) {
-                request.setAttribute("error", imgError.getMessage());
-                request.setAttribute("propiedad", propiedad);
-                cargarCatalogos(request);
-                request.getRequestDispatcher("/WEB-INF/views/agente/registro.jsp").forward(request, response);
-                return;
-            }
+            // Procesar URL de la foto principal
+            String fotoPrincipal = request.getParameter("fotoPrincipalUrl");
+            propiedad.setFotoPrincipal(fotoPrincipal != null && !fotoPrincipal.trim().isEmpty() ? fotoPrincipal.trim() : null);
+
+            // Obtener URLs de la galería
+            String[] fotosGaleria = request.getParameterValues("fotoGaleriaUrl");
 
             // Validacion de negocio (Sprint 1): Venta mayor a 10,000
             if (propiedad.getIdOperacion() == 1 && propiedad.getPrecio().compareTo(new BigDecimal("10000")) < 0) {
@@ -418,6 +367,24 @@ public class PropiedadServlet extends HttpServlet {
             }
 
             if (exito) {
+                // Guardar las fotos secundarias en la galería (persistencia de URLs)
+                if (!esNuevo) {
+                    galeriaDAO.eliminarFotosPorPropiedad(propiedad.getId());
+                }
+                if (fotosGaleria != null) {
+                    int orden = 0;
+                    for (String url : fotosGaleria) {
+                        if (url != null && !url.trim().isEmpty()) {
+                            PropiedadFotoDTO foto = new PropiedadFotoDTO();
+                            foto.setIdPropiedad(propiedad.getId());
+                            foto.setRutaArchivo(url.trim());
+                            foto.setOrden(orden++);
+                            foto.setEsPrincipal(false);
+                            galeriaDAO.agregarFoto(foto);
+                        }
+                    }
+                }
+
                 if (usuario != null) {
                     String details;
                     if (esNuevo) {
@@ -459,7 +426,9 @@ public class PropiedadServlet extends HttpServlet {
                     }
                 }
 
-                if (usuario != null && (usuario.getIdRol() == 3 || usuario.getIdRol() == 4 || usuario.getIdRol() == 5)) {
+                if (usuario != null && usuario.getIdRol() == 5) {
+                    response.sendRedirect(request.getContextPath() + "/admin?accion=propiedades");
+                } else if (usuario != null && (usuario.getIdRol() == 3 || usuario.getIdRol() == 4)) {
                     response.sendRedirect(request.getContextPath() + "/panel");
                 } else {
                     response.sendRedirect(request.getContextPath() + "/propiedades");
