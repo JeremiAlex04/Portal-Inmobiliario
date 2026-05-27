@@ -38,20 +38,20 @@ Plataforma web académica para conectar compradores con agentes inmobiliarios, d
 sequenceDiagram
     autonumber
     actor Usuario
-    participant JSP as Vista (JSP/JSTL/EL)
-    participant Servlet as Controlador (Servlet)
-    participant DTO as Objeto de Transferencia (DTO)
-    participant Facade as Capa de Mediación (Facade)
-    participant DAO as Acceso a Datos (DAO)
-    database DB as Base de Datos (MySQL)
+    participant JSP as "Vista (JSP / JSTL / EL)"
+    participant Servlet as "Controlador (Servlet)"
+    participant DTO as "Objeto de Transferencia (DTO)"
+    participant Facade as "Capa de Mediación (Facade)"
+    participant DAO as "Acceso a Datos (DAO)"
+    database DB as "Base de Datos (MySQL)"
 
     Usuario->>JSP: Envía formulario (POST/GET)
     JSP->>Servlet: Petición HTTP
     Servlet->>Servlet: Valida campos y formatos
     Servlet->>DTO: Setea valores en DTO
-    Servlet->>Facade: Invoca negocio (ej. crearPropiedad(dto))
+    Servlet->>Facade: Invoca negocio (crearPropiedad)
     Facade->>Facade: Valida reglas (precios, límites)
-    Facade->>DAO: Invoca CRUD (ej. crear(dto))
+    Facade->>DAO: Invoca CRUD (crear)
     DAO->>DB: Ejecuta PreparedStatement
     DB-->>DAO: Filas afectadas / ID
     DAO-->>Facade: Retorna estado
@@ -64,11 +64,11 @@ sequenceDiagram
 ### 2.2 Flujo de Búsqueda Inteligente y Autocompletado
 ```mermaid
 graph TD
-    A[index.jsp: Ingresa 'Miraflores (Lima)'] -->|GET /propiedades| B[PropiedadServlet]
+    A["index.jsp: Ingresa 'Miraflores (Lima)'"] -->|GET /propiedades| B[PropiedadServlet]
     B -->|buscarPropiedadesAvanzado| C[PropiedadFacade]
     C -->|buscarPropiedades| D[PropiedadDAO]
-    D -->|cleanKeyword| E[cleanKeyword: 'Miraflores']
-    E -->|LIKE %Miraflores%| F[(MySQL DB)]
+    D -->|cleanKeyword| E["cleanKeyword: 'Miraflores'"]
+    E -->|LIKE %Miraflores%| F[("MySQL DB")]
     F -->|Resultados SQL| D
     D -->|Instancia DTOs + Foto URLs| C
     C -->|List DTOs| B
