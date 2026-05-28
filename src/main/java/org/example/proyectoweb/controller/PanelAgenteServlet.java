@@ -76,6 +76,6 @@ public class PanelAgenteServlet extends HttpServlet {
         request.setAttribute("whatsappSemana", whatsappSemana);
         request.setAttribute("consultasPendientesGlobal", consultasPendientesGlobal);
 
-        request.getRequestDispatcher("/WEB-INF/views/panel_agente.jsp").forward(request, response);
+        request.getRequestDispatcher("/WEB-INF/views/agente/panel.jsp").forward(request, response);
     }
 }

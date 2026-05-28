@@ -19,6 +19,22 @@ public class PropiedadFotoDTO {
     public String getRutaArchivo() { return rutaArchivo; }
     public void setRutaArchivo(String rutaArchivo) { this.rutaArchivo = rutaArchivo; }
 
+    public String getRutaArchivoUrl(String contextPath) {
+        if (rutaArchivo == null || rutaArchivo.isEmpty()) {
+            return null;
+        }
+        if (rutaArchivo.startsWith("http://") || rutaArchivo.startsWith("https://")) {
+            return rutaArchivo;
+        }
+        String path = contextPath;
+        if (path == null) path = "";
+        String file = rutaArchivo;
+        if (file.startsWith("/")) {
+            file = file.substring(1);
+        }
+        return path + "/" + file;
+    }
+
     public int getOrden() { return orden; }
     public void setOrden(int orden) { this.orden = orden; }
 

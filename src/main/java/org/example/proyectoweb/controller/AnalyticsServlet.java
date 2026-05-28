@@ -74,6 +74,6 @@ public class AnalyticsServlet extends HttpServlet {
         request.setAttribute("labelsJson", labelsJson.toString());
         request.setAttribute("dataJson", dataJson.toString());
 
-        request.getRequestDispatcher("/WEB-INF/views/analytics.jsp").forward(request, response);
+        request.getRequestDispatcher("/WEB-INF/views/admin/analytics.jsp").forward(request, response);
     }
 }

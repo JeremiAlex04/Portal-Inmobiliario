@@ -1,5 +1,5 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
-<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
+<%@ taglib uri="jakarta.tags.core" prefix="c" %>
 <!DOCTYPE html>
 <html lang="es" class="scroll-smooth">
 <head>
@@ -7,76 +7,33 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="icon" type="image/png" href="${pageContext.request.contextPath}/assets/img/logo/Logo_Inmobix.png">
     <title>Inmobix - Gestión de Ubicaciones</title>
-    <script src="https://cdn.tailwindcss.com"></script>
+        <script src="https://cdn.tailwindcss.com"></script>
     <script>
-        function confirmarEliminacion(id, tipo) {
-            if (confirm("¿Estás seguro de eliminar esta ubicación? Podría afectar a propiedades asociadas.")) {
-                window.location.href = "${pageContext.request.contextPath}/admin?accion=eliminar_ubicacion&id=" + id + "&tipo=" + tipo;
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        brandHeader: '#000000',
+                        brandFooter: '#000000',
+                        brandBtn: '#000000',
+                        brandHover: '#71717A',
+                        brandBg: '#FFFFFF',
+                        brandText: '#0A0A0A'
+                    }
+                }
             }
-        }
-
-        function editarUbicacion(id, nombre, codigo, parentId) {
-            document.getElementById('modalTitle').innerText = 'Editar Ubicación';
-            document.getElementById('formId').value = id;
-            document.getElementById('formNombre').value = nombre;
-            document.getElementById('formCodigo').value = codigo;
-            
-            const parentSelect = document.getElementById('formParentId');
-            if (parentSelect) {
-                parentSelect.value = parentId;
-            }
-            
-            document.getElementById('ubicacionModal').classList.remove('hidden');
-            document.getElementById('ubicacionModal').classList.add('flex');
-        }
-
-        function nuevaUbicacion() {
-            document.getElementById('modalTitle').innerText = 'Nueva Ubicación';
-            document.getElementById('formId').value = '';
-            document.getElementById('formNombre').value = '';
-            document.getElementById('formCodigo').value = '';
-            
-            const parentSelect = document.getElementById('formParentId');
-            if (parentSelect) {
-                parentSelect.selectedIndex = 0;
-            }
-            
-            document.getElementById('ubicacionModal').classList.remove('hidden');
-            document.getElementById('ubicacionModal').classList.add('flex');
-        }
-
-        function cerrarModal() {
-            document.getElementById('ubicacionModal').classList.add('hidden');
-            document.getElementById('ubicacionModal').classList.remove('flex');
         }
     </script>
+        
+    
+<script src="${pageContext.request.contextPath}/assets/js/admin.js" defer></script>
 </head>
-<body class="bg-slate-50 text-slate-800 flex flex-col min-h-screen font-sans">
+<body class="bg-brandBg text-brandText flex flex-col min-h-screen font-sans">
     
     <!-- Navbar -->
-    <header class="fixed w-full top-0 z-50 bg-slate-900 border-b border-slate-800 shadow-sm transition-all">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div class="flex justify-between items-center h-20">
-                <div class="flex items-center gap-3">
-                    <img src="${pageContext.request.contextPath}/assets/img/logo/Logo_Inmobix.png" alt="Inmobix Logo" class="h-10 w-auto object-contain brightness-0 invert">
-                    <span class="text-2xl font-bold text-white tracking-tight">Inmobix Admin</span>
-                </div>
-                
-                <nav class="hidden md:flex items-center gap-8">
-                    <a href="${pageContext.request.contextPath}/admin?accion=dashboard" class="text-sm font-semibold text-slate-300 hover:text-white transition-colors">Dashboard</a>
-                    <a href="${pageContext.request.contextPath}/admin?accion=usuarios" class="text-sm font-semibold text-slate-300 hover:text-white transition-colors">Usuarios</a>
-                    <a href="${pageContext.request.contextPath}/admin?accion=propiedades" class="text-sm font-semibold text-slate-300 hover:text-white transition-colors">Propiedades</a>
-                    <a href="${pageContext.request.contextPath}/admin?accion=ubicaciones" class="text-sm font-bold text-blue-400 border-b-2 border-blue-400 py-1 transition-colors">Ubicaciones</a>
-                    <a href="${pageContext.request.contextPath}/admin?accion=auditoria" class="text-sm font-semibold text-slate-300 hover:text-white transition-colors">Auditoría</a>
-                </nav>
-
-                <div class="hidden md:flex items-center gap-4">
-                    <span class="text-sm font-semibold text-slate-300">Admin: ${sessionScope.usuarioLogueado.nombres}</span>
-                    <a href="${pageContext.request.contextPath}/usuario?accion=logout" class="bg-red-600 hover:bg-red-700 text-white px-5 py-2.5 rounded-full text-sm font-semibold shadow-md shadow-red-600/20 transition-all hover:-translate-y-0.5">Cerrar Sesión</a>
-                </div>
-            </div>
-        </div>
-    </header>
+        <c:set var="activePage" value="ubicaciones" scope="request" />
+    <c:set var="isAdminArea" value="true" scope="request" />
+    <jsp:include page="/WEB-INF/views/layout/header.jsp" />
 
     <main class="flex-grow pt-28 pb-16 px-4">
         <div class="max-w-7xl mx-auto">
@@ -86,7 +43,7 @@
                     <h1 class="text-3xl font-bold text-slate-900 tracking-tight">Gestión de Ubicaciones</h1>
                     <p class="text-slate-500 mt-2">Administra Departamentos, Provincias y Distritos para la geolocalización de inmuebles.</p>
                 </div>
-                <button onclick="nuevaUbicacion()" class="bg-blue-600 hover:bg-blue-700 text-white px-6 py-3 rounded-xl font-bold shadow-lg shadow-blue-600/20 transition-all hover:-translate-y-0.5 flex items-center gap-2">
+                <button onclick="nuevaUbicacion()" class="bg-brandBtn hover:bg-brandHover text-white px-6 py-3 rounded-xl font-bold shadow-lg shadow-brandBtn/20 transition-all hover:-translate-y-0.5 flex items-center gap-2">
                     <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
                         <path fill-rule="evenodd" d="M10 3a1 1 0 011 1v5h5a1 1 0 110 2h-5v5a1 1 0 11-2 0v-5H4a1 1 0 110-2h5V4a1 1 0 011-1z" clip-rule="evenodd" />
                     </svg>
@@ -96,9 +53,9 @@
 
             <!-- Tabs de Navegación -->
             <div class="flex border-b border-slate-200 mb-8 overflow-x-auto">
-                <a href="${pageContext.request.contextPath}/admin?accion=ubicaciones&tipo=DEPARTAMENTO" class="px-6 py-3 text-sm font-bold transition-all border-b-2 ${tipoActual == 'DEPARTAMENTO' ? 'border-blue-600 text-blue-600' : 'border-transparent text-slate-500 hover:text-slate-700'}">Departamentos</a>
-                <a href="${pageContext.request.contextPath}/admin?accion=ubicaciones&tipo=PROVINCIA" class="px-6 py-3 text-sm font-bold transition-all border-b-2 ${tipoActual == 'PROVINCIA' ? 'border-blue-600 text-blue-600' : 'border-transparent text-slate-500 hover:text-slate-700'}">Provincias</a>
-                <a href="${pageContext.request.contextPath}/admin?accion=ubicaciones&tipo=DISTRITO" class="px-6 py-3 text-sm font-bold transition-all border-b-2 ${tipoActual == 'DISTRITO' ? 'border-blue-600 text-blue-600' : 'border-transparent text-slate-500 hover:text-slate-700'}">Distritos</a>
+                <a href="${pageContext.request.contextPath}/admin?accion=ubicaciones&tipo=DEPARTAMENTO" class="px-6 py-3 text-sm font-bold transition-all border-b-2 ${tipoActual == 'DEPARTAMENTO' ? 'border-black text-black' : 'border-transparent text-slate-500 hover:text-slate-700'}">Departamentos</a>
+                <a href="${pageContext.request.contextPath}/admin?accion=ubicaciones&tipo=PROVINCIA" class="px-6 py-3 text-sm font-bold transition-all border-b-2 ${tipoActual == 'PROVINCIA' ? 'border-black text-black' : 'border-transparent text-slate-500 hover:text-slate-700'}">Provincias</a>
+                <a href="${pageContext.request.contextPath}/admin?accion=ubicaciones&tipo=DISTRITO" class="px-6 py-3 text-sm font-bold transition-all border-b-2 ${tipoActual == 'DISTRITO' ? 'border-black text-black' : 'border-transparent text-slate-500 hover:text-slate-700'}">Distritos</a>
             </div>
 
             <!-- Tabla de Ubicaciones -->
@@ -133,8 +90,8 @@
                                     </c:if>
                                     <td class="px-6 py-4">
                                         <div class="flex justify-center gap-2">
-                                            <button onclick="editarUbicacion('${u.id}', '${u.nombre}', '${u.codigoUbigeo}', '${u.parentId}')" class="text-xs font-bold px-3 py-1.5 rounded-lg bg-blue-50 text-blue-600 hover:bg-blue-100 transition-colors">Editar</button>
-                                            <button onclick="confirmarEliminacion('${u.id}', '${tipoActual}')" class="text-xs font-bold px-3 py-1.5 rounded-lg bg-red-50 text-red-600 hover:bg-red-100 transition-colors">Eliminar</button>
+                                            <button onclick="editarUbicacion('${u.id}', '${u.nombre}', '${u.codigoUbigeo}', '${u.parentId}')" class="text-xs font-bold px-3 py-1.5 rounded-lg border border-slate-200 text-slate-700 hover:text-black hover:border-black hover:bg-black/5 transition-all">Editar</button>
+                                            <button onclick="confirmarEliminacionUbicacion('${pageContext.request.contextPath}/admin?accion=eliminar_ubicacion&id=${u.id}&tipo=${tipoActual}')" class="text-xs font-bold px-3 py-1.5 rounded-lg bg-red-50 text-red-600 hover:bg-red-100 transition-colors">Eliminar</button>
                                         </div>
                                     </td>
                                 </tr>
@@ -191,8 +148,8 @@
                 </div>
 
                 <div class="pt-4 flex gap-3">
-                    <button type="button" onclick="cerrarModal()" class="flex-1 bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold py-4 rounded-xl transition-all">Cancelar</button>
-                    <button type="submit" class="flex-1 bg-blue-600 hover:bg-blue-700 text-white font-bold py-4 rounded-xl shadow-lg shadow-blue-600/20 transition-all">Guardar</button>
+                    <button type="button" onclick="cerrarModal()" class="flex-1 border border-slate-200 text-slate-700 hover:text-black hover:border-black hover:bg-black/5 font-bold py-4 rounded-xl transition-all">Cancelar</button>
+                    <button type="submit" class="flex-1 bg-brandBtn hover:bg-brandHover text-white font-bold py-4 rounded-xl shadow-lg shadow-brandBtn/20 transition-all">Guardar</button>
                 </div>
             </form>
         </div>

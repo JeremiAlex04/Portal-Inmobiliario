@@ -48,7 +48,7 @@ public class AgenteServlet extends HttpServlet {
 
             request.setAttribute("agente", agente);
             request.setAttribute("propiedades", propiedades);
-            request.getRequestDispatcher("/WEB-INF/views/perfil_agente.jsp").forward(request, response);
+            request.getRequestDispatcher("/WEB-INF/views/agente/perfil.jsp").forward(request, response);
 
         } catch (NumberFormatException e) {
             response.sendRedirect(request.getContextPath() + "/propiedades");

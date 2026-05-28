@@ -123,4 +123,12 @@ public class UsuarioFacade {
     public int contarPropiedadesVendidas() {
         return usuarioDAO.contarPropiedadesPorEstado("VENDIDO");
     }
+
+    public int contarPropiedadesPausadas() {
+        return usuarioDAO.contarPropiedadesPorEstado("PAUSADO");
+    }
+
+    public int contarPropiedadesBorradores() {
+        return usuarioDAO.contarPropiedadesPorEstado("BORRADOR");
+    }
 }

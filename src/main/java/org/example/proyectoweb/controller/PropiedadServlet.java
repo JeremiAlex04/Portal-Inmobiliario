@@ -25,11 +25,6 @@ import java.util.Set;
 import java.util.UUID;
 
 @WebServlet(name = "PropiedadServlet", urlPatterns = { "/propiedades" })
-@MultipartConfig(
-    fileSizeThreshold = 1024 * 1024,       // 1 MB
-    maxFileSize       = 2 * 1024 * 1024,   // 2 MB
-    maxRequestSize    = 5 * 1024 * 1024    // 5 MB total
-)
 public class PropiedadServlet extends HttpServlet {
 
     private PropiedadFacade propiedadFacade;
@@ -57,48 +52,9 @@ public class PropiedadServlet extends HttpServlet {
     }
 
     // =========================================================
-    // Utilidad: procesar imagen subida
     // =========================================================
-    private String procesarImagen(HttpServletRequest request) throws IOException, ServletException {
-        Part filePart = request.getPart("fotoPrincipal");
-        if (filePart == null || filePart.getSize() == 0) {
-            return null; // No se subió imagen
-        }
-
-        // Validar tamaño (2 MB)
-        if (filePart.getSize() > 2 * 1024 * 1024) {
-            throw new ServletException("La imagen no puede superar los 2 MB.");
-        }
-
-        // Obtener nombre y extensión
-        String fileName = Paths.get(filePart.getSubmittedFileName()).getFileName().toString();
-        String extension = "";
-        int dot = fileName.lastIndexOf('.');
-        if (dot > 0) {
-            extension = fileName.substring(dot + 1).toLowerCase();
-        }
-
-        // Validar extensión
-        if (!EXTENSIONES_PERMITIDAS.contains(extension)) {
-            throw new ServletException("Formato no permitido. Use: jpg, jpeg, png o webp.");
-        }
-
-        // Generar nombre único
-        String nuevoNombre = UUID.randomUUID().toString() + "." + extension;
-
-        // Crear directorio de uploads si no existe
-        String uploadPath = getServletContext().getRealPath("/uploads/propiedades");
-        File uploadDir = new File(uploadPath);
-        if (!uploadDir.exists()) {
-            uploadDir.mkdirs();
-        }
-
-        // Guardar archivo
-        filePart.write(uploadPath + File.separator + nuevoNombre);
-
-        // Retornar ruta relativa para la BD
-        return "uploads/propiedades/" + nuevoNombre;
-    }
+    // Utilidad: Las imágenes físicas fueron reemplazadas por URLs dinámicas
+    // =========================================================
 
     // =========================================================
     // GET — Navegación, listado, búsqueda, detalle
@@ -113,10 +69,21 @@ public class PropiedadServlet extends HttpServlet {
 
         try {
             switch (accion) {
-                case "nuevo":
+                case "nuevo": {
+                    UsuarioDTO usuario = (UsuarioDTO) request.getSession().getAttribute("usuarioLogueado");
+                    if (usuario == null) {
+                        request.setAttribute("error", "Por favor, inicia sesión para publicar una propiedad.");
+                        request.getRequestDispatcher("/WEB-INF/views/public/login.jsp").forward(request, response);
+                        return;
+                    }
+                    if (usuario.getIdRol() != 3 && usuario.getIdRol() != 4 && usuario.getIdRol() != 5) {
+                        response.sendError(HttpServletResponse.SC_FORBIDDEN, "Acceso denegado. Se requiere cuenta de Agente o Constructora.");
+                        return;
+                    }
                     cargarCatalogos(request);
-                    request.getRequestDispatcher("/WEB-INF/views/registro.jsp").forward(request, response);
+                    request.getRequestDispatcher("/WEB-INF/views/agente/registro.jsp").forward(request, response);
                     break;
+                }
 
                 case "ver":
                     int idVer = Integer.parseInt(request.getParameter("id"));
@@ -137,37 +104,73 @@ public class PropiedadServlet extends HttpServlet {
                         List<PropiedadFotoDTO> galeria = galeriaDAO.obtenerFotos(idVer);
                         request.setAttribute("galeriaFotos", galeria);
                         request.setAttribute("propiedad", pVer);
-                        request.getRequestDispatcher("/WEB-INF/views/detalle_propiedad.jsp").forward(request, response);
+                        request.getRequestDispatcher("/WEB-INF/views/public/detalle_propiedad.jsp").forward(request, response);
                     } else {
                         response.sendError(HttpServletResponse.SC_NOT_FOUND, "Propiedad no encontrada");
                     }
                     break;
 
-                case "editar":
+                case "editar": {
+                    UsuarioDTO usuario = (UsuarioDTO) request.getSession().getAttribute("usuarioLogueado");
+                    if (usuario == null) {
+                        request.setAttribute("error", "Por favor, inicia sesión para editar una propiedad.");
+                        request.getRequestDispatcher("/WEB-INF/views/public/login.jsp").forward(request, response);
+                        return;
+                    }
                     int idEditar = Integer.parseInt(request.getParameter("id"));
                     PropiedadDTO pEditar = propiedadFacade.obtenerPropiedad(idEditar);
+                    
+                    if (pEditar == null) {
+                        response.sendError(HttpServletResponse.SC_NOT_FOUND, "Propiedad no encontrada");
+                        return;
+                    }
+
+                    // Validar que el usuario sea el dueño o administrador
+                    if (usuario.getIdRol() != 5 && pEditar.getIdUsuarioAgente() != usuario.getIdUsuario()) {
+                        response.sendError(HttpServletResponse.SC_FORBIDDEN, "No tienes permiso para editar esta propiedad.");
+                        return;
+                    }
+
                     request.setAttribute("propiedad", pEditar);
                     // Sprint 3: Cargar galería para edición
                     request.setAttribute("galeriaFotos", galeriaDAO.obtenerFotos(idEditar));
                     cargarCatalogos(request);
-                    request.getRequestDispatcher("/WEB-INF/views/registro.jsp").forward(request, response);
+                    request.getRequestDispatcher("/WEB-INF/views/agente/registro.jsp").forward(request, response);
                     break;
+                }
 
-                case "eliminar":
+                case "eliminar": {
+                    UsuarioDTO sessionUser = (UsuarioDTO) request.getSession().getAttribute("usuarioLogueado");
+                    if (sessionUser == null) {
+                        request.setAttribute("error", "Por favor, inicia sesión para eliminar una propiedad.");
+                        request.getRequestDispatcher("/WEB-INF/views/public/login.jsp").forward(request, response);
+                        return;
+                    }
                     int idEliminar = Integer.parseInt(request.getParameter("id"));
                     PropiedadDTO pDel = propiedadFacade.obtenerPropiedad(idEliminar);
-                    propiedadFacade.eliminarPropiedad(idEliminar);
-                    UsuarioDTO sessionUser = (UsuarioDTO) request.getSession().getAttribute("usuarioLogueado");
-                    if (sessionUser != null) {
-                        String details = pDel != null ? "{\"titulo\":\"" + pDel.getTitulo().replace("\"", "\\\"") + "\",\"precio\":" + pDel.getPrecio() + ",\"moneda\":\"" + pDel.getMonedaBase() + "\"}" : "{}";
-                        auditoriaFacade.registrarEvento(sessionUser.getIdUsuario(), "propiedad", idEliminar, "ELIMINAR", request.getRemoteAddr(), request.getHeader("User-Agent"), details);
+                    
+                    if (pDel == null) {
+                        response.sendError(HttpServletResponse.SC_NOT_FOUND, "Propiedad no encontrada");
+                        return;
                     }
-                    if (sessionUser != null && (sessionUser.getIdRol() == 3 || sessionUser.getIdRol() == 4 || sessionUser.getIdRol() == 5)) {
+
+                    // Validar permisos
+                    if (sessionUser.getIdRol() != 5 && pDel.getIdUsuarioAgente() != sessionUser.getIdUsuario()) {
+                        response.sendError(HttpServletResponse.SC_FORBIDDEN, "No tienes permiso para eliminar esta propiedad.");
+                        return;
+                    }
+
+                    propiedadFacade.eliminarPropiedad(idEliminar);
+                    String details = "{\"titulo\":\"" + pDel.getTitulo().replace("\"", "\\\"") + "\",\"precio\":" + pDel.getPrecio() + ",\"moneda\":\"" + pDel.getMonedaBase() + "\"}";
+                    auditoriaFacade.registrarEvento(sessionUser.getIdUsuario(), "propiedad", idEliminar, "ELIMINAR", request.getRemoteAddr(), request.getHeader("User-Agent"), details);
+                    
+                    if (sessionUser.getIdRol() == 3 || sessionUser.getIdRol() == 4 || sessionUser.getIdRol() == 5) {
                         response.sendRedirect(request.getContextPath() + "/panel");
                     } else {
                         response.sendRedirect(request.getContextPath() + "/propiedades");
                     }
                     break;
+                }
 
                 case "listar":
                 default:
@@ -225,7 +228,7 @@ public class PropiedadServlet extends HttpServlet {
                     request.setAttribute("currentPage", page);
                     request.setAttribute("totalPages", totalPages);
 
-                    request.getRequestDispatcher("/WEB-INF/views/propiedades.jsp").forward(request, response);
+                    request.getRequestDispatcher("/WEB-INF/views/public/propiedades.jsp").forward(request, response);
                     break;
             }
         } catch (Exception e) {
@@ -241,6 +244,16 @@ public class PropiedadServlet extends HttpServlet {
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         try {
+            UsuarioDTO usuario = (UsuarioDTO) request.getSession().getAttribute("usuarioLogueado");
+            if (usuario == null) {
+                request.setAttribute("error", "Sesión inválida o expirada. Por favor, inicia sesión.");
+                request.getRequestDispatcher("/WEB-INF/views/public/login.jsp").forward(request, response);
+                return;
+            }
+            if (usuario.getIdRol() != 3 && usuario.getIdRol() != 4 && usuario.getIdRol() != 5) {
+                response.sendError(HttpServletResponse.SC_FORBIDDEN, "No tienes permiso para realizar esta acción.");
+                return;
+            }
             PropiedadDTO propiedad = new PropiedadDTO();
 
             // Si hay ID es actualización
@@ -305,46 +318,48 @@ public class PropiedadServlet extends HttpServlet {
             }
             propiedad.setTour360Url(request.getParameter("tour360Url"));
 
-            // Sprint 2: Procesar imagen
-            try {
-                String rutaFoto = procesarImagen(request);
-                if (rutaFoto != null) {
-                    propiedad.setFotoPrincipal(rutaFoto);
-                }
-            } catch (ServletException imgError) {
-                request.setAttribute("error", imgError.getMessage());
-                request.setAttribute("propiedad", propiedad);
-                cargarCatalogos(request);
-                request.getRequestDispatcher("/WEB-INF/views/registro.jsp").forward(request, response);
-                return;
-            }
+            // Procesar URL de la foto principal
+            String fotoPrincipal = request.getParameter("fotoPrincipalUrl");
+            propiedad.setFotoPrincipal(fotoPrincipal != null && !fotoPrincipal.trim().isEmpty() ? fotoPrincipal.trim() : null);
+
+            // Obtener URLs de la galería
+            String[] fotosGaleria = request.getParameterValues("fotoGaleriaUrl");
 
             // Validacion de negocio (Sprint 1): Venta mayor a 10,000
             if (propiedad.getIdOperacion() == 1 && propiedad.getPrecio().compareTo(new BigDecimal("10000")) < 0) {
                 request.setAttribute("error", "Por políticas de negocio, el precio de Venta debe ser mayor a 10,000.");
                 request.setAttribute("propiedad", propiedad);
                 cargarCatalogos(request);
-                request.getRequestDispatcher("/WEB-INF/views/registro.jsp").forward(request, response);
+                request.getRequestDispatcher("/WEB-INF/views/agente/registro.jsp").forward(request, response);
                 return;
             }
 
             boolean exito;
             boolean esNuevo = (propiedad.getId() <= 0);
             PropiedadDTO oldProp = null;
-            UsuarioDTO usuario = (UsuarioDTO) request.getSession().getAttribute("usuarioLogueado");
 
             if (!esNuevo) {
                 oldProp = propiedadFacade.obtenerPropiedad(propiedad.getId());
+                if (oldProp == null) {
+                    response.sendError(HttpServletResponse.SC_NOT_FOUND, "Propiedad no encontrada");
+                    return;
+                }
+                // Validar que el usuario sea el dueño o administrador
+                if (usuario.getIdRol() != 5 && oldProp.getIdUsuarioAgente() != usuario.getIdUsuario()) {
+                    response.sendError(HttpServletResponse.SC_FORBIDDEN, "No tienes permiso para actualizar esta propiedad.");
+                    return;
+                }
+                propiedad.setIdUsuarioAgente(oldProp.getIdUsuarioAgente());
                 exito = propiedadFacade.actualizarPropiedad(propiedad);
             } else {
-                int idAgente = usuario != null ? usuario.getIdUsuario() : 1;
+                int idAgente = usuario.getIdUsuario();
                 int activeCount = propiedadFacade.contarPropiedadesActivas(idAgente);
                 int limit = propiedadFacade.obtenerLimitePublicaciones(idAgente);
                 if (activeCount >= limit) {
                     request.setAttribute("error", "Límite de publicaciones alcanzado (" + limit + " activo/s). Por favor, actualiza tu plan en la sección Suscripciones.");
                     request.setAttribute("propiedad", propiedad);
                     cargarCatalogos(request);
-                    request.getRequestDispatcher("/WEB-INF/views/registro.jsp").forward(request, response);
+                    request.getRequestDispatcher("/WEB-INF/views/agente/registro.jsp").forward(request, response);
                     return;
                 }
                 propiedad.setIdUsuarioAgente(idAgente);
@@ -352,6 +367,24 @@ public class PropiedadServlet extends HttpServlet {
             }
 
             if (exito) {
+                // Guardar las fotos secundarias en la galería (persistencia de URLs)
+                if (!esNuevo) {
+                    galeriaDAO.eliminarFotosPorPropiedad(propiedad.getId());
+                }
+                if (fotosGaleria != null) {
+                    int orden = 0;
+                    for (String url : fotosGaleria) {
+                        if (url != null && !url.trim().isEmpty()) {
+                            PropiedadFotoDTO foto = new PropiedadFotoDTO();
+                            foto.setIdPropiedad(propiedad.getId());
+                            foto.setRutaArchivo(url.trim());
+                            foto.setOrden(orden++);
+                            foto.setEsPrincipal(false);
+                            galeriaDAO.agregarFoto(foto);
+                        }
+                    }
+                }
+
                 if (usuario != null) {
                     String details;
                     if (esNuevo) {
@@ -393,7 +426,9 @@ public class PropiedadServlet extends HttpServlet {
                     }
                 }
 
-                if (usuario != null && (usuario.getIdRol() == 3 || usuario.getIdRol() == 4 || usuario.getIdRol() == 5)) {
+                if (usuario != null && usuario.getIdRol() == 5) {
+                    response.sendRedirect(request.getContextPath() + "/admin?accion=propiedades");
+                } else if (usuario != null && (usuario.getIdRol() == 3 || usuario.getIdRol() == 4)) {
                     response.sendRedirect(request.getContextPath() + "/panel");
                 } else {
                     response.sendRedirect(request.getContextPath() + "/propiedades");
@@ -402,13 +437,13 @@ public class PropiedadServlet extends HttpServlet {
                 request.setAttribute("error", "No se pudo guardar la propiedad en la base de datos. Verifica los datos.");
                 request.setAttribute("propiedad", propiedad);
                 cargarCatalogos(request);
-                request.getRequestDispatcher("/WEB-INF/views/registro.jsp").forward(request, response);
+                request.getRequestDispatcher("/WEB-INF/views/agente/registro.jsp").forward(request, response);
             }
         } catch (Exception e) {
             e.printStackTrace();
             request.setAttribute("error", "Error de formato de datos: " + e.getMessage());
             cargarCatalogos(request);
-            request.getRequestDispatcher("/WEB-INF/views/registro.jsp").forward(request, response);
+            request.getRequestDispatcher("/WEB-INF/views/agente/registro.jsp").forward(request, response);
         }
     }
 }
