@@ -35,20 +35,20 @@ public class PagoServlet extends HttpServlet {
             case "planes":
                 List<PlanDTO> planes = pagoDAO.listarPlanes();
                 request.setAttribute("listaPlanes", planes);
-                request.getRequestDispatcher("/WEB-INF/views/planes.jsp").forward(request, response);
+                request.getRequestDispatcher("/WEB-INF/views/public/planes.jsp").forward(request, response);
                 break;
 
             case "formulario":
                 int idPlan = Integer.parseInt(request.getParameter("plan"));
                 PlanDTO plan = pagoDAO.obtenerPlan(idPlan);
                 request.setAttribute("planSeleccionado", plan);
-                request.getRequestDispatcher("/WEB-INF/views/pago_formulario.jsp").forward(request, response);
+                request.getRequestDispatcher("/WEB-INF/views/usuario/pago_formulario.jsp").forward(request, response);
                 break;
 
             case "historial":
                 List<PagoDTO> misPagos = pagoDAO.listarPagosPorUsuario(user.getIdUsuario());
                 request.setAttribute("listaPagos", misPagos);
-                request.getRequestDispatcher("/WEB-INF/views/historial_pagos.jsp").forward(request, response);
+                request.getRequestDispatcher("/WEB-INF/views/usuario/historial_pagos.jsp").forward(request, response);
                 break;
 
             case "admin":
@@ -60,7 +60,7 @@ public class PagoServlet extends HttpServlet {
                 List<PagoDTO> todosPagos = pagoDAO.listarPagos(filtro);
                 request.setAttribute("listaPagos", todosPagos);
                 request.setAttribute("filtroEstado", filtro);
-                request.getRequestDispatcher("/WEB-INF/views/admin_pagos.jsp").forward(request, response);
+                request.getRequestDispatcher("/WEB-INF/views/admin/pagos.jsp").forward(request, response);
                 break;
         }
     }

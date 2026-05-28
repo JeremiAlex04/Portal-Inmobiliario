@@ -85,4 +85,14 @@ public class GaleriaDAO {
         } catch (SQLException e) { e.printStackTrace(); }
         return null;
     }
+
+    public boolean eliminarFotosPorPropiedad(int idPropiedad) {
+        String sql = "DELETE FROM propiedad_fotos WHERE id_propiedad = ?";
+        try (Connection conn = ConexionDB.getConnection();
+             PreparedStatement stmt = conn.prepareStatement(sql)) {
+            stmt.setInt(1, idPropiedad);
+            return stmt.executeUpdate() > 0;
+        } catch (SQLException e) { e.printStackTrace(); }
+        return false;
+    }
 }

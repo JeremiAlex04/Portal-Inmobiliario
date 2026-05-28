@@ -121,10 +121,10 @@ public class PropiedadFacade {
     }
 
     public boolean cambiarEstadoPropiedad(int idPropiedad, String nuevoEstado) {
-        // RN-07: Validar que el estado sea uno de los permitidos
-        if (nuevoEstado == null || (!nuevoEstado.equals("ACTIVO") && !nuevoEstado.equals("INACTIVO")
-                && !nuevoEstado.equals("VENDIDO") && !nuevoEstado.equals("ALQUILADO")
-                && !nuevoEstado.equals("RECHAZADO"))) {
+        // RN-07: Validar que el estado sea uno de los permitidos por el ENUM de la base de datos
+        if (nuevoEstado == null || (!nuevoEstado.equals("BORRADOR") && !nuevoEstado.equals("ACTIVO")
+                && !nuevoEstado.equals("PAUSADO") && !nuevoEstado.equals("VENDIDO")
+                && !nuevoEstado.equals("ELIMINADO"))) {
             return false;
         }
         return propiedadDAO.cambiarEstadoPropiedad(idPropiedad, nuevoEstado);
@@ -159,5 +159,17 @@ public class PropiedadFacade {
 
     public int contarPropiedadesActivas(int idUsuario) {
         return propiedadDAO.contarPropiedadesActivas(idUsuario);
+    }
+
+    public List<PropiedadDTO> obtenerPropiedadesDestacadas(int limit) {
+        return propiedadDAO.obtenerPropiedadesDestacadas(limit);
+    }
+
+    public List<PropiedadDTO> buscarPropiedadesAdmin(String keyword, String operacion, String tipoInmueble, int offset, int limit) {
+        return propiedadDAO.buscarPropiedadesAdmin(keyword, operacion, tipoInmueble, offset, limit);
+    }
+
+    public List<PropiedadDTO> listarPropiedadesAdmin(int offset, int limit) {
+        return propiedadDAO.buscarPropiedadesAdmin(null, null, null, offset, limit);
     }
 }

@@ -15,10 +15,11 @@ public class PropiedadDAO {
 
     public List<PropiedadDTO> buscarPropiedades(String keyword, String operacion, String tipoInmueble, int offset,
             int limit) {
+        keyword = cleanKeyword(keyword);
         List<PropiedadDTO> lista = new ArrayList<>();
 
         StringBuilder sql = new StringBuilder(
-                "SELECT v.*, p.descripcion, p.foto_principal, p.numero_vistas " +
+                "SELECT v.*, p.descripcion, p.foto_principal, p.numero_vistas, p.destacada, p.area_total_m2, p.fecha_publicacion " +
                         "FROM v_propiedades_bimonetarias v " +
                         "INNER JOIN propiedad p ON v.id_propiedad = p.id_propiedad " +
                         "WHERE 1=1 ");
@@ -79,6 +80,9 @@ public class PropiedadDAO {
                     try { p.setFotoPrincipal(rs.getString("foto_principal")); } catch(Exception ignored) {}
                     try { p.setNumeroVistas(rs.getInt("numero_vistas")); } catch(Exception ignored) {}
                     try { p.setTipoCambioVenta(rs.getBigDecimal("tipo_cambio_venta")); } catch(Exception ignored) {}
+                    try { p.setDestacada(rs.getBoolean("destacada")); } catch(Exception ignored) {}
+                    try { p.setAreaTotalM2(rs.getBigDecimal("area_total_m2")); } catch(Exception ignored) {}
+                    try { p.setFechaPublicacion(rs.getString("fecha_publicacion")); } catch(Exception ignored) {}
 
                     p.setUbicacion(rs.getString("distrito") + ", " + rs.getString("provincia"));
                     p.setPrecio(rs.getBigDecimal("precio_usd"));
@@ -144,6 +148,7 @@ public class PropiedadDAO {
     }
 
     public int contarPropiedades(String keyword, String operacion, String tipoInmueble) {
+        keyword = cleanKeyword(keyword);
         int total = 0;
         StringBuilder sql = new StringBuilder(
                 "SELECT COUNT(v.id_propiedad) " +
@@ -279,10 +284,27 @@ public class PropiedadDAO {
 
     public PropiedadDTO obtenerPropiedadPorId(int id) {
         PropiedadDTO p = null;
-        String sql = "SELECT p.*, v.tipo_inmueble, v.operacion, v.distrito, v.provincia, v.departamento, v.precio_usd, v.precio_pen, u.nombres as agente_nombres, u.apellidos as agente_apellidos, u.telefono as agente_telefono, u.correo as agente_correo " +
+        String sql = "SELECT p.*, " +
+                     "ti.nombre AS tipo_inmueble, " +
+                     "op.nombre AS operacion, " +
+                     "d.nombre AS distrito, " +
+                     "pr.nombre AS provincia, " +
+                     "dep.nombre AS departamento, " +
+                     "u.nombres AS agente_nombres, " +
+                     "u.apellidos AS agente_apellidos, " +
+                     "u.telefono AS agente_telefono, " +
+                     "u.correo AS agente_correo, " +
+                     "tc.venta AS tipo_cambio_venta, " +
+                     "CASE WHEN p.moneda_base = 'USD' THEN ROUND(p.precio * tc.venta, 2) ELSE p.precio END AS precio_pen, " +
+                     "CASE WHEN p.moneda_base = 'PEN' THEN ROUND(p.precio / tc.venta, 2) ELSE p.precio END AS precio_usd " +
                      "FROM propiedad p " +
-                     "LEFT JOIN v_propiedades_bimonetarias v ON p.id_propiedad = v.id_propiedad " +
+                     "LEFT JOIN tipo_inmueble ti ON p.id_tipo_inmueble = ti.id_tipo " +
+                     "LEFT JOIN operacion op ON p.id_operacion = op.id_operacion " +
+                     "LEFT JOIN distrito d ON p.id_distrito = d.id_distrito " +
+                     "LEFT JOIN provincia pr ON d.id_provincia = pr.id_provincia " +
+                     "LEFT JOIN departamento dep ON pr.id_departamento = dep.id_departamento " +
                      "LEFT JOIN usuario u ON p.id_usuario_agente = u.id_usuario " +
+                     "LEFT JOIN (SELECT venta FROM tipo_cambio WHERE par_moneda = 'USD/PEN' ORDER BY fecha_vigencia DESC LIMIT 1) tc ON 1=1 " +
                      "WHERE p.id_propiedad = ?";
 
         try (Connection conn = ConexionDB.getConnection();
@@ -315,7 +337,7 @@ public class PropiedadDAO {
                     p.setLatitud(rs.getBigDecimal("latitud"));
                     p.setLongitud(rs.getBigDecimal("longitud"));
 
-                    // Text catalogs from view
+                    // Text catalogs from base joins
                     p.setTipoInmueble(rs.getString("tipo_inmueble"));
                     p.setOperacion(rs.getString("operacion"));
                     p.setDistrito(rs.getString("distrito"));
@@ -330,6 +352,7 @@ public class PropiedadDAO {
                     p.setTour360Url(rs.getString("tour_360_url"));
                     p.setFechaPublicacion(rs.getString("fecha_publicacion"));
                     p.setFechaExpiracion(rs.getString("fecha_expiracion"));
+                    p.setDestacada(rs.getBoolean("destacada"));
 
                     // Agent details
                     String nombres = rs.getString("agente_nombres") != null ? rs.getString("agente_nombres") : "";
@@ -337,6 +360,8 @@ public class PropiedadDAO {
                     p.setAgenteNombre((nombres + " " + apellidos).trim());
                     p.setAgenteTelefono(rs.getString("agente_telefono"));
                     p.setAgenteCorreo(rs.getString("agente_correo"));
+                    
+                    try { p.setTipoCambioVenta(rs.getBigDecimal("tipo_cambio_venta")); } catch(Exception ignored) {}
                 }
             }
         } catch (SQLException e) {
@@ -346,7 +371,7 @@ public class PropiedadDAO {
     }
 
     public boolean actualizarPropiedad(PropiedadDTO p) {
-        String sql = "UPDATE propiedad SET id_tipo_inmueble=?, id_operacion=?, id_distrito=?, partida_sunarp=?, titulo=?, descripcion=?, direccion=?, area_total_m2=?, area_techada_m2=?, num_dormitorios=?, num_banos=?, num_cocheras=?, anio_construccion=?, moneda_base=?, precio=?, bono_mi_vivienda=?, bono_verde=?, foto_principal=COALESCE(?,foto_principal), latitud=?, longitud=?, referencia=?, num_pisos=?, tour_360_url=? WHERE id_propiedad=?";
+        String sql = "UPDATE propiedad SET id_tipo_inmueble=?, id_operacion=?, id_distrito=?, partida_sunarp=?, titulo=?, descripcion=?, direccion=?, area_total_m2=?, area_techada_m2=?, num_dormitorios=?, num_banos=?, num_cocheras=?, anio_construccion=?, moneda_base=?, precio=?, bono_mi_vivienda=?, bono_verde=?, foto_principal=?, latitud=?, longitud=?, referencia=?, num_pisos=?, tour_360_url=? WHERE id_propiedad=?";
         boolean rowUpdated = false;
 
         try (Connection conn = ConexionDB.getConnection();
@@ -434,9 +459,10 @@ public class PropiedadDAO {
     // Sprint 2: Búsqueda avanzada con filtros extendidos
     public List<PropiedadDTO> buscarPropiedadesAvanzado(String keyword, String operacion, String tipoInmueble,
             BigDecimal precioMin, BigDecimal precioMax, Integer dormitorios, Integer banos, int offset, int limit) {
+        keyword = cleanKeyword(keyword);
         List<PropiedadDTO> lista = new ArrayList<>();
         StringBuilder sql = new StringBuilder(
-                "SELECT v.*, p.descripcion, p.foto_principal, p.numero_vistas " +
+                "SELECT v.*, p.descripcion, p.foto_principal, p.numero_vistas, p.destacada, p.area_total_m2 " +
                 "FROM v_propiedades_bimonetarias v " +
                 "INNER JOIN propiedad p ON v.id_propiedad = p.id_propiedad " +
                 "WHERE 1=1 ");
@@ -517,6 +543,7 @@ public class PropiedadDAO {
     // Sprint 2: Conteo avanzado
     public int contarPropiedadesAvanzado(String keyword, String operacion, String tipoInmueble,
             BigDecimal precioMin, BigDecimal precioMax, Integer dormitorios, Integer banos) {
+        keyword = cleanKeyword(keyword);
         StringBuilder sql = new StringBuilder(
                 "SELECT COUNT(v.id_propiedad) FROM v_propiedades_bimonetarias v " +
                 "INNER JOIN propiedad p ON v.id_propiedad = p.id_propiedad WHERE 1=1 ");
@@ -553,6 +580,15 @@ public class PropiedadDAO {
         return 0;
     }
 
+    private String cleanKeyword(String keyword) {
+        if (keyword == null) return null;
+        String trimmed = keyword.trim();
+        if (trimmed.contains("(")) {
+            trimmed = trimmed.split("\\(")[0].trim();
+        }
+        return trimmed;
+    }
+
     // Helper: mapear ResultSet a DTO
     private PropiedadDTO mapResultSet(ResultSet rs) throws SQLException {
         PropiedadDTO p = new PropiedadDTO();
@@ -576,6 +612,8 @@ public class PropiedadDAO {
         try { p.setFotoPrincipal(rs.getString("foto_principal")); } catch(Exception ignored) {}
         try { p.setNumeroVistas(rs.getInt("numero_vistas")); } catch(Exception ignored) {}
         try { p.setTipoCambioVenta(rs.getBigDecimal("tipo_cambio_venta")); } catch(Exception ignored) {}
+        try { p.setDestacada(rs.getBoolean("destacada")); } catch(Exception ignored) {}
+        try { p.setAreaTotalM2(rs.getBigDecimal("area_total_m2")); } catch(Exception ignored) {}
         p.setUbicacion(rs.getString("distrito") + ", " + rs.getString("provincia"));
         p.setPrecio(rs.getBigDecimal("precio_usd"));
         return p;
@@ -676,5 +714,228 @@ public class PropiedadDAO {
             e.printStackTrace();
         }
         return 0;
+    }
+
+    public List<PropiedadDTO> obtenerPropiedadesDestacadas(int limit) {
+        List<PropiedadDTO> lista = new ArrayList<>();
+        String sql = "SELECT v.*, p.descripcion, p.foto_principal, p.numero_vistas, p.destacada, p.area_total_m2 " +
+                     "FROM v_propiedades_bimonetarias v " +
+                     "INNER JOIN propiedad p ON v.id_propiedad = p.id_propiedad " +
+                     "WHERE p.destacada = 1 AND p.estado = 'ACTIVO' " +
+                     "ORDER BY p.id_propiedad DESC LIMIT ?";
+        try (Connection conn = ConexionDB.getConnection();
+             PreparedStatement stmt = conn.prepareStatement(sql)) {
+            stmt.setInt(1, limit);
+            try (ResultSet rs = stmt.executeQuery()) {
+                while (rs.next()) {
+                    PropiedadDTO p = new PropiedadDTO();
+                    p.setId(rs.getInt("id_propiedad"));
+                    p.setTitulo(rs.getString("titulo"));
+                    p.setDescripcion(rs.getString("descripcion"));
+                    p.setEstado(rs.getString("estado"));
+                    p.setMonedaBase(rs.getString("moneda_base"));
+                    p.setPrecioPen(rs.getBigDecimal("precio_pen"));
+                    p.setPrecioUsd(rs.getBigDecimal("precio_usd"));
+                    p.setTipoInmueble(rs.getString("tipo_inmueble"));
+                    p.setOperacion(rs.getString("operacion"));
+                    p.setDistrito(rs.getString("distrito"));
+                    p.setProvincia(rs.getString("provincia"));
+                    p.setDepartamento(rs.getString("departamento"));
+                    p.setAreaTechadaM2(rs.getBigDecimal("area_techada_m2"));
+                    p.setNumDormitorios(rs.getInt("num_dormitorios"));
+                    p.setNumBanos(rs.getInt("num_banos"));
+                    p.setBonoMiVivienda(rs.getInt("bono_mi_vivienda"));
+                    p.setBonoVerde(rs.getInt("bono_verde"));
+                    p.setFotoPrincipal(rs.getString("foto_principal"));
+                    p.setNumeroVistas(rs.getInt("numero_vistas"));
+                    p.setTipoCambioVenta(rs.getBigDecimal("tipo_cambio_venta"));
+                    p.setUbicacion(rs.getString("distrito") + ", " + rs.getString("provincia"));
+                    p.setPrecio(rs.getBigDecimal("precio_usd"));
+                    p.setDestacada(true);
+                    p.setAreaTotalM2(rs.getBigDecimal("area_total_m2"));
+                    lista.add(p);
+                }
+            }
+        } catch (SQLException e) {
+            System.err.println("Error al obtener propiedades destacadas: " + e.getMessage());
+        }
+
+        if (lista.isEmpty()) {
+            String fallbackSql = "SELECT v.*, p.descripcion, p.foto_principal, p.numero_vistas, p.destacada, p.area_total_m2 " +
+                                 "FROM v_propiedades_bimonetarias v " +
+                                 "INNER JOIN propiedad p ON v.id_propiedad = p.id_propiedad " +
+                                 "WHERE p.estado = 'ACTIVO' " +
+                                 "ORDER BY p.id_propiedad DESC LIMIT ?";
+            try (Connection conn = ConexionDB.getConnection();
+                 PreparedStatement stmt = conn.prepareStatement(fallbackSql)) {
+                stmt.setInt(1, limit);
+                try (ResultSet rs = stmt.executeQuery()) {
+                    while (rs.next()) {
+                        PropiedadDTO p = new PropiedadDTO();
+                        p.setId(rs.getInt("id_propiedad"));
+                        p.setTitulo(rs.getString("titulo"));
+                        p.setDescripcion(rs.getString("descripcion"));
+                        p.setEstado(rs.getString("estado"));
+                        p.setMonedaBase(rs.getString("moneda_base"));
+                        p.setPrecioPen(rs.getBigDecimal("precio_pen"));
+                        p.setPrecioUsd(rs.getBigDecimal("precio_usd"));
+                        p.setTipoInmueble(rs.getString("tipo_inmueble"));
+                        p.setOperacion(rs.getString("operacion"));
+                        p.setDistrito(rs.getString("distrito"));
+                        p.setProvincia(rs.getString("provincia"));
+                        p.setDepartamento(rs.getString("departamento"));
+                        p.setAreaTechadaM2(rs.getBigDecimal("area_techada_m2"));
+                        p.setNumDormitorios(rs.getInt("num_dormitorios"));
+                        p.setNumBanos(rs.getInt("num_banos"));
+                        p.setBonoMiVivienda(rs.getInt("bono_mi_vivienda"));
+                        p.setBonoVerde(rs.getInt("bono_verde"));
+                        p.setFotoPrincipal(rs.getString("foto_principal"));
+                        p.setNumeroVistas(rs.getInt("numero_vistas"));
+                        p.setTipoCambioVenta(rs.getBigDecimal("tipo_cambio_venta"));
+                        p.setUbicacion(rs.getString("distrito") + ", " + rs.getString("provincia"));
+                        p.setPrecio(rs.getBigDecimal("precio_usd"));
+                        p.setDestacada(rs.getBoolean("destacada"));
+                        p.setAreaTotalM2(rs.getBigDecimal("area_total_m2"));
+                        lista.add(p);
+                    }
+                }
+            } catch (SQLException e) {
+                System.err.println("Error al obtener propiedades fallback destacadas: " + e.getMessage());
+            }
+        }
+        return lista;
+    }
+
+    public List<PropiedadDTO> buscarPropiedadesAdmin(String keyword, String operacion, String tipoInmueble, int offset, int limit) {
+        keyword = cleanKeyword(keyword);
+        List<PropiedadDTO> lista = new ArrayList<>();
+
+        StringBuilder sql = new StringBuilder(
+            "SELECT p.id_propiedad, p.titulo, p.estado, p.moneda_base, p.precio, p.foto_principal, p.numero_vistas, " +
+            "p.area_techada_m2, p.num_dormitorios, p.num_banos, p.descripcion, p.fecha_publicacion, " +
+            "ti.nombre as tipo_inmueble, op.nombre as operacion, d.nombre as distrito, pr.nombre as provincia, " +
+            "tc.venta AS tipo_cambio_venta, " +
+            "CASE WHEN p.moneda_base = 'USD' THEN ROUND(p.precio * tc.venta, 2) ELSE p.precio END AS precio_pen, " +
+            "CASE WHEN p.moneda_base = 'PEN' THEN ROUND(p.precio / tc.venta, 2) ELSE p.precio END AS precio_usd " +
+            "FROM propiedad p " +
+            "LEFT JOIN tipo_inmueble ti ON p.id_tipo_inmueble = ti.id_tipo " +
+            "LEFT JOIN operacion op ON p.id_operacion = op.id_operacion " +
+            "LEFT JOIN distrito d ON p.id_distrito = d.id_distrito " +
+            "LEFT JOIN provincia pr ON d.id_provincia = pr.id_provincia " +
+            "LEFT JOIN (SELECT venta FROM tipo_cambio WHERE par_moneda = 'USD/PEN' ORDER BY fecha_vigencia DESC LIMIT 1) tc ON 1=1 " +
+            "WHERE 1=1 "
+        );
+
+        if (keyword != null && !keyword.trim().isEmpty()) {
+            sql.append(" AND (p.titulo LIKE ? OR d.nombre LIKE ? OR p.descripcion LIKE ?) ");
+        }
+        if (operacion != null && !operacion.trim().isEmpty()) {
+            sql.append(" AND op.nombre = ? ");
+        }
+        if (tipoInmueble != null && !tipoInmueble.trim().isEmpty()) {
+            sql.append(" AND ti.nombre = ? ");
+        }
+
+        sql.append(" ORDER BY p.id_propiedad DESC LIMIT ? OFFSET ?");
+
+        try (Connection conn = ConexionDB.getConnection();
+             PreparedStatement stmt = conn.prepareStatement(sql.toString())) {
+
+            int paramIndex = 1;
+            if (keyword != null && !keyword.trim().isEmpty()) {
+                String term = "%" + keyword.trim() + "%";
+                stmt.setString(paramIndex++, term);
+                stmt.setString(paramIndex++, term);
+                stmt.setString(paramIndex++, term);
+            }
+            if (operacion != null && !operacion.trim().isEmpty()) {
+                stmt.setString(paramIndex++, operacion.trim());
+            }
+            if (tipoInmueble != null && !tipoInmueble.trim().isEmpty()) {
+                stmt.setString(paramIndex++, tipoInmueble.trim());
+            }
+            stmt.setInt(paramIndex++, limit);
+            stmt.setInt(paramIndex++, offset);
+
+            try (ResultSet rs = stmt.executeQuery()) {
+                while (rs.next()) {
+                    PropiedadDTO p = new PropiedadDTO();
+                    p.setId(rs.getInt("id_propiedad"));
+                    p.setTitulo(rs.getString("titulo"));
+                    p.setEstado(rs.getString("estado"));
+                    p.setMonedaBase(rs.getString("moneda_base"));
+                    p.setPrecio(rs.getBigDecimal("precio"));
+                    p.setPrecioPen(rs.getBigDecimal("precio_pen"));
+                    p.setPrecioUsd(rs.getBigDecimal("precio_usd"));
+                    p.setFotoPrincipal(rs.getString("foto_principal"));
+                    p.setNumeroVistas(rs.getInt("numero_vistas"));
+                    p.setAreaTechadaM2(rs.getBigDecimal("area_techada_m2"));
+                    p.setNumDormitorios(rs.getInt("num_dormitorios"));
+                    p.setNumBanos(rs.getInt("num_banos"));
+                    p.setDescripcion(rs.getString("descripcion"));
+                    p.setFechaPublicacion(rs.getString("fecha_publicacion"));
+                    p.setTipoInmueble(rs.getString("tipo_inmueble"));
+                    p.setOperacion(rs.getString("operacion"));
+                    p.setDistrito(rs.getString("distrito"));
+                    p.setProvincia(rs.getString("provincia"));
+                    p.setUbicacion(rs.getString("distrito") + ", " + rs.getString("provincia"));
+                    try { p.setTipoCambioVenta(rs.getBigDecimal("tipo_cambio_venta")); } catch(Exception ignored) {}
+                    lista.add(p);
+                }
+            }
+        } catch (SQLException e) {
+            System.err.println("Error al buscar propiedades admin: " + e.getMessage());
+        }
+        return lista;
+    }
+
+    public int contarPropiedadesAdmin(String keyword, String operacion, String tipoInmueble) {
+        keyword = cleanKeyword(keyword);
+        int total = 0;
+        StringBuilder sql = new StringBuilder(
+            "SELECT COUNT(p.id_propiedad) " +
+            "FROM propiedad p " +
+            "LEFT JOIN tipo_inmueble ti ON p.id_tipo_inmueble = ti.id_tipo " +
+            "LEFT JOIN operacion op ON p.id_operacion = op.id_operacion " +
+            "LEFT JOIN distrito d ON p.id_distrito = d.id_distrito " +
+            "WHERE 1=1 "
+        );
+
+        if (keyword != null && !keyword.trim().isEmpty()) {
+            sql.append(" AND (p.titulo LIKE ? OR d.nombre LIKE ? OR p.descripcion LIKE ?) ");
+        }
+        if (operacion != null && !operacion.trim().isEmpty()) {
+            sql.append(" AND op.nombre = ? ");
+        }
+        if (tipoInmueble != null && !tipoInmueble.trim().isEmpty()) {
+            sql.append(" AND ti.nombre = ? ");
+        }
+
+        try (Connection conn = ConexionDB.getConnection();
+             PreparedStatement stmt = conn.prepareStatement(sql.toString())) {
+
+            int paramIndex = 1;
+            if (keyword != null && !keyword.trim().isEmpty()) {
+                String term = "%" + keyword.trim() + "%";
+                stmt.setString(paramIndex++, term);
+                stmt.setString(paramIndex++, term);
+                stmt.setString(paramIndex++, term);
+            }
+            if (operacion != null && !operacion.trim().isEmpty()) {
+                stmt.setString(paramIndex++, operacion.trim());
+            }
+            if (tipoInmueble != null && !tipoInmueble.trim().isEmpty()) {
+                stmt.setString(paramIndex++, tipoInmueble.trim());
+            }
+
+            try (ResultSet rs = stmt.executeQuery()) {
+                if (rs.next()) {
+                    total = rs.getInt(1);
+                }
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return total;
     }
 }
