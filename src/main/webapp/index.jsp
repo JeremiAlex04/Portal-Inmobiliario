@@ -209,7 +209,7 @@
                                                 </c:choose>
                                             </span>
                                         </div>
-                                        <a href="${pageContext.request.contextPath}/propiedades?accion=detalle&id=${p.id}" class="bg-black hover:bg-zinc-800 text-white text-xs font-bold px-4 py-2.5 rounded-full transition-all">Ver Ficha</a>
+                                        <a href="${pageContext.request.contextPath}/propiedades?accion=ver&id=${p.id}" class="bg-black hover:bg-zinc-800 text-white text-xs font-bold px-4 py-2.5 rounded-full transition-all">Ver Ficha</a>
                                     </div>
                                 </div>
                             </div>

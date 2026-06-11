@@ -134,7 +134,7 @@
                                         <div class="text-xl font-extrabold text-indigo-700">
                                             $ ${prop.precio}
                                         </div>
-                                        <a href="${pageContext.request.contextPath}/propiedades?accion=detalle&id=${prop.id}"
+                                        <a href="${pageContext.request.contextPath}/propiedades?accion=ver&id=${prop.id}"
                                             class="bg-slate-100 hover:bg-slate-200 text-slate-700 px-4 py-2 rounded-lg font-bold text-sm transition-colors">
                                             Ver Detalles
                                         </a>
