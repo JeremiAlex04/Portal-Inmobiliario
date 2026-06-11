@@ -20,5 +20,11 @@
     "command": "npm run lint",
     "runOn": "folderOpen"
   },
-  "java.configuration.updateBuildConfiguration": "interactive"
+  "java.configuration.updateBuildConfiguration": "interactive",
+  "files.associations": {
+    "*.jsp": "jsp"
+  },
+  "[jsp]": {
+    "editor.defaultFormatter": null
+  }
 }

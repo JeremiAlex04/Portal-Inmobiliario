@@ -4,28 +4,8 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="icon" type="image/png" href="${pageContext.request.contextPath}/assets/img/logo/Logo_Inmobix.png">
-    <title>Inmobix - Planes de Publicación</title>
-        <script src="https://cdn.tailwindcss.com"></script>
-    <script>
-        tailwind.config = {
-            theme: {
-                extend: {
-                    colors: {
-                        brandHeader: '#000000',
-                        brandFooter: '#000000',
-                        brandBtn: '#000000',
-                        brandHover: '#71717A',
-                        brandBg: '#FFFFFF',
-                        brandText: '#0A0A0A'
-                    }
-                }
-            }
-        }
-    </script>
-        
+    <c:set var="pageTitle" value="Inmobix - Planes de Publicación" scope="request" />
+    <jsp:include page="/WEB-INF/views/layout/head.jsp" />
 </head>
 <body class="bg-brandBg text-brandText min-h-screen font-sans">
         <c:set var="activePage" value="planes" scope="request" />
@@ -105,5 +85,6 @@
             </div>
         </div>
     </main>
+    <jsp:include page="/WEB-INF/views/layout/footer.jsp" />
 </body>
 </html>
