@@ -10,8 +10,8 @@
 <link rel="stylesheet" href="${pageContext.request.contextPath}/assets/css/estilosadic.css">
 
 <!-- Configuración y script de Tailwind CSS Play CDN -->
-<script src="${pageContext.request.contextPath}/assets/js/tailwind-config.js"></script>
 <script src="https://cdn.tailwindcss.com"></script>
+<script src="${pageContext.request.contextPath}/assets/js/tailwind-config.js"></script>
 
 <!-- Google Fonts -->
 <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400..900;1,400..900&family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
