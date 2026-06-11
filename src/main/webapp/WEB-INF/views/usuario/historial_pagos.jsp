@@ -2,26 +2,10 @@
 <%@ taglib uri="jakarta.tags.core" prefix="c" %>
 <%@ taglib uri="jakarta.tags.fmt" prefix="fmt" %>
 <!DOCTYPE html>
-<html lang="es"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
-<link rel="icon" type="image/png" href="${pageContext.request.contextPath}/assets/img/logo/Logo_Inmobix.png">
-<title>Inmobix - Historial de Pagos</title>    <script src="https://cdn.tailwindcss.com"></script>
-    <script>
-        tailwind.config = {
-            theme: {
-                extend: {
-                    colors: {
-                        brandHeader: '#000000',
-                        brandFooter: '#000000',
-                        brandBtn: '#000000',
-                        brandHover: '#71717A',
-                        brandBg: '#FFFFFF',
-                        brandText: '#0A0A0A'
-                    }
-                }
-            }
-        }
-    </script>
-        </head>
+<html lang="es"><head>
+    <c:set var="pageTitle" value="Inmobix - Historial de Pagos" scope="request" />
+    <jsp:include page="/WEB-INF/views/layout/head.jsp" />
+</head>
 <body class="bg-brandBg text-brandText min-h-screen font-sans">
     <c:set var="activePage" value="historial_pagos" scope="request" />
     <jsp:include page="/WEB-INF/views/layout/header.jsp" />
@@ -40,4 +24,6 @@
 <td class="px-6 py-4 text-center font-mono text-xs">${p.codigoOperacion}</td>
 <td class="px-6 py-4 text-center"><span class="px-3 py-1 rounded-full text-xs font-bold ${p.estado == 'APROBADO' ? 'bg-emerald-100 text-emerald-700' : p.estado == 'RECHAZADO' ? 'bg-red-100 text-red-700' : 'bg-amber-100 text-amber-700'}">${p.estado}</span></td>
 </tr></c:forEach></c:otherwise></c:choose>
-</tbody></table></div></div></main></body></html>
+</tbody></table></div></div></main>
+<jsp:include page="/WEB-INF/views/layout/footer.jsp" />
+</body></html>

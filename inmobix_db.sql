@@ -348,6 +348,47 @@ CREATE TABLE evento_auditoria (
         REFERENCES usuario(id_usuario) ON DELETE SET NULL
 ) ENGINE=InnoDB COMMENT='Log de auditoría';
 
+-- Bloque 1.11: Vistas de Base de Datos
+DROP VIEW IF EXISTS v_propiedades_bimonetarias;
+CREATE VIEW v_propiedades_bimonetarias AS
+SELECT 
+    p.id_propiedad,
+    p.titulo,
+    p.estado,
+    p.moneda_base,
+    p.precio,
+    tc.tipo_cambio_venta,
+    CASE 
+        WHEN p.moneda_base = 'PEN' THEN p.precio
+        ELSE ROUND(p.precio * tc.tipo_cambio_venta, 2)
+    END AS precio_pen,
+    CASE 
+        WHEN p.moneda_base = 'USD' THEN p.precio
+        ELSE ROUND(p.precio / tc.tipo_cambio_venta, 2)
+    END AS precio_usd,
+    ti.nombre AS tipo_inmueble,
+    op.nombre AS operacion,
+    d.nombre AS distrito,
+    pr.nombre AS provincia,
+    dep.nombre AS departamento,
+    p.area_techada_m2,
+    p.num_dormitorios,
+    p.num_banos,
+    p.bono_mi_vivienda,
+    p.bono_verde
+FROM propiedad p
+INNER JOIN tipo_inmueble ti ON p.id_tipo_inmueble = ti.id_tipo
+INNER JOIN operacion op ON p.id_operacion = op.id_operacion
+INNER JOIN distrito d ON p.id_distrito = d.id_distrito
+INNER JOIN provincia pr ON d.id_provincia = pr.id_provincia
+INNER JOIN departamento dep ON pr.id_departamento = dep.id_departamento
+CROSS JOIN (
+    SELECT venta AS tipo_cambio_venta 
+    FROM tipo_cambio 
+    WHERE par_moneda = 'USD/PEN' 
+    ORDER BY fecha_vigencia DESC, id_tipo_cambio DESC 
+    LIMIT 1
+) tc;
 
 -- ============================================================
 -- PARTE 2: INSERCIÓN DE DATOS SEMILLA (DML)

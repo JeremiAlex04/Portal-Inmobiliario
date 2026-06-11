@@ -2,26 +2,11 @@
 <%@ taglib uri="jakarta.tags.core" prefix="c" %>
 <%@ taglib uri="jakarta.tags.fmt" prefix="fmt" %>
 <!DOCTYPE html>
-<html lang="es"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
-<link rel="icon" type="image/png" href="${pageContext.request.contextPath}/assets/img/logo/Logo_Inmobix.png">
-<title>Inmobix Admin - Pagos</title>    <script src="https://cdn.tailwindcss.com"></script>
-    <script>
-        tailwind.config = {
-            theme: {
-                extend: {
-                    colors: {
-                        brandHeader: '#000000',
-                        brandFooter: '#000000',
-                        brandBtn: '#000000',
-                        brandHover: '#71717A',
-                        brandBg: '#FFFFFF',
-                        brandText: '#0A0A0A'
-                    }
-                }
-            }
-        }
-    </script>
-        </head>
+<html lang="es" class="scroll-smooth">
+<head>
+    <c:set var="pageTitle" value="Inmobix Admin - Pagos" scope="request" />
+    <jsp:include page="/WEB-INF/views/layout/head.jsp" />
+</head>
 <body class="bg-brandBg text-brandText min-h-screen font-sans">
     <c:set var="activePage" value="pagos" scope="request" />
     <c:set var="isAdminArea" value="true" scope="request" />
@@ -54,4 +39,7 @@
 <button name="nuevoEstado" value="APROBADO" onclick="return confirm('¿Estás seguro de APROBAR este pago? Esta acción activará los beneficios del plan.');" class="bg-emerald-600 text-white px-3 py-1 rounded text-xs font-bold hover:bg-emerald-700">Aprobar</button>
 <button name="nuevoEstado" value="RECHAZADO" onclick="return confirm('¿Estás seguro de RECHAZAR este pago? El plan no se activará.');" class="bg-red-600 text-white px-3 py-1 rounded text-xs font-bold hover:bg-red-700">Rechazar</button>
 </form></c:if></td>
-</tr></c:forEach></tbody></table></div></div></main></body></html>
+</tr></c:forEach></tbody></table></div></div></main>
+    <jsp:include page="/WEB-INF/views/layout/footer.jsp" />
+</body>
+</html>

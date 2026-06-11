@@ -3,31 +3,9 @@
 <!DOCTYPE html>
 <html lang="es" class="scroll-smooth">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="icon" type="image/png" href="${pageContext.request.contextPath}/assets/img/logo/Logo_Inmobix.png">
-    <title>Inmobix - Moderación de Propiedades</title>
-    <link rel="stylesheet" href="${pageContext.request.contextPath}/assets/css/styles.css">
-        <script src="https://cdn.tailwindcss.com"></script>
-    <script>
-        tailwind.config = {
-            theme: {
-                extend: {
-                    colors: {
-                        brandHeader: '#000000',
-                        brandFooter: '#000000',
-                        brandBtn: '#000000',
-                        brandHover: '#71717A',
-                        brandBg: '#FFFFFF',
-                        brandText: '#0A0A0A'
-                    }
-                }
-            }
-        }
-    </script>
-        
-    
-<script src="${pageContext.request.contextPath}/assets/js/admin.js" defer></script>
+    <c:set var="pageTitle" value="Inmobix - Moderación de Propiedades" scope="request" />
+    <jsp:include page="/WEB-INF/views/layout/head.jsp" />
+    <script src="${pageContext.request.contextPath}/assets/js/admin.js" defer></script>
 </head>
 <body class="bg-brandBg text-brandText flex flex-col min-h-screen font-sans">
     
@@ -147,5 +125,6 @@
         </div>
     </main>
 
+    <jsp:include page="/WEB-INF/views/layout/footer.jsp" />
 </body>
 </html>
