@@ -6,17 +6,43 @@ function toggleDetail(id) {
     }
 }
 
-// Confirmation alert for deletions
-function confirmarEliminacion(url) {
+// Confirmation alert for deletions — sends POST instead of GET (buena práctica HTTP)
+function confirmarEliminacion(formAction, params) {
     if (confirm("¿Estás seguro que deseas ELIMINAR permanentemente este elemento de la plataforma? Esta acción es irreversible.")) {
-        window.location.href = url;
+        var form = document.createElement('form');
+        form.method = 'POST';
+        form.action = formAction;
+        for (var key in params) {
+            if (params.hasOwnProperty(key)) {
+                var input = document.createElement('input');
+                input.type = 'hidden';
+                input.name = key;
+                input.value = params[key];
+                form.appendChild(input);
+            }
+        }
+        document.body.appendChild(form);
+        form.submit();
     }
 }
 
-// Specific confirmation alert for locations
-function confirmarEliminacionUbicacion(url) {
+// Specific confirmation alert for locations — sends POST
+function confirmarEliminacionUbicacion(formAction, params) {
     if (confirm("¿Estás seguro de eliminar esta ubicación? Podría afectar a propiedades asociadas.")) {
-        window.location.href = url;
+        var form = document.createElement('form');
+        form.method = 'POST';
+        form.action = formAction;
+        for (var key in params) {
+            if (params.hasOwnProperty(key)) {
+                var input = document.createElement('input');
+                input.type = 'hidden';
+                input.name = key;
+                input.value = params[key];
+                form.appendChild(input);
+            }
+        }
+        document.body.appendChild(form);
+        form.submit();
     }
 }
 

@@ -75,7 +75,7 @@
                                     </td>
                                     <td class="px-6 py-4 font-medium">${u.correo}</td>
                                     <td class="px-6 py-4">
-                                        <form action="${pageContext.request.contextPath}/admin" method="GET" class="flex items-center gap-2">
+                                        <form action="${pageContext.request.contextPath}/admin" method="POST" class="flex items-center gap-2">
                                             <input type="hidden" name="accion" value="cambiar_rol">
                                             <input type="hidden" name="id" value="${u.idUsuario}">
                                             <select name="rol" onchange="if(confirm('¿Estás seguro de cambiar el rol de este usuario?')) { this.form.submit(); } else { location.reload(); }" class="bg-slate-50 border border-slate-200 text-slate-700 text-xs rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2" ${u.idUsuario == sessionScope.usuarioLogueado.idUsuario ? 'disabled' : ''}>
@@ -106,14 +106,24 @@
                                                 <button onclick="abrirModalEditar('${u.idUsuario}', '${u.nombres}', '${u.apellidos}', '${u.correo}')" class="text-xs font-bold px-3 py-1.5 rounded-lg border border-slate-200 text-slate-700 hover:text-black hover:border-black hover:bg-black/5 transition-all">Editar</button>
                                                 <c:choose>
                                                     <c:when test="${u.activo == 1}">
-                                                        <a href="${pageContext.request.contextPath}/admin?accion=cambiar_estado&id=${u.idUsuario}&estado=0" class="text-xs font-bold px-3 py-1.5 rounded-lg bg-orange-50 text-orange-600 hover:bg-orange-100 transition-colors">Bloquear</a>
+                                                        <form action="${pageContext.request.contextPath}/admin" method="POST" class="inline">
+                                                            <input type="hidden" name="accion" value="cambiar_estado">
+                                                            <input type="hidden" name="id" value="${u.idUsuario}">
+                                                            <input type="hidden" name="estado" value="0">
+                                                            <button type="submit" class="text-xs font-bold px-3 py-1.5 rounded-lg bg-orange-50 text-orange-600 hover:bg-orange-100 transition-colors">Bloquear</button>
+                                                        </form>
                                                     </c:when>
                                                     <c:otherwise>
-                                                        <a href="${pageContext.request.contextPath}/admin?accion=cambiar_estado&id=${u.idUsuario}&estado=1" class="text-xs font-bold px-3 py-1.5 rounded-lg bg-emerald-50 text-emerald-600 hover:bg-emerald-100 transition-colors">Activar</a>
+                                                        <form action="${pageContext.request.contextPath}/admin" method="POST" class="inline">
+                                                            <input type="hidden" name="accion" value="cambiar_estado">
+                                                            <input type="hidden" name="id" value="${u.idUsuario}">
+                                                            <input type="hidden" name="estado" value="1">
+                                                            <button type="submit" class="text-xs font-bold px-3 py-1.5 rounded-lg bg-emerald-50 text-emerald-600 hover:bg-emerald-100 transition-colors">Activar</button>
+                                                        </form>
                                                     </c:otherwise>
                                                 </c:choose>
                                                 
-                                                <button onclick="confirmarEliminacion('${pageContext.request.contextPath}/admin?accion=eliminar_usuario&id=${u.idUsuario}')" class="text-xs font-bold px-3 py-1.5 rounded-lg bg-red-50 text-red-600 hover:bg-red-100 transition-colors">Eliminar</button>
+                                                <button onclick="confirmarEliminacion('${pageContext.request.contextPath}/admin', {accion: 'eliminar_usuario', id: '${u.idUsuario}'})" class="text-xs font-bold px-3 py-1.5 rounded-lg bg-red-50 text-red-600 hover:bg-red-100 transition-colors">Eliminar</button>
                                             </c:if>
                                             <c:if test="${u.idUsuario == sessionScope.usuarioLogueado.idUsuario}">
                                                 <span class="text-xs text-slate-400 italic">Tú (Admin)</span>

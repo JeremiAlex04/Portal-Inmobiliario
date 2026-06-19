@@ -103,50 +103,6 @@ public class AdminServlet extends HttpServlet {
                 request.getRequestDispatcher("/WEB-INF/views/admin/usuarios.jsp").forward(request, response);
                 break;
 
-            // ---- USUARIOS: Eliminar ----
-            case "eliminar_usuario":
-                int idEliminar = Integer.parseInt(request.getParameter("id"));
-                if (idEliminar != usuario.getIdUsuario()) {
-                    UsuarioDTO targetUser = usuarioFacade.obtenerUsuarioPorId(idEliminar);
-                    boolean deleted = usuarioFacade.eliminarUsuario(idEliminar);
-                    if (deleted && targetUser != null) {
-                        String det = "{\"correo\":\"" + targetUser.getCorreo() + "\",\"nombre\":\"" + targetUser.getNombres() + " " + targetUser.getApellidos() + "\"}";
-                        auditoriaFacade.registrarEvento(usuario.getIdUsuario(), "usuario", idEliminar, "ELIMINAR", request.getRemoteAddr(), request.getHeader("User-Agent"), det);
-                    }
-                }
-                response.sendRedirect(request.getContextPath() + "/admin?accion=usuarios");
-                break;
-
-            // ---- USUARIOS: Cambiar estado ----
-            case "cambiar_estado":
-                int idEstado = Integer.parseInt(request.getParameter("id"));
-                int nuevoEstado = Integer.parseInt(request.getParameter("estado"));
-                if (idEstado != usuario.getIdUsuario()) {
-                    UsuarioDTO targetUser = usuarioFacade.obtenerUsuarioPorId(idEstado);
-                    boolean changed = usuarioFacade.cambiarEstadoUsuario(idEstado, nuevoEstado);
-                    if (changed && targetUser != null) {
-                        String det = "{\"correo\":\"" + targetUser.getCorreo() + "\",\"activo\":" + nuevoEstado + "}";
-                        auditoriaFacade.registrarEvento(usuario.getIdUsuario(), "usuario", idEstado, "ACTUALIZAR", request.getRemoteAddr(), request.getHeader("User-Agent"), det);
-                    }
-                }
-                response.sendRedirect(request.getContextPath() + "/admin?accion=usuarios");
-                break;
-
-            // ---- USUARIOS: Cambiar rol ----
-            case "cambiar_rol":
-                int idRolUser = Integer.parseInt(request.getParameter("id"));
-                int nuevoRol = Integer.parseInt(request.getParameter("rol"));
-                if (idRolUser != usuario.getIdUsuario()) {
-                    UsuarioDTO targetUser = usuarioFacade.obtenerUsuarioPorId(idRolUser);
-                    boolean changed = usuarioFacade.cambiarRolUsuario(idRolUser, nuevoRol);
-                    if (changed && targetUser != null) {
-                        String det = "{\"correo\":\"" + targetUser.getCorreo() + "\",\"rol_nuevo\":" + nuevoRol + ",\"rol_anterior\":" + targetUser.getIdRol() + "}";
-                        auditoriaFacade.registrarEvento(usuario.getIdUsuario(), "usuario", idRolUser, "ACTUALIZAR", request.getRemoteAddr(), request.getHeader("User-Agent"), det);
-                    }
-                }
-                response.sendRedirect(request.getContextPath() + "/admin?accion=usuarios");
-                break;
-
             // ---- PROPIEDADES: Listado con búsqueda ----
             case "propiedades":
                 String keyProp = request.getParameter("busqueda");
@@ -164,31 +120,6 @@ public class AdminServlet extends HttpServlet {
                 request.getRequestDispatcher("/WEB-INF/views/admin/propiedades.jsp").forward(request, response);
                 break;
 
-            // ---- PROPIEDADES: Cambiar estado ----
-            case "cambiar_estado_prop":
-                int idProp = Integer.parseInt(request.getParameter("id"));
-                String nuevoEstadoProp = request.getParameter("estado");
-                PropiedadDTO targetProp = propiedadFacade.obtenerPropiedad(idProp);
-                boolean changedProp = propiedadFacade.cambiarEstadoPropiedad(idProp, nuevoEstadoProp);
-                if (changedProp && targetProp != null) {
-                    String det = "{\"titulo\":\"" + targetProp.getTitulo().replace("\"", "\\\"") + "\",\"estado_nuevo\":\"" + nuevoEstadoProp + "\",\"estado_anterior\":\"" + targetProp.getEstado() + "\"}";
-                    auditoriaFacade.registrarEvento(usuario.getIdUsuario(), "propiedad", idProp, "ACTUALIZAR", request.getRemoteAddr(), request.getHeader("User-Agent"), det);
-                }
-                response.sendRedirect(request.getContextPath() + "/admin?accion=propiedades");
-                break;
-
-            // ---- PROPIEDADES: Eliminar ----
-            case "eliminar_prop":
-                int idEliminarProp = Integer.parseInt(request.getParameter("id"));
-                PropiedadDTO targetPropDel = propiedadFacade.obtenerPropiedad(idEliminarProp);
-                boolean deletedProp = propiedadFacade.eliminarPropiedad(idEliminarProp);
-                if (deletedProp && targetPropDel != null) {
-                    String det = "{\"titulo\":\"" + targetPropDel.getTitulo().replace("\"", "\\\"") + "\"}";
-                    auditoriaFacade.registrarEvento(usuario.getIdUsuario(), "propiedad", idEliminarProp, "ELIMINAR", request.getRemoteAddr(), request.getHeader("User-Agent"), det);
-                }
-                response.sendRedirect(request.getContextPath() + "/admin?accion=propiedades");
-                break;
-
             // ---- UBICACIONES: Listado ----
             case "ubicaciones":
                 String tipo = request.getParameter("tipo");
@@ -204,14 +135,6 @@ public class AdminServlet extends HttpServlet {
                 }
 
                 request.getRequestDispatcher("/WEB-INF/views/admin/ubicaciones.jsp").forward(request, response);
-                break;
-
-            // ---- UBICACIONES: Eliminar ----
-            case "eliminar_ubicacion":
-                int idUbi = Integer.parseInt(request.getParameter("id"));
-                String tipoDel = request.getParameter("tipo");
-                ubicacionFacade.eliminarUbicacion(idUbi, tipoDel);
-                response.sendRedirect(request.getContextPath() + "/admin?accion=ubicaciones&tipo=" + tipoDel);
                 break;
 
             // ---- AUDITORIA: Panel de logs ----
@@ -272,6 +195,75 @@ public class AdminServlet extends HttpServlet {
                 response.sendRedirect(request.getContextPath() + "/admin?accion=usuarios");
                 break;
 
+            // ---- USUARIOS: Eliminar (POST — operación destructiva) ----
+            case "eliminar_usuario":
+                int idEliminar = Integer.parseInt(request.getParameter("id"));
+                if (idEliminar != admin.getIdUsuario()) {
+                    UsuarioDTO targetUser = usuarioFacade.obtenerUsuarioPorId(idEliminar);
+                    boolean deleted = usuarioFacade.eliminarUsuario(idEliminar);
+                    if (deleted && targetUser != null) {
+                        String det = "{\"correo\":\"" + targetUser.getCorreo() + "\",\"nombre\":\"" + targetUser.getNombres() + " " + targetUser.getApellidos() + "\"}";
+                        auditoriaFacade.registrarEvento(admin.getIdUsuario(), "usuario", idEliminar, "ELIMINAR", request.getRemoteAddr(), request.getHeader("User-Agent"), det);
+                    }
+                }
+                response.sendRedirect(request.getContextPath() + "/admin?accion=usuarios");
+                break;
+
+            // ---- USUARIOS: Cambiar estado (POST — cambio de estado) ----
+            case "cambiar_estado":
+                int idEstado = Integer.parseInt(request.getParameter("id"));
+                int nuevoEstado = Integer.parseInt(request.getParameter("estado"));
+                if (idEstado != admin.getIdUsuario()) {
+                    UsuarioDTO targetUser = usuarioFacade.obtenerUsuarioPorId(idEstado);
+                    boolean changed = usuarioFacade.cambiarEstadoUsuario(idEstado, nuevoEstado);
+                    if (changed && targetUser != null) {
+                        String det = "{\"correo\":\"" + targetUser.getCorreo() + "\",\"activo\":" + nuevoEstado + "}";
+                        auditoriaFacade.registrarEvento(admin.getIdUsuario(), "usuario", idEstado, "ACTUALIZAR", request.getRemoteAddr(), request.getHeader("User-Agent"), det);
+                    }
+                }
+                response.sendRedirect(request.getContextPath() + "/admin?accion=usuarios");
+                break;
+
+            // ---- USUARIOS: Cambiar rol (POST — cambio de estado) ----
+            case "cambiar_rol":
+                int idRolUser = Integer.parseInt(request.getParameter("id"));
+                int nuevoRol = Integer.parseInt(request.getParameter("rol"));
+                if (idRolUser != admin.getIdUsuario()) {
+                    UsuarioDTO targetUser = usuarioFacade.obtenerUsuarioPorId(idRolUser);
+                    boolean changed = usuarioFacade.cambiarRolUsuario(idRolUser, nuevoRol);
+                    if (changed && targetUser != null) {
+                        String det = "{\"correo\":\"" + targetUser.getCorreo() + "\",\"rol_nuevo\":" + nuevoRol + ",\"rol_anterior\":" + targetUser.getIdRol() + "}";
+                        auditoriaFacade.registrarEvento(admin.getIdUsuario(), "usuario", idRolUser, "ACTUALIZAR", request.getRemoteAddr(), request.getHeader("User-Agent"), det);
+                    }
+                }
+                response.sendRedirect(request.getContextPath() + "/admin?accion=usuarios");
+                break;
+
+            // ---- PROPIEDADES: Cambiar estado (POST — cambio de estado) ----
+            case "cambiar_estado_prop":
+                int idProp = Integer.parseInt(request.getParameter("id"));
+                String nuevoEstadoProp = request.getParameter("estado");
+                PropiedadDTO targetProp = propiedadFacade.obtenerPropiedad(idProp);
+                boolean changedProp = propiedadFacade.cambiarEstadoPropiedad(idProp, nuevoEstadoProp);
+                if (changedProp && targetProp != null) {
+                    String det = "{\"titulo\":\"" + targetProp.getTitulo().replace("\"", "\\\"") + "\",\"estado_nuevo\":\"" + nuevoEstadoProp + "\",\"estado_anterior\":\"" + targetProp.getEstado() + "\"}";
+                    auditoriaFacade.registrarEvento(admin.getIdUsuario(), "propiedad", idProp, "ACTUALIZAR", request.getRemoteAddr(), request.getHeader("User-Agent"), det);
+                }
+                response.sendRedirect(request.getContextPath() + "/admin?accion=propiedades");
+                break;
+
+            // ---- PROPIEDADES: Eliminar (POST — operación destructiva) ----
+            case "eliminar_prop":
+                int idEliminarProp = Integer.parseInt(request.getParameter("id"));
+                PropiedadDTO targetPropDel = propiedadFacade.obtenerPropiedad(idEliminarProp);
+                boolean deletedProp = propiedadFacade.eliminarPropiedad(idEliminarProp);
+                if (deletedProp && targetPropDel != null) {
+                    String det = "{\"titulo\":\"" + targetPropDel.getTitulo().replace("\"", "\\\"") + "\"}";
+                    auditoriaFacade.registrarEvento(admin.getIdUsuario(), "propiedad", idEliminarProp, "ELIMINAR", request.getRemoteAddr(), request.getHeader("User-Agent"), det);
+                }
+                response.sendRedirect(request.getContextPath() + "/admin?accion=propiedades");
+                break;
+
             // ---- UBICACIONES: Guardar (crear o editar) ----
             case "guardar_ubicacion":
                 UbicacionDTO u = new UbicacionDTO();
@@ -295,6 +287,14 @@ public class AdminServlet extends HttpServlet {
                 }
 
                 response.sendRedirect(request.getContextPath() + "/admin?accion=ubicaciones&tipo=" + tipoU);
+                break;
+
+            // ---- UBICACIONES: Eliminar (POST — operación destructiva) ----
+            case "eliminar_ubicacion":
+                int idUbi = Integer.parseInt(request.getParameter("id"));
+                String tipoDel = request.getParameter("tipo");
+                ubicacionFacade.eliminarUbicacion(idUbi, tipoDel);
+                response.sendRedirect(request.getContextPath() + "/admin?accion=ubicaciones&tipo=" + tipoDel);
                 break;
 
             default:

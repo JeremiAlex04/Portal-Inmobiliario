@@ -166,14 +166,22 @@
                                              <c:if test="${not empty sessionScope.usuarioLogueado}">
                                                  <c:choose>
                                                      <c:when test="${propiedad.favorito}">
-                                                         <a href="${pageContext.request.contextPath}/favorito?accion=remover&id=${propiedad.id}" class="absolute top-4 right-4 w-10 h-10 bg-red-500 text-white rounded-full flex items-center justify-center shadow-lg hover:bg-red-600 transition-colors" title="Quitar de favoritos">
-                                                             <svg class="w-5 h-5 text-white fill-current" viewBox="0 0 24 24"><path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"></path></svg>
-                                                         </a>
+                                                         <form action="${pageContext.request.contextPath}/favorito" method="POST" class="absolute top-4 right-4 z-10 m-0 p-0">
+                                                             <input type="hidden" name="accion" value="remover">
+                                                             <input type="hidden" name="id" value="${propiedad.id}">
+                                                             <button type="submit" class="w-10 h-10 bg-red-500 text-white rounded-full flex items-center justify-center shadow-lg hover:bg-red-600 transition-colors cursor-pointer border-0" title="Quitar de favoritos">
+                                                                 <svg class="w-5 h-5 text-white fill-current" viewBox="0 0 24 24"><path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"></path></svg>
+                                                             </button>
+                                                         </form>
                                                      </c:when>
                                                      <c:otherwise>
-                                                         <a href="${pageContext.request.contextPath}/favorito?accion=agregar&id=${propiedad.id}" class="absolute top-4 right-4 w-10 h-10 bg-white/80 backdrop-blur text-slate-400 rounded-full flex items-center justify-center shadow-lg hover:bg-red-50 hover:text-red-500 transition-colors" title="Guardar en favoritos">
-                                                             <svg class="w-5 h-5 text-slate-400 hover:text-red-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"></path></svg>
-                                                         </a>
+                                                         <form action="${pageContext.request.contextPath}/favorito" method="POST" class="absolute top-4 right-4 z-10 m-0 p-0">
+                                                             <input type="hidden" name="accion" value="agregar">
+                                                             <input type="hidden" name="id" value="${propiedad.id}">
+                                                             <button type="submit" class="w-10 h-10 bg-white/80 backdrop-blur text-slate-400 rounded-full flex items-center justify-center shadow-lg hover:bg-red-50 hover:text-red-500 transition-colors cursor-pointer border-0" title="Guardar en favoritos">
+                                                                 <svg class="w-5 h-5 text-slate-400 hover:text-red-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"></path></svg>
+                                                             </button>
+                                                         </form>
                                                      </c:otherwise>
                                                  </c:choose>
                                              </c:if>

@@ -107,7 +107,7 @@
                                         <div class="flex justify-center gap-2">
                                              <a href="${pageContext.request.contextPath}/propiedades?accion=ver&id=${p.id}" target="_blank" class="text-xs font-bold px-3 py-1.5 rounded-lg border border-slate-200 text-slate-700 hover:text-black hover:border-black hover:bg-black/5 transition-all">Ver Detalles</a>
                                              <a href="${pageContext.request.contextPath}/propiedades?accion=editar&id=${p.id}" class="text-xs font-bold px-3 py-1.5 rounded-lg border border-slate-200 text-blue-600 hover:text-blue-800 hover:border-blue-300 hover:bg-blue-50 transition-all">Editar</a>
-                                            <button onclick="confirmarEliminacion('${pageContext.request.contextPath}/admin?accion=eliminar_prop&id=${p.id}')" class="text-xs font-bold px-3 py-1.5 rounded-lg bg-red-50 text-red-600 hover:bg-red-100 transition-colors">Eliminar</button>
+                                            <button onclick="confirmarEliminacion('${pageContext.request.contextPath}/admin', {accion: 'eliminar_prop', id: '${p.id}'})" class="text-xs font-bold px-3 py-1.5 rounded-lg bg-red-50 text-red-600 hover:bg-red-100 transition-colors">Eliminar</button>
                                         </div>
                                     </td>
                                 </tr>
