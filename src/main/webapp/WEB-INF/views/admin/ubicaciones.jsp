@@ -70,7 +70,7 @@
                                     <td class="px-6 py-4">
                                         <div class="flex justify-center gap-2">
                                             <button onclick="editarUbicacion('${u.id}', '${u.nombre}', '${u.codigoUbigeo}', '${u.parentId}')" class="text-xs font-bold px-3 py-1.5 rounded-lg border border-slate-200 text-slate-700 hover:text-black hover:border-black hover:bg-black/5 transition-all">Editar</button>
-                                            <button onclick="confirmarEliminacionUbicacion('${pageContext.request.contextPath}/admin?accion=eliminar_ubicacion&id=${u.id}&tipo=${tipoActual}')" class="text-xs font-bold px-3 py-1.5 rounded-lg bg-red-50 text-red-600 hover:bg-red-100 transition-colors">Eliminar</button>
+                                            <button onclick="confirmarEliminacionUbicacion('${pageContext.request.contextPath}/admin', {accion: 'eliminar_ubicacion', id: '${u.id}', tipo: '${tipoActual}'})" class="text-xs font-bold px-3 py-1.5 rounded-lg bg-red-50 text-red-600 hover:bg-red-100 transition-colors">Eliminar</button>
                                         </div>
                                     </td>
                                 </tr>

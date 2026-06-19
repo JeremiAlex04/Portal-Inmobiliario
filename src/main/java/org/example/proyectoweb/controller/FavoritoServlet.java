@@ -30,8 +30,24 @@ public class FavoritoServlet extends HttpServlet {
         }
 
         UsuarioDTO usuario = (UsuarioDTO) session.getAttribute("usuarioLogueado");
+
+        // GET solo maneja listado (operación segura y sin efectos secundarios)
+        request.setAttribute("listaFavoritos", favoritoFacade.listarFavoritos(usuario.getIdUsuario()));
+        request.getRequestDispatcher("/WEB-INF/views/usuario/favoritos.jsp").forward(request, response);
+    }
+
+    // POST — Agregar y remover favoritos (operaciones con efectos secundarios)
+    @Override
+    protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+        HttpSession session = request.getSession(false);
+        if (session == null || session.getAttribute("usuarioLogueado") == null) {
+            response.sendRedirect(request.getContextPath() + "/usuario?accion=login");
+            return;
+        }
+
+        UsuarioDTO usuario = (UsuarioDTO) session.getAttribute("usuarioLogueado");
         String accion = request.getParameter("accion");
-        if (accion == null) accion = "listar";
+        if (accion == null) accion = "";
 
         switch (accion) {
             case "agregar":
@@ -49,11 +65,10 @@ public class FavoritoServlet extends HttpServlet {
                 response.sendRedirect(ref != null ? ref : request.getContextPath() + "/propiedades");
                 break;
 
-            case "listar":
             default:
-                request.setAttribute("listaFavoritos", favoritoFacade.listarFavoritos(usuario.getIdUsuario()));
-                request.getRequestDispatcher("/WEB-INF/views/usuario/favoritos.jsp").forward(request, response);
+                response.sendRedirect(request.getContextPath() + "/favorito");
                 break;
         }
     }
 }
+

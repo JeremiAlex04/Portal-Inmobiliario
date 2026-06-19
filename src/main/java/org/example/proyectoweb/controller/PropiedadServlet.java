@@ -139,39 +139,6 @@ public class PropiedadServlet extends HttpServlet {
                     break;
                 }
 
-                case "eliminar": {
-                    UsuarioDTO sessionUser = (UsuarioDTO) request.getSession().getAttribute("usuarioLogueado");
-                    if (sessionUser == null) {
-                        request.setAttribute("error", "Por favor, inicia sesión para eliminar una propiedad.");
-                        request.getRequestDispatcher("/WEB-INF/views/public/login.jsp").forward(request, response);
-                        return;
-                    }
-                    int idEliminar = Integer.parseInt(request.getParameter("id"));
-                    PropiedadDTO pDel = propiedadFacade.obtenerPropiedad(idEliminar);
-                    
-                    if (pDel == null) {
-                        response.sendError(HttpServletResponse.SC_NOT_FOUND, "Propiedad no encontrada");
-                        return;
-                    }
-
-                    // Validar permisos
-                    if (sessionUser.getIdRol() != 5 && pDel.getIdUsuarioAgente() != sessionUser.getIdUsuario()) {
-                        response.sendError(HttpServletResponse.SC_FORBIDDEN, "No tienes permiso para eliminar esta propiedad.");
-                        return;
-                    }
-
-                    propiedadFacade.eliminarPropiedad(idEliminar);
-                    String details = "{\"titulo\":\"" + pDel.getTitulo().replace("\"", "\\\"") + "\",\"precio\":" + pDel.getPrecio() + ",\"moneda\":\"" + pDel.getMonedaBase() + "\"}";
-                    auditoriaFacade.registrarEvento(sessionUser.getIdUsuario(), "propiedad", idEliminar, "ELIMINAR", request.getRemoteAddr(), request.getHeader("User-Agent"), details);
-                    
-                    if (sessionUser.getIdRol() == 3 || sessionUser.getIdRol() == 4 || sessionUser.getIdRol() == 5) {
-                        response.sendRedirect(request.getContextPath() + "/panel");
-                    } else {
-                        response.sendRedirect(request.getContextPath() + "/propiedades");
-                    }
-                    break;
-                }
-
                 case "listar":
                 default:
                     // Sprint 2: Capturar todos los filtros avanzados
@@ -244,6 +211,42 @@ public class PropiedadServlet extends HttpServlet {
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         try {
+            // ---- ELIMINAR propiedad (POST — operación destructiva) ----
+            String accionPost = request.getParameter("accion");
+            if ("eliminar".equals(accionPost)) {
+                UsuarioDTO sessionUser = (UsuarioDTO) request.getSession().getAttribute("usuarioLogueado");
+                if (sessionUser == null) {
+                    request.setAttribute("error", "Por favor, inicia sesión para eliminar una propiedad.");
+                    request.getRequestDispatcher("/WEB-INF/views/public/login.jsp").forward(request, response);
+                    return;
+                }
+                int idEliminar = Integer.parseInt(request.getParameter("id"));
+                PropiedadDTO pDel = propiedadFacade.obtenerPropiedad(idEliminar);
+
+                if (pDel == null) {
+                    response.sendError(HttpServletResponse.SC_NOT_FOUND, "Propiedad no encontrada");
+                    return;
+                }
+
+                // Validar permisos
+                if (sessionUser.getIdRol() != 5 && pDel.getIdUsuarioAgente() != sessionUser.getIdUsuario()) {
+                    response.sendError(HttpServletResponse.SC_FORBIDDEN, "No tienes permiso para eliminar esta propiedad.");
+                    return;
+                }
+
+                propiedadFacade.eliminarPropiedad(idEliminar);
+                String details = "{\"titulo\":\"" + pDel.getTitulo().replace("\"", "\\\"") + "\",\"precio\":" + pDel.getPrecio() + ",\"moneda\":\"" + pDel.getMonedaBase() + "\"}";
+                auditoriaFacade.registrarEvento(sessionUser.getIdUsuario(), "propiedad", idEliminar, "ELIMINAR", request.getRemoteAddr(), request.getHeader("User-Agent"), details);
+
+                if (sessionUser.getIdRol() == 3 || sessionUser.getIdRol() == 4 || sessionUser.getIdRol() == 5) {
+                    response.sendRedirect(request.getContextPath() + "/panel");
+                } else {
+                    response.sendRedirect(request.getContextPath() + "/propiedades");
+                }
+                return;
+            }
+
+            // ---- CREAR / EDITAR propiedad ----
             UsuarioDTO usuario = (UsuarioDTO) request.getSession().getAttribute("usuarioLogueado");
             if (usuario == null) {
                 request.setAttribute("error", "Sesión inválida o expirada. Por favor, inicia sesión.");
