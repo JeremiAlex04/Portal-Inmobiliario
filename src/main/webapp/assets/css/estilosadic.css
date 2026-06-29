@@ -399,3 +399,21 @@ html {
 .hero-carousel-dot {
     transition: width 0.3s ease, background-color 0.3s ease;
 }
+
+/* ============================================ */
+/* KEN BURNS ANIMATION                          */
+/* ============================================ */
+@keyframes kenBurns {
+    0% {
+        transform: scale(1.05) translate(0, 0);
+    }
+    50% {
+        transform: scale(1.12) translate(-1%, -0.5%);
+    }
+    100% {
+        transform: scale(1.05) translate(0, 0);
+    }
+}
+.ken-burns-active {
+    animation: kenBurns 25s infinite ease-in-out;
+}

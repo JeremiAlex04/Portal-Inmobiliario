@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="jakarta.faces.html"
+      xmlns:f="jakarta.faces.core"
+      xmlns:ui="jakarta.faces.facelets">
+<f:view contentType="text/html" locale="#{configuracionBean.locale}">
+    <h:head>
+        <meta charset="UTF-8"/>
+        <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+        <title><ui:insert name="titulo">#{msg['app.titulo']}</ui:insert></title>
+        <link rel="icon" type="image/x-icon" href="#{request.contextPath}/assets/img/logo.png"/>
+        <script src="https://cdn.tailwindcss.com"></script>
+        <script src="#{request.contextPath}/assets/js/tailwind-config.js"></script>
+        <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&amp;family=Playfair+Display:wght@400;500;600;700&amp;display=swap" rel="stylesheet"/>
+        <link rel="stylesheet" href="#{request.contextPath}/assets/css/styles.css"/>
+        <link rel="stylesheet" href="#{request.contextPath}/assets/css/estilosadic.css"/>
+        <ui:insert name="headExtra"/>
+    </h:head>
+    <h:body class="font-body antialiased bg-slate-50 min-h-screen flex flex-col justify-between">
+        
+        <!-- Simplified Header (Logo only) -->
+        <header class="w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 flex items-center justify-between">
+            <a href="#{request.contextPath}/index.xhtml" class="inline-flex items-center gap-2.5 no-underline group">
+                <img src="#{request.contextPath}/assets/img/logo/Logo_Inmobix.png" alt="InmobiX" class="h-9 w-auto text-black transition-transform group-hover:scale-105"/>
+                <span class="text-xl font-black text-slate-900 tracking-tight">InmobiX</span>
+            </a>
+            <a href="#{request.contextPath}/index.xhtml" class="text-xs font-bold text-slate-500 hover:text-black transition-colors flex items-center gap-1">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"></path></svg>
+                Volver al inicio
+            </a>
+        </header>
+
+        <!-- Dedicated Auth Content -->
+        <main class="flex-grow flex items-center justify-center">
+            <ui:insert name="contenido"/>
+        </main>
+
+        <!-- Simplified Footer (Copyright & Policies) -->
+        <footer class="w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 text-center text-xs text-slate-400 border-t border-slate-200/50 flex flex-col sm:flex-row justify-between items-center gap-3">
+            <p>&#169; 2026 Portal Inmobiliario Inmobix. Todos los derechos reservados.</p>
+            <div class="flex gap-4">
+                <a href="#{request.contextPath}/contacto.xhtml" class="hover:text-slate-600 transition-colors">Términos de servicio</a>
+                <a href="#{request.contextPath}/contacto.xhtml" class="hover:text-slate-600 transition-colors">Políticas de privacidad</a>
+            </div>
+        </footer>
+
+        <!-- Scripts -->
+        <script src="#{request.contextPath}/assets/js/main.js"></script>
+        <ui:insert name="scriptsExtra"/>
+    </h:body>
+</f:view>
+</html>

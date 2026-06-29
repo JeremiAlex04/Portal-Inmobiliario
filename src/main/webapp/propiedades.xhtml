@@ -158,13 +158,25 @@
 
                                 <div class="flex items-center justify-between border-t border-slate-100 pt-4">
                                     <div>
-                                        <span class="text-xs text-slate-400 block font-medium">Precio</span>
-                                        <span class="text-xl font-black text-black">
-                                            <c:choose>
-                                                <c:when test="#{p.monedaBase == 'USD'}">US$ #{p.precioUsd}</c:when>
-                                                <c:otherwise>S/. #{p.precioPen}</c:otherwise>
-                                            </c:choose>
-                                        </span>
+                                        <span class="text-[9px] text-slate-400 block font-black uppercase tracking-wider">Precio</span>
+                                        <c:choose>
+                                            <c:when test="#{p.monedaBase == 'USD'}">
+                                                <p class="text-lg font-black text-slate-950 leading-tight">
+                                                    $ <h:outputText value="#{p.precioUsd}"><f:convertNumber pattern="#,##0"/></h:outputText>
+                                                </p>
+                                                <p class="text-[10px] font-bold text-slate-400 mt-0.5">
+                                                    S/ <h:outputText value="#{p.precioPen}"><f:convertNumber pattern="#,##0"/></h:outputText>
+                                                </p>
+                                            </c:when>
+                                            <c:otherwise>
+                                                <p class="text-lg font-black text-slate-950 leading-tight">
+                                                    S/ <h:outputText value="#{p.precioPen}"><f:convertNumber pattern="#,##0"/></h:outputText>
+                                                </p>
+                                                <p class="text-[10px] font-bold text-slate-400 mt-0.5">
+                                                    $ <h:outputText value="#{p.precioUsd}"><f:convertNumber pattern="#,##0"/></h:outputText>
+                                                </p>
+                                            </c:otherwise>
+                                        </c:choose>
                                     </div>
                                     <a href="#{request.contextPath}/detalle_propiedad.xhtml?id=#{p.id}" class="inline-flex items-center justify-center gap-1.5 bg-black hover:bg-slate-800 text-white text-xs font-bold px-5 py-2.5 rounded-full transition-all hover:scale-[1.03] shadow-md">
                                         #{msg['propiedad.ver']}

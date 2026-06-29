@@ -36,12 +36,7 @@
                     <a href="#{request.contextPath}/faq.xhtml" class="text-sm font-semibold #{facesContext.viewRoot.viewId eq '/faq.xhtml' ? 'text-white' : 'text-white/80 hover:text-white'} transition-colors">#{msg['menu.faq']}</a>
                     <a href="#{request.contextPath}/contacto.xhtml" class="text-sm font-semibold #{facesContext.viewRoot.viewId eq '/contacto.xhtml' ? 'text-white' : 'text-white/80 hover:text-white'} transition-colors">#{msg['menu.contacto']}</a>
 
-                    <!-- Language Switcher -->
-                    <div class="flex items-center gap-1 pl-4 border-l border-white/10 ml-1">
-                        <a href="#{request.contextPath}/index.xhtml?lang=es" class="text-xs font-semibold #{configuracionBean.idioma == 'es' ? 'text-white' : 'text-white/50 hover:text-white/80'} transition-colors">ES</a>
-                        <span class="text-white/20">|</span>
-                        <a href="#{request.contextPath}/index.xhtml?lang=en" class="text-xs font-semibold #{configuracionBean.idioma == 'en' ? 'text-white' : 'text-white/50 hover:text-white/80'} transition-colors">EN</a>
-                    </div>
+
                 </nav>
 
                 <!-- Actions -->
