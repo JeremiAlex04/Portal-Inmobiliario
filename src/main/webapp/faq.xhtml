@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="jakarta.faces.html"
+      xmlns:f="jakarta.faces.core"
+      xmlns:ui="jakarta.faces.facelets"
+      xmlns:c="jakarta.tags.core">
+<ui:composition template="/WEB-INF/templates/plantilla.xhtml">
+    <ui:define name="titulo">Preguntas Frecuentes - #{msg['app.titulo']}</ui:define>
+    <ui:define name="contenido">
+        <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-16 md:py-24">
+            
+            <!-- Page Header -->
+            <div class="text-center mb-16">
+                <span class="text-xs font-black uppercase tracking-[0.25em] text-amber-600 block mb-2">Ayuda</span>
+                <h1 class="font-title text-3xl md:text-4xl lg:text-5xl font-light tracking-tight text-slate-900 mb-4">Preguntas Frecuentes</h1>
+                <p class="text-slate-500 max-w-xl mx-auto text-sm md:text-base">Resuelve tus dudas rápidamente sobre el uso del portal, seguridad registral y planes de publicación.</p>
+            </div>
+
+            <!-- FAQs Content Accordion -->
+            <div class="space-y-12 reveal-stagger active">
+                
+                <!-- Category 1: General -->
+                <div class="space-y-4">
+                    <h2 class="text-xs font-black uppercase tracking-[0.2em] text-slate-400 border-b border-slate-100 pb-3 mb-5">Preguntas Generales</h2>
+                    
+                    <!-- FAQ 1 -->
+                    <div class="border border-slate-200/60 bg-white rounded-2xl p-4 md:p-5 hover:shadow-md transition-all duration-300">
+                        <button type="button" class="faq-btn flex justify-between items-center w-full text-left focus:outline-none" onclick="toggleFaq(this)">
+                            <span class="font-bold text-slate-800 text-sm md:text-base pr-4">¿Qué es InmobiX?</span>
+                            <svg class="w-4 h-4 text-slate-400 transition-transform duration-300 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M19 9l-7 7-7-7"></path></svg>
+                        </button>
+                        <div class="faq-answer max-h-0 overflow-hidden transition-all duration-300 ease-in-out text-slate-500 text-xs md:text-sm leading-relaxed">
+                            <div class="pt-3">
+                                InmobiX es el portal inmobiliario premium líder en el Perú, diseñado para ofrecer búsquedas fluidas, visualizaciones fotorrealistas de nivel superior y procesos verificados con la base de datos de SUNARP para garantizar transacciones tranquilas y sin sorpresas.
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- FAQ 2 -->
+                    <div class="border border-slate-200/60 bg-white rounded-2xl p-4 md:p-5 hover:shadow-md transition-all duration-300">
+                        <button type="button" class="faq-btn flex justify-between items-center w-full text-left focus:outline-none" onclick="toggleFaq(this)">
+                            <span class="font-bold text-slate-800 text-sm md:text-base pr-4">¿Cómo me registro en el portal?</span>
+                            <svg class="w-4 h-4 text-slate-400 transition-transform duration-300 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M19 9l-7 7-7-7"></path></svg>
+                        </button>
+                        <div class="faq-answer max-h-0 overflow-hidden transition-all duration-300 ease-in-out text-slate-500 text-xs md:text-sm leading-relaxed">
+                            <div class="pt-3">
+                                Registrarse es totalmente gratuito. Ve a la sección de "Regístrate" en el menú superior, escribe tus datos personales (nombres, apellidos, correo y contraseña) y selecciona si tu tipo de cuenta es **Comprador** o **Agente Inmobiliario**.
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Category 2: Buyers -->
+                <div class="space-y-4">
+                    <h2 class="text-xs font-black uppercase tracking-[0.2em] text-slate-400 border-b border-slate-100 pb-3 mb-5">Para Compradores e Inquilinos</h2>
+
+                    <!-- FAQ 3 -->
+                    <div class="border border-slate-200/60 bg-white rounded-2xl p-4 md:p-5 hover:shadow-md transition-all duration-300">
+                        <button type="button" class="faq-btn flex justify-between items-center w-full text-left focus:outline-none" onclick="toggleFaq(this)">
+                            <span class="font-bold text-slate-800 text-sm md:text-base pr-4">¿Es seguro comprar en InmobiX?</span>
+                            <svg class="w-4 h-4 text-slate-400 transition-transform duration-300 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M19 9l-7 7-7-7"></path></svg>
+                        </button>
+                        <div class="faq-answer max-h-0 overflow-hidden transition-all duration-300 ease-in-out text-slate-500 text-xs md:text-sm leading-relaxed">
+                            <div class="pt-3">
+                                Sí. A diferencia de otros portales, validamos las publicaciones contrastando la información física del predio con la partida registral y datos de SUNARP. De este modo, nos aseguramos de que el vendedor cuente con facultades reales para transferir el predio.
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- FAQ 4 -->
+                    <div class="border border-slate-200/60 bg-white rounded-2xl p-4 md:p-5 hover:shadow-md transition-all duration-300">
+                        <button type="button" class="faq-btn flex justify-between items-center w-full text-left focus:outline-none" onclick="toggleFaq(this)">
+                            <span class="font-bold text-slate-800 text-sm md:text-base pr-4">¿Qué es el Bono Verde y el Bono MiVivienda?</span>
+                            <svg class="w-4 h-4 text-slate-400 transition-transform duration-300 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M19 9l-7 7-7-7"></path></svg>
+                        </button>
+                        <div class="faq-answer max-h-0 overflow-hidden transition-all duration-300 ease-in-out text-slate-500 text-xs md:text-sm leading-relaxed">
+                            <div class="pt-3">
+                                Son incentivos estatales en el Perú que reducen el costo de adquisición de viviendas. El **Bono MiVivienda** otorga un subsidio directo sobre la cuota inicial, mientras que el **Bono Verde** reduce adicionalmente la tasa de interés hipotecaria por adquirir inmuebles con tecnologías sostenibles (ahorro de agua y luz).
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Category 3: Agents -->
+                <div class="space-y-4">
+                    <h2 class="text-xs font-black uppercase tracking-[0.2em] text-slate-400 border-b border-slate-100 pb-3 mb-5">Para Agentes y Vendedores</h2>
+
+                    <!-- FAQ 5 -->
+                    <div class="border border-slate-200/60 bg-white rounded-2xl p-4 md:p-5 hover:shadow-md transition-all duration-300">
+                        <button type="button" class="faq-btn flex justify-between items-center w-full text-left focus:outline-none" onclick="toggleFaq(this)">
+                            <span class="font-bold text-slate-800 text-sm md:text-base pr-4">¿Cómo publico mi propiedad?</span>
+                            <svg class="w-4 h-4 text-slate-400 transition-transform duration-300 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M19 9l-7 7-7-7"></path></svg>
+                        </button>
+                        <div class="faq-answer max-h-0 overflow-hidden transition-all duration-300 ease-in-out text-slate-500 text-xs md:text-sm leading-relaxed">
+                            <div class="pt-3">
+                                Si posees una cuenta de tipo Agente, simplemente ve a "Publicar" en el menú, selecciona el plan que más te convenga y sigue los pasos sencillos del asistente para completar datos, ubicar tu zona e importar tus imágenes de calidad.
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- FAQ 6 -->
+                    <div class="border border-slate-200/60 bg-white rounded-2xl p-4 md:p-5 hover:shadow-md transition-all duration-300">
+                        <button type="button" class="faq-btn flex justify-between items-center w-full text-left focus:outline-none" onclick="toggleFaq(this)">
+                            <span class="font-bold text-slate-800 text-sm md:text-base pr-4">¿Cuáles son los métodos de pago aceptados?</span>
+                            <svg class="w-4 h-4 text-slate-400 transition-transform duration-300 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M19 9l-7 7-7-7"></path></svg>
+                        </button>
+                        <div class="faq-answer max-h-0 overflow-hidden transition-all duration-300 ease-in-out text-slate-500 text-xs md:text-sm leading-relaxed">
+                            <div class="pt-3">
+                                Aceptamos pagos con tarjeta de crédito/débito directamente en la plataforma, transferencias interbancarias y depósitos directos. Tu plan de publicación se activará inmediatamente después de validar la transacción.
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+
+        </div>
+
+        <script>
+            /* ============================================ */
+            /* FAQ ACCORDION TRANSITIONS                    */
+            /* ============================================ */
+            function toggleFaq(btn) {
+                const answer = btn.nextElementSibling;
+                const icon = btn.querySelector('svg');
+                if (answer.style.maxHeight &amp;&amp; answer.style.maxHeight !== '0px') {
+                    answer.style.maxHeight = '0px';
+                    icon.classList.remove('rotate-180');
+                } else {
+                    // Close all other first
+                    document.querySelectorAll('.faq-answer').forEach(el => el.style.maxHeight = '0px');
+                    document.querySelectorAll('.faq-btn svg').forEach(svg => svg.classList.remove('rotate-180'));
+                    
+                    answer.style.maxHeight = answer.scrollHeight + 'px';
+                    icon.classList.add('rotate-180');
+                }
+            }
+        </script>
+    </ui:define>
+</ui:composition>
+</html>

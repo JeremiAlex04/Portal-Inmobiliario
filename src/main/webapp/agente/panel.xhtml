@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="jakarta.faces.html"
+      xmlns:f="jakarta.faces.core"
+      xmlns:ui="jakarta.faces.facelets"
+      xmlns:c="jakarta.tags.core">
+<ui:composition template="/WEB-INF/templates/plantilla.xhtml">
+    <ui:define name="titulo">#{msg['agente.panel']} - #{msg['app.titulo']}</ui:define>
+    <ui:define name="contenido">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+            <h1 class="text-2xl font-bold text-gray-900 mb-6">#{msg['agente.panel']}</h1>
+
+            <!-- Stats -->
+            <div class="grid grid-cols-2 gap-4 mb-6">
+                <div class="bg-white rounded-xl shadow-sm p-4 border border-gray-100">
+                    <p class="text-2xl font-bold text-amber-600">#{agenteBean.consultasPendientes}</p>
+                    <p class="text-sm text-gray-500">Consultas Pendientes</p>
+                </div>
+                <div class="bg-white rounded-xl shadow-sm p-4 border border-gray-100">
+                    <p class="text-2xl font-bold text-green-600">#{agenteBean.whatsappSemana}</p>
+                    <p class="text-sm text-gray-500">WhatsApp Semana</p>
+                </div>
+            </div>
+
+            <!-- Tabs -->
+            <div class="flex gap-2 mb-6">
+                <a href="#{request.contextPath}/agente/panel.xhtml?seccion=propiedades"
+                   class="px-4 py-2 rounded-lg text-sm font-medium #{agenteBean.seccion == 'propiedades' ? 'bg-gray-900 text-white' : 'bg-gray-100 text-gray-700 hover:bg-gray-200'}">#{msg['agente.mispropiedades']}</a>
+                <a href="#{request.contextPath}/agente/panel.xhtml?seccion=consultas"
+                   class="px-4 py-2 rounded-lg text-sm font-medium #{agenteBean.seccion == 'consultas' ? 'bg-gray-900 text-white' : 'bg-gray-100 text-gray-700 hover:bg-gray-200'}">#{msg['agente.consultas']}</a>
+                <a href="#{request.contextPath}/propiedades?accion=nuevo"
+                   class="px-4 py-2 rounded-lg text-sm font-medium bg-amber-500 text-white hover:bg-amber-600">+ #{msg['agente.publicar']}</a>
+            </div>
+
+            <!-- Mis Propiedades -->
+            <c:if test="#{agenteBean.seccion == 'propiedades' or empty param.seccion}">
+                <div class="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
+                    <div class="overflow-x-auto">
+                        <table class="w-full text-sm">
+                            <thead class="bg-gray-50">
+                                <tr>
+                                    <th class="px-4 py-3 text-left font-medium text-gray-500">T\u00EDtulo</th>
+                                    <th class="px-4 py-3 text-left font-medium text-gray-500">Tipo/Operaci\u00F3n</th>
+                                    <th class="px-4 py-3 text-left font-medium text-gray-500">Precio</th>
+                                    <th class="px-4 py-3 text-left font-medium text-gray-500">Vistas</th>
+                                    <th class="px-4 py-3 text-left font-medium text-gray-500">Estado</th>
+                                    <th class="px-4 py-3 text-left font-medium text-gray-500">Acciones</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <c:forEach items="#{agenteBean.misPropiedades}" var="p">
+                                    <tr class="border-t border-gray-50 hover:bg-gray-50">
+                                        <td class="px-4 py-3 font-medium">#{p.titulo}</td>
+                                        <td class="px-4 py-3">#{p.tipoInmueble} / #{p.operacion}</td>
+                                        <td class="px-4 py-3">$ #{p.precioUsd}</td>
+                                        <td class="px-4 py-3">#{p.numeroVistas}</td>
+                                        <td class="px-4 py-3">
+                                            <span class="px-2 py-1 text-xs rounded-full #{p.estado == 'ACTIVO' ? 'bg-green-100 text-green-700' : p.estado == 'PAUSADO' ? 'bg-amber-100 text-amber-700' : 'bg-gray-100 text-gray-600'}">#{p.estado}</span>
+                                        </td>
+                                        <td class="px-4 py-3">
+                                            <div class="flex gap-2">
+                                                <a href="#{request.contextPath}/detalle_propiedad.xhtml?id=#{p.id}" class="text-xs px-2 py-1 rounded bg-blue-50 text-blue-600 hover:bg-blue-100">Ver</a>
+                                                <a href="#{request.contextPath}/analytics.xhtml?id=#{p.id}" class="text-xs px-2 py-1 rounded bg-purple-50 text-purple-600 hover:bg-purple-100">Stats</a>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                </c:forEach>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </c:if>
+
+            <!-- Consultas -->
+            <c:if test="#{agenteBean.seccion == 'consultas'}">
+                <div class="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
+                    <div class="overflow-x-auto">
+                        <table class="w-full text-sm">
+                            <thead class="bg-gray-50">
+                                <tr>
+                                    <th class="px-4 py-3 text-left font-medium text-gray-500">Fecha</th>
+                                    <th class="px-4 py-3 text-left font-medium text-gray-500">Propiedad</th>
+                                    <th class="px-4 py-3 text-left font-medium text-gray-500">De</th>
+                                    <th class="px-4 py-3 text-left font-medium text-gray-500">Mensaje</th>
+                                    <th class="px-4 py-3 text-left font-medium text-gray-500">Estado</th>
+                                    <th class="px-4 py-3 text-left font-medium text-gray-500">Acci\u00F3n</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <c:forEach items="#{agenteBean.consultas}" var="c">
+                                    <tr class="border-t border-gray-50 hover:bg-gray-50">
+                                        <td class="px-4 py-3 text-xs">#{c.fecha}</td>
+                                        <td class="px-4 py-3">#{c.tituloPropiedad}</td>
+                                        <td class="px-4 py-3">#{c.nombre}<br/><span class="text-xs text-gray-400">#{c.email}</span></td>
+                                        <td class="px-4 py-3 max-w-xs truncate">#{c.mensaje}</td>
+                                        <td class="px-4 py-3">
+                                            <span class="px-2 py-1 text-xs rounded-full #{c.estado == 'PENDIENTE' ? 'bg-amber-100 text-amber-700' : 'bg-green-100 text-green-700'}">#{c.estado}</span>
+                                        </td>
+                                        <td class="px-4 py-3">
+                                            <h:form>
+                                                <h:commandButton action="#{agenteBean.cambiarEstadoConsulta(c.id, 'ATENDIDO')}" value="Atender"
+                                                    class="text-xs px-2 py-1 rounded bg-green-50 text-green-600 hover:bg-green-100"/>
+                                            </h:form>
+                                        </td>
+                                    </tr>
+                                </c:forEach>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </c:if>
+        </div>
+    </ui:define>
+</ui:composition>
+</html>

@@ -353,6 +353,8 @@ public class PropiedadDAO {
                     p.setFechaPublicacion(rs.getString("fecha_publicacion"));
                     p.setFechaExpiracion(rs.getString("fecha_expiracion"));
                     p.setDestacada(rs.getBoolean("destacada"));
+                    p.setFotoPrincipal(rs.getString("foto_principal"));
+                    p.setNumeroVistas(rs.getInt("numero_vistas"));
 
                     // Agent details
                     String nombres = rs.getString("agente_nombres") != null ? rs.getString("agente_nombres") : "";

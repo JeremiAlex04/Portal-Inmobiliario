@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="jakarta.faces.html"
+      xmlns:f="jakarta.faces.core"
+      xmlns:ui="jakarta.faces.facelets">
+<ui:composition template="/WEB-INF/templates/plantilla.xhtml">
+    <ui:define name="titulo">#{msg['usuario.perfil']} - #{msg['app.titulo']}</ui:define>
+    <ui:define name="contenido">
+        <f:event type="preRenderView" listener="#{usuarioBean.cargarDatos}"/>
+        <div class="max-w-2xl mx-auto px-4 py-8">
+            <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-8">
+                <h1 class="text-2xl font-bold text-gray-900 mb-6 font-playfair">#{msg['usuario.perfil']}</h1>
+
+                <h:messages styleClass="mb-4" errorClass="text-red-600 text-sm" infoClass="text-green-600 text-sm"/>
+
+                <h:form>
+                    <div class="space-y-4">
+                        <div class="grid grid-cols-2 gap-4">
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-1">#{msg['auth.register.nombres']}</label>
+                                <h:inputText value="#{usuarioBean.nombres}" class="w-full px-4 py-2 border border-gray-300 rounded-lg"/>
+                            </div>
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-1">#{msg['auth.register.apellidos']}</label>
+                                <h:inputText value="#{usuarioBean.apellidos}" class="w-full px-4 py-2 border border-gray-300 rounded-lg"/>
+                            </div>
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-1">#{msg['auth.register.correo']}</label>
+                            <h:inputText value="#{usuarioBean.correo}" class="w-full px-4 py-2 border border-gray-300 rounded-lg"/>
+                        </div>
+                        <div>
+                            <span class="inline-block px-3 py-1 text-xs rounded-full bg-gray-100 text-gray-700">
+                                Rol: #{authBean.usuario.rolNombre}
+                            </span>
+                        </div>
+                        <h:commandButton action="#{usuarioBean.actualizarPerfil}" value="#{msg['usuario.guardar']}"
+                            class="bg-gray-900 hover:bg-gray-800 text-white px-6 py-2 rounded-lg font-medium"/>
+                    </div>
+                </h:form>
+            </div>
+        </div>
+    </ui:define>
+</ui:composition>
+</html>

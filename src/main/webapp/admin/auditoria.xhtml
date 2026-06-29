@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="jakarta.faces.html"
+      xmlns:f="jakarta.faces.core"
+      xmlns:ui="jakarta.faces.facelets"
+      xmlns:c="jakarta.tags.core">
+<ui:composition template="/WEB-INF/templates/plantilla.xhtml">
+    <ui:define name="titulo">#{msg['admin.auditoria']} - #{msg['app.titulo']}</ui:define>
+    <ui:define name="contenido">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+            <h1 class="text-2xl font-bold text-gray-900 mb-6">#{msg['admin.auditoria']}</h1>
+
+            <div class="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
+                <div class="overflow-x-auto">
+                    <table class="w-full text-sm">
+                        <thead class="bg-gray-50">
+                            <tr>
+                                <th class="px-4 py-3 text-left font-medium text-gray-500">ID</th>
+                                <th class="px-4 py-3 text-left font-medium text-gray-500">Fecha/Hora</th>
+                                <th class="px-4 py-3 text-left font-medium text-gray-500">Usuario</th>
+                                <th class="px-4 py-3 text-left font-medium text-gray-500">Acci\u00F3n</th>
+                                <th class="px-4 py-3 text-left font-medium text-gray-500">Entidad</th>
+                                <th class="px-4 py-3 text-left font-medium text-gray-500">Detalle</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <c:forEach items="#{adminBean.listaEventos}" var="e">
+                                <tr class="border-t border-gray-50 hover:bg-gray-50">
+                                    <td class="px-4 py-3 text-xs">#{e.idEvento}</td>
+                                    <td class="px-4 py-3 text-xs">#{e.fechaEvento}</td>
+                                    <td class="px-4 py-3">#{e.usuarioNombre}</td>
+                                    <td class="px-4 py-3">
+                                        <span class="px-2 py-1 text-xs rounded-full #{e.accion == 'CREAR' ? 'bg-green-100 text-green-700' : e.accion == 'ACTUALIZAR' ? 'bg-amber-100 text-amber-700' : e.accion == 'ELIMINAR' ? 'bg-red-100 text-red-700' : e.accion == 'LOGIN' ? 'bg-blue-100 text-blue-700' : 'bg-gray-100 text-gray-600'}">#{e.accion}</span>
+                                    </td>
+                                    <td class="px-4 py-3">#{e.entidad}</td>
+                                    <td class="px-4 py-3">
+                                        <button onclick="toggleJson(#{e.idEvento})" class="text-xs px-2 py-1 rounded bg-gray-100 text-gray-600 hover:bg-gray-200">Ver JSON</button>
+                                        <pre id="json_#{e.idEvento}" class="hidden mt-2 text-xs bg-gray-50 p-2 rounded overflow-x-auto">#{e.detalleJson}</pre>
+                                    </td>
+                                </tr>
+                            </c:forEach>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <script>
+            function toggleJson(id) {
+                var el = document.getElementById('json_' + id);
+                el.classList.toggle('hidden');
+            }
+        </script>
+    </ui:define>
+</ui:composition>
+</html>

@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="jakarta.faces.html"
+      xmlns:f="jakarta.faces.core"
+      xmlns:ui="jakarta.faces.facelets"
+      xmlns:c="jakarta.tags.core">
+<ui:composition template="/WEB-INF/templates/plantilla.xhtml">
+    <ui:define name="titulo">#{msg['admin.dashboard']} - #{msg['app.titulo']}</ui:define>
+    <ui:define name="contenido">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+            <h1 class="text-3xl font-bold text-gray-900 mb-8">#{msg['admin.dashboard']}</h1>
+
+            <!-- Stat Cards -->
+            <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4 mb-8">
+                <div class="bg-white rounded-xl shadow-sm p-4 border border-gray-100">
+                    <p class="text-2xl font-bold text-gray-900">#{adminBean.totalUsuarios}</p>
+                    <p class="text-sm text-gray-500">Total Usuarios</p>
+                </div>
+                <div class="bg-white rounded-xl shadow-sm p-4 border border-gray-100">
+                    <p class="text-2xl font-bold text-gray-900">#{adminBean.totalAgentes}</p>
+                    <p class="text-sm text-gray-500">Agentes</p>
+                </div>
+                <div class="bg-white rounded-xl shadow-sm p-4 border border-gray-100">
+                    <p class="text-2xl font-bold text-gray-900">#{adminBean.totalPropiedades}</p>
+                    <p class="text-sm text-gray-500">Total Propiedades</p>
+                </div>
+                <div class="bg-white rounded-xl shadow-sm p-4 border border-gray-100">
+                    <p class="text-2xl font-bold text-green-600">#{adminBean.propActivas}</p>
+                    <p class="text-sm text-gray-500">Activas</p>
+                </div>
+                <div class="bg-white rounded-xl shadow-sm p-4 border border-gray-100">
+                    <p class="text-2xl font-bold text-red-500">#{adminBean.propPausadas}</p>
+                    <p class="text-sm text-gray-500">Pausadas</p>
+                </div>
+                <div class="bg-white rounded-xl shadow-sm p-4 border border-gray-100">
+                    <p class="text-2xl font-bold text-blue-600">#{adminBean.propVendidas}</p>
+                    <p class="text-sm text-gray-500">Vendidas</p>
+                </div>
+            </div>
+
+            <!-- Charts -->
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
+                <div class="bg-white rounded-xl shadow-sm p-6 border border-gray-100">
+                    <h3 class="font-semibold text-gray-900 mb-4">Estado de Propiedades</h3>
+                    <canvas id="stateChart" width="400" height="300"></canvas>
+                </div>
+            </div>
+
+            <!-- Quick Actions -->
+            <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
+                <a href="#{request.contextPath}/admin/usuarios.xhtml" class="bg-white rounded-xl shadow-sm p-4 border border-gray-100 hover:shadow-md transition-all text-center">
+                    <p class="font-medium text-gray-900">#{msg['admin.usuarios']}</p>
+                </a>
+                <a href="#{request.contextPath}/admin/propiedades.xhtml" class="bg-white rounded-xl shadow-sm p-4 border border-gray-100 hover:shadow-md transition-all text-center">
+                    <p class="font-medium text-gray-900">#{msg['admin.propiedades']}</p>
+                </a>
+                <a href="#{request.contextPath}/admin/ubicaciones.xhtml" class="bg-white rounded-xl shadow-sm p-4 border border-gray-100 hover:shadow-md transition-all text-center">
+                    <p class="font-medium text-gray-900">#{msg['admin.ubicaciones']}</p>
+                </a>
+                <a href="#{request.contextPath}/admin/auditoria.xhtml" class="bg-white rounded-xl shadow-sm p-4 border border-gray-100 hover:shadow-md transition-all text-center">
+                    <p class="font-medium text-gray-900">#{msg['admin.auditoria']}</p>
+                </a>
+            </div>
+
+            <!-- Tables -->
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                <div class="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
+                    <div class="p-4 border-b border-gray-100">
+                        <h3 class="font-semibold text-gray-900">\u00DAltimos Usuarios</h3>
+                    </div>
+                    <div class="overflow-x-auto">
+                        <table class="w-full text-sm">
+                            <thead class="bg-gray-50">
+                                <tr>
+                                    <th class="px-4 py-3 text-left font-medium text-gray-500">ID</th>
+                                    <th class="px-4 py-3 text-left font-medium text-gray-500">Nombre</th>
+                                    <th class="px-4 py-3 text-left font-medium text-gray-500">Rol</th>
+                                    <th class="px-4 py-3 text-left font-medium text-gray-500">Estado</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <c:forEach items="#{adminBean.ultimosUsuarios}" var="u" varStatus="loop">
+                                    <tr class="border-t border-gray-50 hover:bg-gray-50">
+                                        <td class="px-4 py-3">#{u.idUsuario}</td>
+                                        <td class="px-4 py-3">#{u.nombres} #{u.apellidos}</td>
+                                        <td class="px-4 py-3">#{u.rolNombre}</td>
+                                        <td class="px-4 py-3">
+                                            <span class="px-2 py-1 text-xs rounded-full #{u.activo == 1 ? 'bg-green-100 text-green-700' : 'bg-red-100 text-red-700'}">
+                                                #{u.activo == 1 ? 'Activo' : 'Bloqueado'}
+                                            </span>
+                                        </td>
+                                    </tr>
+                                </c:forEach>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <div class="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
+                    <div class="p-4 border-b border-gray-100">
+                        <h3 class="font-semibold text-gray-900">\u00DAltimas Propiedades</h3>
+                    </div>
+                    <div class="overflow-x-auto">
+                        <table class="w-full text-sm">
+                            <thead class="bg-gray-50">
+                                <tr>
+                                    <th class="px-4 py-3 text-left font-medium text-gray-500">ID</th>
+                                    <th class="px-4 py-3 text-left font-medium text-gray-500">T\u00EDtulo</th>
+                                    <th class="px-4 py-3 text-left font-medium text-gray-500">Estado</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <c:forEach items="#{adminBean.ultimasPropiedades}" var="p" varStatus="loop">
+                                    <tr class="border-t border-gray-50 hover:bg-gray-50">
+                                        <td class="px-4 py-3">#{p.id}</td>
+                                        <td class="px-4 py-3">#{p.titulo}</td>
+                                        <td class="px-4 py-3">#{p.estado}</td>
+                                    </tr>
+                                </c:forEach>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <script>
+            const stateCtx = document.getElementById('stateChart')?.getContext('2d');
+            if (stateCtx) {
+                new Chart(stateCtx, {
+                    type: 'doughnut',
+                    data: {
+                        labels: ['Activas', 'Vendidas', 'Pausadas', 'Borradores'],
+                        datasets: [{
+                            data: [#{adminBean.propActivas}, #{adminBean.propVendidas}, #{adminBean.propPausadas}, #{adminBean.propBorradores}],
+                            backgroundColor: ['#059669', '#2563eb', '#d97706', '#6b7280']
+                        }]
+                    }
+                });
+            }
+        </script>
+    </ui:define>
+</ui:composition>
+</html>

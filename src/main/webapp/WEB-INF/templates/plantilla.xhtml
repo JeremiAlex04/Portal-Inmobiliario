@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="jakarta.faces.html"
+      xmlns:f="jakarta.faces.core"
+      xmlns:ui="jakarta.faces.facelets">
+<f:view contentType="text/html" locale="#{configuracionBean.locale}">
+    <h:head>
+        <meta charset="UTF-8"/>
+        <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+        <title><ui:insert name="titulo">#{msg['app.titulo']}</ui:insert></title>
+        <link rel="icon" type="image/x-icon" href="#{request.contextPath}/assets/img/logo.png"/>
+        <script src="https://cdn.tailwindcss.com"></script>
+        <script src="#{request.contextPath}/assets/js/tailwind-config.js"></script>
+        <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&amp;family=Playfair+Display:wght@400;500;600;700&amp;display=swap" rel="stylesheet"/>
+        <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"/>
+        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.min.css"/>
+        <link rel="stylesheet" href="#{request.contextPath}/assets/css/styles.css"/>
+        <link rel="stylesheet" href="#{request.contextPath}/assets/css/estilosadic.css"/>
+        <ui:insert name="headExtra"/>
+    </h:head>
+    <h:body class="font-body antialiased">
+        <!-- Header / Navbar -->
+        <ui:include src="/WEB-INF/views/layout/header.xhtml"/>
+
+        <!-- Main Content -->
+        <main class="min-h-screen bg-gray-50">
+            <ui:insert name="contenido"/>
+        </main>
+
+        <!-- Footer -->
+        <ui:include src="/WEB-INF/views/layout/footer.xhtml"/>
+
+        <!-- Scripts -->
+        <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+        <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+        <script src="#{request.contextPath}/assets/js/main.js"></script>
+        <ui:insert name="scriptsExtra"/>
+    </h:body>
+</f:view>
+</html>

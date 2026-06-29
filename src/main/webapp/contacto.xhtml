@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="jakarta.faces.html"
+      xmlns:f="jakarta.faces.core"
+      xmlns:ui="jakarta.faces.facelets"
+      xmlns:c="jakarta.tags.core">
+<ui:composition template="/WEB-INF/templates/plantilla.xhtml">
+    <ui:define name="titulo">#{msg['menu.contacto']} - #{msg['app.titulo']}</ui:define>
+    <ui:define name="contenido">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16 md:py-24">
+            
+            <!-- Page Header -->
+            <div class="text-center mb-16">
+                <span class="text-xs font-black uppercase tracking-[0.25em] text-amber-600 block mb-2">Contacto</span>
+                <h1 class="font-title text-3xl md:text-4xl lg:text-5xl font-light tracking-tight text-slate-900 mb-4">Ponte en contacto con nosotros</h1>
+                <p class="text-slate-500 max-w-xl mx-auto text-sm md:text-base">Estamos aquí para ayudarte a resolver tus dudas, asesorarte en tus publicaciones o guiarte a tu próximo hogar.</p>
+            </div>
+
+            <!-- Two-Column Layout -->
+            <div class="grid grid-cols-1 lg:grid-cols-12 gap-12 items-stretch max-w-5xl mx-auto reveal-stagger active">
+                
+                <!-- Left Column: Contact info & Office -->
+                <div class="lg:col-span-5 flex flex-col justify-between space-y-8">
+                    <div class="space-y-6">
+                        <span class="text-xs font-black uppercase tracking-[0.25em] text-slate-400 block">Información de contacto</span>
+                        <h2 class="font-title text-2xl md:text-3xl font-light text-slate-900 leading-tight">¿Tienes alguna pregunta? Escríbenos directamente.</h2>
+                        <p class="text-slate-500 text-sm leading-relaxed">Nuestro equipo de soporte y asesores inmobiliarios se pondrán en contacto contigo en un plazo máximo de 24 horas hábiles.</p>
+                    </div>
+
+                    <!-- Contact Details cards -->
+                    <div class="space-y-4">
+                        <!-- Phone Card -->
+                        <div class="flex items-center gap-4 bg-slate-50 border border-slate-100 rounded-2xl p-4 hover:shadow-md transition-all duration-300">
+                            <div class="w-10 h-10 rounded-xl bg-black text-white flex items-center justify-center shrink-0">
+                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 5a2 2 0 012-2h3.28a1 1 0 01.94.725l.548 2.2a1 1 0 01-.321.988l-1.305.98a10.582 10.582 0 004.872 4.872l.98-1.305a1 1 0 01.988-.321l2.2.548a1 1 0 01.725.94V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z"></path></svg>
+                            </div>
+                            <div>
+                                <h4 class="text-xs font-black uppercase tracking-wider text-slate-400">Teléfono</h4>
+                                <p class="text-sm font-bold text-slate-900 mt-0.5">+51 987 654 321</p>
+                            </div>
+                        </div>
+
+                        <!-- Email Card -->
+                        <div class="flex items-center gap-4 bg-slate-50 border border-slate-100 rounded-2xl p-4 hover:shadow-md transition-all duration-300">
+                            <div class="w-10 h-10 rounded-xl bg-black text-white flex items-center justify-center shrink-0">
+                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"></path></svg>
+                            </div>
+                            <div>
+                                <h4 class="text-xs font-black uppercase tracking-wider text-slate-400">Correo Electrónico</h4>
+                                <p class="text-sm font-bold text-slate-900 mt-0.5">contacto@inmobix.pe</p>
+                            </div>
+                        </div>
+
+                        <!-- Office Card -->
+                        <div class="flex items-center gap-4 bg-slate-50 border border-slate-100 rounded-2xl p-4 hover:shadow-md transition-all duration-300">
+                            <div class="w-10 h-10 rounded-xl bg-black text-white flex items-center justify-center shrink-0">
+                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"></path></svg>
+                            </div>
+                            <div>
+                                <h4 class="text-xs font-black uppercase tracking-wider text-slate-400">Oficina Principal</h4>
+                                <p class="text-sm font-bold text-slate-900 mt-0.5">Av. Larco 456, Miraflores, Lima</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Social proof / Hours -->
+                    <div class="text-xs text-slate-400 font-semibold border-t border-slate-100 pt-6">
+                        Horario de atención: Lunes a Viernes de 9:00 AM a 6:00 PM
+                    </div>
+                </div>
+
+                <!-- Right Column: Contact Form Card -->
+                <div class="lg:col-span-7">
+                    <div class="bg-white rounded-3xl border border-slate-200/60 p-8 md:p-10 shadow-sm">
+                        
+                        <!-- Messages Banner (Success / Error alerts) -->
+                        <h:messages id="contact-messages" styleClass="mb-6 block list-none p-0"
+                                    errorClass="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-xl text-sm font-medium mb-3 block"
+                                    infoClass="bg-emerald-50 border border-emerald-200 text-emerald-700 px-4 py-3 rounded-xl text-sm font-medium mb-3 block"/>
+
+                        <h:form>
+                            <div class="space-y-6">
+                                
+                                <!-- Name Input -->
+                                <div>
+                                    <label class="block text-xs font-black text-slate-400 uppercase tracking-[0.1em] mb-1.5 px-1">#{msg['auth.register.nombres']}</label>
+                                    <h:inputText value="#{contactoBean.nombres}" required="true" 
+                                                 requiredMessage="Por favor, escribe tus nombres."
+                                                 styleClass="w-full bg-slate-50 border border-slate-200 text-slate-900 rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-black transition-all placeholder:text-slate-400"
+                                                 placeholder="Tu nombre completo" />
+                                </div>
+
+                                <!-- Email Input -->
+                                <div>
+                                    <label class="block text-xs font-black text-slate-400 uppercase tracking-[0.1em] mb-1.5 px-1">#{msg['auth.register.correo']}</label>
+                                    <h:inputText value="#{contactoBean.email}" required="true" 
+                                                 requiredMessage="Por favor, escribe tu correo electrónico."
+                                                 styleClass="w-full bg-slate-50 border border-slate-200 text-slate-900 rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-black transition-all placeholder:text-slate-400"
+                                                 placeholder="correo@ejemplo.com" />
+                                </div>
+
+                                <!-- Message Textarea -->
+                                <div>
+                                    <label class="block text-xs font-black text-slate-400 uppercase tracking-[0.1em] mb-1.5 px-1">Mensaje</label>
+                                    <h:inputTextarea value="#{contactoBean.mensaje}" required="true" 
+                                                     requiredMessage="Por favor, escribe tu mensaje."
+                                                     rows="5"
+                                                     styleClass="w-full bg-slate-50 border border-slate-200 text-slate-900 rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-black transition-all placeholder:text-slate-400"
+                                                     placeholder="¿En qué podemos ayudarte?" />
+                                </div>
+
+                                <!-- Submit Button -->
+                                <div>
+                                    <h:commandButton action="#{contactoBean.enviar}" value="Enviar mensaje"
+                                                     styleClass="w-full bg-black hover:bg-slate-800 text-white font-bold py-3.5 px-8 rounded-xl text-sm transition-all hover:scale-[1.01] shadow-md shadow-black/10 cursor-pointer"/>
+                                </div>
+
+                            </div>
+                        </h:form>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </ui:define>
+</ui:composition>
+</html>

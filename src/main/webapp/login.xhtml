@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="jakarta.faces.html"
+      xmlns:ui="jakarta.faces.facelets">
+<ui:composition template="/WEB-INF/templates/plantilla.xhtml">
+    <ui:define name="titulo">#{msg['auth.login.title']} - #{msg['app.titulo']}</ui:define>
+    <ui:define name="contenido">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16 md:py-24">
+            <div class="max-w-5xl mx-auto grid lg:grid-cols-12 overflow-hidden rounded-[2rem] shadow-2xl border border-slate-200/60 bg-white">
+                
+                <!-- Left Column (Brand Info Side) -->
+                <section class="lg:col-span-5 relative hidden lg:flex flex-col justify-between bg-slate-950 text-white p-10 xl:p-12 overflow-hidden dot-grid-pattern">
+                    <!-- Decorative Blurs -->
+                    <div class="absolute -right-20 -top-20 w-80 h-80 rounded-full bg-amber-500/10 blur-[80px]"></div>
+                    <div class="absolute -left-20 -bottom-20 w-80 h-80 rounded-full bg-white/5 blur-[80px]"></div>
+
+                    <div class="relative z-10">
+                        <span class="inline-flex items-center gap-2 px-4 py-2 rounded-full border border-white/15 bg-white/5 text-[10px] font-bold uppercase tracking-[0.25em] text-amber-300 backdrop-blur-sm mb-8 badge-shimmer">
+                            <span class="h-1.5 w-1.5 rounded-full bg-amber-400 animate-pulse"></span>
+                            Portal Inmobiliario Premium
+                        </span>
+                        <h2 class="mt-6 text-3xl xl:text-4xl font-light tracking-tight leading-[1.15]">Accede a tu cuenta y gestiona tus inmuebles desde un solo lugar.</h2>
+                        <p class="mt-4 text-slate-400 text-sm leading-relaxed max-w-sm">Publica propiedades, guarda tus favoritos y contacta de forma directa con total seguridad.</p>
+                    </div>
+
+                    <!-- Side Stats -->
+                    <div class="relative z-10 grid grid-cols-3 gap-3 text-center">
+                        <div class="rounded-2xl border border-white/10 bg-white/5 p-4 backdrop-blur-sm">
+                            <div class="text-xl xl:text-2xl font-black text-amber-400">+1.5K</div>
+                            <div class="text-[9px] uppercase tracking-wider text-slate-400 mt-1 font-bold">Inmuebles</div>
+                        </div>
+                        <div class="rounded-2xl border border-white/10 bg-white/5 p-4 backdrop-blur-sm">
+                            <div class="text-xl xl:text-2xl font-black text-white">24/7</div>
+                            <div class="text-[9px] uppercase tracking-wider text-slate-400 mt-1 font-bold">Acceso</div>
+                        </div>
+                        <div class="rounded-2xl border border-white/10 bg-white/5 p-4 backdrop-blur-sm">
+                            <div class="text-xl xl:text-2xl font-black text-white">SSL</div>
+                            <div class="text-[9px] uppercase tracking-wider text-slate-400 mt-1 font-bold">Seguro</div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Right Column (Form Side) -->
+                <section class="lg:col-span-7 p-8 sm:p-12 md:p-14 lg:p-16">
+                    <div class="max-w-md mx-auto">
+                        
+                        <!-- Header -->
+                        <div class="text-center lg:text-left mb-10">
+                            <!-- Mobile Brand Icon -->
+                            <div class="inline-flex items-center justify-center w-14 h-14 rounded-2xl bg-black text-white shadow-lg mb-6 lg:hidden text-lg font-black tracking-wider">
+                                <span class="text-amber-400">I</span>X
+                            </div>
+                            <h1 class="font-title text-3xl sm:text-4xl font-light text-slate-900 tracking-tight">Bienvenido de vuelta</h1>
+                            <p class="text-slate-500 mt-2 text-sm">Ingresa tus credenciales para acceder a tu cuenta.</p>
+                        </div>
+
+                        <!-- Notification Banner -->
+                        <h:messages id="login-messages" styleClass="mb-6 block list-none p-0"
+                                    errorClass="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-xl text-sm font-medium mb-3 block"
+                                    infoClass="bg-emerald-50 border border-emerald-200 text-emerald-700 px-4 py-3 rounded-xl text-sm font-medium mb-3 block"/>
+
+                        <!-- Login Form -->
+                        <h:form>
+                            <div class="space-y-6">
+                                
+                                <!-- Email field -->
+                                <div>
+                                    <label class="block text-xs font-black text-slate-400 uppercase tracking-[0.1em] mb-1.5 px-1">#{msg['auth.login.correo']}</label>
+                                    <h:inputText value="#{authBean.correo}" required="true"
+                                                 requiredMessage="Por favor, escribe tu correo electrónico."
+                                                 styleClass="w-full bg-slate-50 border border-slate-200 text-slate-900 rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-black focus:ring-2 focus:ring-black/10 transition-all placeholder:text-slate-400"
+                                                 placeholder="correo@ejemplo.com" />
+                                </div>
+
+                                <!-- Password field -->
+                                <div>
+                                    <div class="flex items-center justify-between mb-1.5 px-1">
+                                        <label class="block text-xs font-black text-slate-400 uppercase tracking-[0.1em]">#{msg['auth.login.password']}</label>
+                                        <a href="#" class="text-xs font-bold text-slate-400 hover:text-black transition-colors">¿Olvidaste tu contraseña?</a>
+                                    </div>
+                                    <h:inputSecret value="#{authBean.password}" required="true"
+                                                   requiredMessage="Por favor, escribe tu contraseña."
+                                                   styleClass="w-full bg-slate-50 border border-slate-200 text-slate-900 rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-black focus:ring-2 focus:ring-black/10 transition-all placeholder:text-slate-400"
+                                                   placeholder="••••••••" />
+                                </div>
+
+                                <!-- Submit Button -->
+                                <div>
+                                    <h:commandButton action="#{authBean.login}" value="#{msg['auth.login.submit']}"
+                                                     styleClass="w-full inline-flex items-center justify-center gap-2 bg-black hover:bg-slate-800 text-white font-bold py-3.5 px-8 rounded-xl text-sm transition-all hover:scale-[1.01] shadow-lg shadow-black/10 cursor-pointer"/>
+                                </div>
+
+                            </div>
+                        </h:form>
+
+                        <!-- Footer redirect -->
+                        <p class="text-center text-sm text-slate-500 mt-8 border-t border-slate-100 pt-6">
+                            ¿Aún no tienes una cuenta? 
+                            <h:link outcome="/registro.xhtml" class="text-black font-bold hover:text-slate-700 transition-colors ml-1">Regístrate aquí</h:link>
+                        </p>
+
+                    </div>
+                </section>
+                
+            </div>
+        </div>
+    </ui:define>
+</ui:composition>
+</html>

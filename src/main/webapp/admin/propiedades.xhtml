@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="jakarta.faces.html"
+      xmlns:f="jakarta.faces.core"
+      xmlns:ui="jakarta.faces.facelets"
+      xmlns:c="jakarta.tags.core">
+<ui:composition template="/WEB-INF/templates/plantilla.xhtml">
+    <ui:define name="titulo">#{msg['admin.propiedades']} - #{msg['app.titulo']}</ui:define>
+    <ui:define name="contenido">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+            <h1 class="text-2xl font-bold text-gray-900 mb-6">#{msg['admin.propiedades']}</h1>
+
+            <!-- Filters -->
+            <h:form class="flex gap-4 mb-6">
+                <h:inputText value="#{adminBean.keyProp}" placeholder="Buscar propiedad..." class="flex-1 px-3 py-2 border border-gray-300 rounded-lg text-sm"/>
+                <h:selectOneMenu value="#{adminBean.operacionProp}" class="px-3 py-2 border border-gray-300 rounded-lg text-sm">
+                    <f:selectItem itemValue="" itemLabel="Todas las operaciones"/>
+                    <f:selectItem itemValue="VENTA" itemLabel="Venta"/>
+                    <f:selectItem itemValue="ALQUILER" itemLabel="Alquiler"/>
+                </h:selectOneMenu>
+                <h:commandButton value="#{msg['comun.buscar']}"
+                    class="bg-gray-900 hover:bg-gray-800 text-white px-4 py-2 rounded-lg text-sm"/>
+            </h:form>
+
+            <!-- Table -->
+            <div class="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
+                <div class="overflow-x-auto">
+                    <table class="w-full text-sm">
+                        <thead class="bg-gray-50">
+                            <tr>
+                                <th class="px-4 py-3 text-left font-medium text-gray-500">ID</th>
+                                <th class="px-4 py-3 text-left font-medium text-gray-500">Inmueble</th>
+                                <th class="px-4 py-3 text-left font-medium text-gray-500">Ubicaci\u00F3n</th>
+                                <th class="px-4 py-3 text-left font-medium text-gray-500">Operaci\u00F3n</th>
+                                <th class="px-4 py-3 text-left font-medium text-gray-500">Precio</th>
+                                <th class="px-4 py-3 text-left font-medium text-gray-500">Estado</th>
+                                <th class="px-4 py-3 text-left font-medium text-gray-500">Acciones</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <c:forEach items="#{adminBean.propiedadesAdmin}" var="p">
+                                <tr class="border-t border-gray-50 hover:bg-gray-50">
+                                    <td class="px-4 py-3">#{p.id}</td>
+                                    <td class="px-4 py-3 font-medium">#{p.titulo}</td>
+                                    <td class="px-4 py-3">#{p.distrito}</td>
+                                    <td class="px-4 py-3"><span class="px-2 py-1 text-xs rounded-full bg-amber-100 text-amber-700">#{p.operacion}</span></td>
+                                    <td class="px-4 py-3">$ #{p.precioUsd}</td>
+                                    <td class="px-4 py-3">
+                                        <h:form>
+                                            <h:selectOneMenu value="#{p.estado}" onchange="this.form.submit()" class="text-xs px-2 py-1 border rounded">
+                                                <f:selectItem itemValue="ACTIVO" itemLabel="ACTIVO"/>
+                                                <f:selectItem itemValue="PAUSADO" itemLabel="PAUSADO"/>
+                                                <f:selectItem itemValue="VENDIDO" itemLabel="VENDIDO"/>
+                                                <f:selectItem itemValue="BORRADOR" itemLabel="BORRADOR"/>
+                                                <f:selectItem itemValue="ELIMINADO" itemLabel="ELIMINADO"/>
+                                            </h:selectOneMenu>
+                                            <h:commandButton action="#{adminBean.cambiarEstadoPropiedad(p.id, p.estado)}" style="display:none"/>
+                                        </h:form>
+                                    </td>
+                                    <td class="px-4 py-3">
+                                        <div class="flex gap-2">
+                                            <a href="#{request.contextPath}/detalle_propiedad.xhtml?id=#{p.id}" class="text-xs px-2 py-1 rounded bg-blue-50 text-blue-600 hover:bg-blue-100">Ver</a>
+                                            <h:form style="display:inline">
+                                                <h:commandButton action="#{adminBean.eliminarPropiedad(p.id)}" value="Eliminar"
+                                                    class="text-xs px-2 py-1 rounded bg-red-50 text-red-600 hover:bg-red-100"/>
+                                            </h:form>
+                                        </div>
+                                    </td>
+                                </tr>
+                            </c:forEach>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </ui:define>
+</ui:composition>
+</html>

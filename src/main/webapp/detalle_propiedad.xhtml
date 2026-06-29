@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="jakarta.faces.html"
+      xmlns:f="jakarta.faces.core"
+      xmlns:ui="jakarta.faces.facelets">
+<ui:composition template="/WEB-INF/templates/plantilla.xhtml">
+    <f:metadata>
+        <f:viewParam name="id" value="#{detallePropiedadBean.id}"/>
+        <f:event type="preRenderView" listener="#{detallePropiedadBean.cargar}"/>
+    </f:metadata>
+
+    <ui:define name="titulo">#{empty detallePropiedadBean.propiedad ? msg['app.titulo'] : detallePropiedadBean.propiedad.titulo += ' - ' += msg['app.titulo']}</ui:define>
+
+    <ui:define name="contenido">
+        <h:panelGroup layout="block" rendered="#{empty detallePropiedadBean.propiedad}">
+            <div class="max-w-7xl mx-auto px-4 py-16 text-center">
+                <h2 class="text-2xl font-bold text-gray-900">Propiedad no encontrada</h2>
+                <a href="#{request.contextPath}/propiedades.xhtml" class="text-gray-900 underline mt-4 inline-block">Volver al cat&#225;logo</a>
+            </div>
+        </h:panelGroup>
+
+        <h:panelGroup layout="block" rendered="#{not empty detallePropiedadBean.propiedad}">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+                <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+                    <!-- Main Content -->
+                    <div class="lg:col-span-2">
+                        <!-- Gallery -->
+                        <div class="bg-white rounded-2xl overflow-hidden shadow-sm mb-6">
+                            <h:panelGroup layout="block" rendered="#{not empty detallePropiedadBean.propiedad.fotoPrincipal}">
+                                <img src="#{detallePropiedadBean.propiedad.fotoPrincipalUrl(request.contextPath)}" alt="#{detallePropiedadBean.propiedad.titulo}" class="w-full h-96 object-cover"/>
+                            </h:panelGroup>
+                            <h:panelGroup layout="block" rendered="#{empty detallePropiedadBean.propiedad.fotoPrincipal}">
+                                <div class="w-full h-96 bg-gray-200 flex items-center justify-center text-gray-400">
+                                    <svg class="w-24 h-24" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>
+                                </div>
+                            </h:panelGroup>
+                        </div>
+
+                        <!-- Title & Price -->
+                        <div class="bg-white rounded-2xl p-6 shadow-sm mb-6">
+                            <div class="flex justify-between items-start">
+                                <div>
+                                    <h1 class="text-2xl font-bold text-gray-900 font-playfair">#{detallePropiedadBean.propiedad.titulo}</h1>
+                                    <p class="text-gray-500 mt-1">#{detallePropiedadBean.propiedad.distrito}, #{detallePropiedadBean.propiedad.provincia}, #{detallePropiedadBean.propiedad.departamento}</p>
+                                </div>
+                                <div class="text-right">
+                                    <p class="text-3xl font-bold text-gray-900">$ #{detallePropiedadBean.propiedad.precioUsd}</p>
+                                    <p class="text-sm text-gray-400">S/ #{detallePropiedadBean.propiedad.precioPen}</p>
+                                </div>
+                            </div>
+                            <div class="flex gap-4 mt-4 text-sm text-gray-500">
+                                <span>#{detallePropiedadBean.propiedad.areaTotalM2} m&#178; totales</span>
+                                <span>#{detallePropiedadBean.propiedad.numDormitorios} dorm.</span>
+                                <span>#{detallePropiedadBean.propiedad.numBanos} ba&#241;os</span>
+                                <span>#{detallePropiedadBean.propiedad.numCocheras} cocheras</span>
+                            </div>
+                        </div>
+
+                        <!-- Description -->
+                        <div class="bg-white rounded-2xl p-6 shadow-sm mb-6">
+                            <h2 class="text-lg font-semibold text-gray-900 mb-4">Descripci&#243;n</h2>
+                            <p class="text-gray-600 leading-relaxed">#{detallePropiedadBean.propiedad.descripcion}</p>
+                        </div>
+
+                        <!-- Caracteristicas -->
+                        <div class="bg-white rounded-2xl p-6 shadow-sm mb-6">
+                            <h2 class="text-lg font-semibold text-gray-900 mb-4">Caracter&#237;sticas</h2>
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-3 text-sm">
+                                <p class="text-gray-600"><span class="font-medium text-gray-800">Tipo:</span> #{detallePropiedadBean.propiedad.tipoInmueble}</p>
+                                <p class="text-gray-600"><span class="font-medium text-gray-800">Operaci&#243;n:</span> #{detallePropiedadBean.propiedad.operacion}</p>
+                                <p class="text-gray-600"><span class="font-medium text-gray-800">Direcci&#243;n:</span> #{empty detallePropiedadBean.propiedad.direccion ? 'No registrada' : detallePropiedadBean.propiedad.direccion}</p>
+                                <p class="text-gray-600"><span class="font-medium text-gray-800">Referencia:</span> #{empty detallePropiedadBean.propiedad.referencia ? 'No registrada' : detallePropiedadBean.propiedad.referencia}</p>
+                                <p class="text-gray-600"><span class="font-medium text-gray-800">A&#241;o de construcci&#243;n:</span> #{detallePropiedadBean.propiedad.anioConstruccion}</p>
+                                <p class="text-gray-600"><span class="font-medium text-gray-800">N&#176; de pisos:</span> #{empty detallePropiedadBean.propiedad.numPisos ? 'No especificado' : detallePropiedadBean.propiedad.numPisos}</p>
+                            </div>
+                        </div>
+
+                        <!-- Map -->
+                        <div class="bg-white rounded-2xl p-6 shadow-sm mb-6">
+                            <h2 class="text-lg font-semibold text-gray-900 mb-4">Ubicaci&#243;n</h2>
+                            <h:panelGroup layout="block" rendered="#{detallePropiedadBean.tieneCoordenadas}">
+                                <iframe title="Mapa de la propiedad"
+                                        src="#{detallePropiedadBean.openStreetMapEmbedUrl}"
+                                        class="w-full rounded-xl border border-gray-200"
+                                        style="height: 320px;"
+                                        loading="lazy"></iframe>
+                                <p class="text-xs text-gray-500 mt-2">Ubicaci&#243;n exacta de la propiedad.</p>
+                                <a href="#{detallePropiedadBean.openStreetMapDetalleUrl}" target="_blank" rel="noopener" class="inline-block text-xs text-blue-600 hover:underline mt-1">Abrir mapa completo</a>
+                            </h:panelGroup>
+                            <h:panelGroup layout="block" rendered="#{not detallePropiedadBean.tieneCoordenadas}">
+                                <div class="w-full rounded-xl border border-amber-200 bg-amber-50 text-amber-800 px-4 py-3 text-sm">
+                                    Esta propiedad no tiene coordenadas guardadas (latitud/longitud), por eso no se puede mostrar una ubicaci&#243;n exacta en el mapa.
+                                </div>
+                                <a href="#{detallePropiedadBean.googleMapsUrl}" target="_blank" rel="noopener" class="inline-block text-xs text-blue-600 hover:underline mt-1">Abrir en Google Maps</a>
+                            </h:panelGroup>
+                        </div>
+
+                        <!-- Analytics Chart -->
+                        <div class="bg-white rounded-2xl p-6 shadow-sm mb-6">
+                            <h2 class="text-lg font-semibold text-gray-900 mb-4">Vistas (30 d&#237;as)</h2>
+                            <canvas id="viewsChart" width="400" height="200"
+                                    data-labels="#{detallePropiedadBean.labelsJson}"
+                                    data-data="#{detallePropiedadBean.dataJson}"></canvas>
+                        </div>
+                    </div>
+
+                    <!-- Sidebar -->
+                    <div class="lg:col-span-1">
+                        <!-- Agent Card -->
+                        <div class="bg-white rounded-2xl p-6 shadow-sm mb-6 sticky top-24">
+                            <h3 class="font-semibold text-gray-900 mb-4">Agente</h3>
+                            <p class="font-medium text-gray-900">#{detallePropiedadBean.propiedad.agenteNombre}</p>
+                            <p class="text-sm text-gray-500">#{detallePropiedadBean.propiedad.agenteTelefono}</p>
+                            <p class="text-sm text-gray-500">#{detallePropiedadBean.propiedad.agenteCorreo}</p>
+
+                            <!-- Consulta Form -->
+                            <h:form class="mt-6 space-y-4">
+                                <h:inputHidden value="#{detallePropiedadBean.id}"/>
+                                <div>
+                                    <h:inputText value="#{detallePropiedadBean.consultaNombre}" placeholder="Nombre" required="true"
+                                        class="w-full px-4 py-2 border border-gray-300 rounded-lg text-sm"/>
+                                </div>
+                                <div>
+                                    <h:inputText value="#{detallePropiedadBean.consultaEmail}" placeholder="Email" required="true"
+                                        class="w-full px-4 py-2 border border-gray-300 rounded-lg text-sm"/>
+                                </div>
+                                <div>
+                                    <h:inputText value="#{detallePropiedadBean.consultaTelefono}" placeholder="Tel&#233;fono"
+                                        class="w-full px-4 py-2 border border-gray-300 rounded-lg text-sm"/>
+                                </div>
+                                <div>
+                                    <h:inputTextarea value="#{detallePropiedadBean.consultaMensaje}" placeholder="Mensaje" rows="4"
+                                        class="w-full px-4 py-2 border border-gray-300 rounded-lg text-sm"/>
+                                </div>
+                                <h:commandButton action="#{detallePropiedadBean.enviarConsulta}" value="Enviar consulta"
+                                    class="w-full bg-gray-900 hover:bg-gray-800 text-white py-2 rounded-lg text-sm font-medium"/>
+                            </h:form>
+
+                            <!-- Favorito -->
+                            <h:form class="mt-4">
+                                <h:commandButton action="#{favoritoBean.agregarFavorito(detallePropiedadBean.id)}"
+                                    value="#{msg['propiedad.favorito.agregar']}"
+                                    class="w-full bg-gray-100 hover:bg-gray-200 text-gray-700 py-2 rounded-lg text-sm font-medium"/>
+                            </h:form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </h:panelGroup>
+
+        <script>
+            <![CDATA[
+            document.addEventListener('DOMContentLoaded', function() {
+
+                var chartEl = document.getElementById('viewsChart');
+                if (chartEl) {
+                    try {
+                        var labels = JSON.parse(chartEl.dataset.labels);
+                        var data = JSON.parse(chartEl.dataset.data);
+                        new Chart(chartEl, {
+                            type: 'line',
+                            data: {
+                                labels: labels,
+                                datasets: [{
+                                    label: 'Vistas',
+                                    data: data,
+                                    borderColor: '#1f2937',
+                                    tension: 0.3
+                                }]
+                            }
+                        });
+                    } catch(e) {}
+                }
+            });
+            ]]>
+        </script>
+    </ui:define>
+</ui:composition>
+</html>

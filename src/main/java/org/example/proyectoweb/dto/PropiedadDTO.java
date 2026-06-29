@@ -315,6 +315,10 @@ public class PropiedadDTO {
     public void setFotoPrincipal(String fotoPrincipal) { this.fotoPrincipal = fotoPrincipal; }
 
     public String getFotoPrincipalUrl(String contextPath) {
+        return fotoPrincipalUrl(contextPath);
+    }
+
+    public String fotoPrincipalUrl(String contextPath) {
         if (fotoPrincipal == null || fotoPrincipal.isEmpty()) {
             return null;
         }

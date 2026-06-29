@@ -1,0 +1,195 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="jakarta.faces.html"
+      xmlns:f="jakarta.faces.core"
+      xmlns:ui="jakarta.faces.facelets"
+      xmlns:c="jakarta.tags.core">
+<ui:composition template="/WEB-INF/templates/plantilla.xhtml">
+    <ui:define name="titulo">#{msg['menu.catalogo']} - #{msg['app.titulo']}</ui:define>
+    <ui:define name="contenido">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+            
+            <!-- Page Title Header -->
+            <div class="mb-8 md:mb-12">
+                <span class="text-xs font-black uppercase tracking-[0.25em] text-amber-600 block mb-2">Colección Premium</span>
+                <h1 class="font-title text-3xl md:text-4xl lg:text-5xl font-light tracking-tight text-slate-900">Descubrir Propiedades</h1>
+                <p class="text-slate-500 mt-2 text-sm md:text-base max-w-3xl">Explora y filtra las propiedades disponibles en todo el Perú con nuestra búsqueda avanzada.</p>
+            </div>
+
+            <!-- Search & Filters Panel -->
+            <h:form class="bg-white rounded-3xl border border-slate-200/60 p-6 md:p-8 shadow-sm mb-10 md:mb-12">
+                <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-5">
+                    
+                    <!-- Keyword input -->
+                    <div>
+                        <label class="block text-xs font-semibold text-slate-500 uppercase tracking-[0.1em] mb-1.5 px-1">#{msg['inicio.buscador.placeholder']}</label>
+                        <h:inputText value="#{propiedadBean.keyword}" 
+                                     styleClass="w-full bg-slate-50 border border-slate-200 text-slate-900 rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:border-black transition-all placeholder:text-slate-400" />
+                    </div>
+
+                    <!-- Operation filter -->
+                    <div>
+                        <label class="block text-xs font-semibold text-slate-500 uppercase tracking-[0.1em] mb-1.5 px-1">#{msg['propiedad.operacion']}</label>
+                        <div class="relative">
+                            <h:selectOneMenu value="#{propiedadBean.operacion}" 
+                                             styleClass="w-full bg-slate-50 border border-slate-200 text-slate-900 rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:border-black transition-all appearance-none cursor-pointer">
+                                <f:selectItem itemValue="" itemLabel="Todas"/>
+                                <f:selectItem itemValue="VENTA" itemLabel="#{msg['inicio.compra']}"/>
+                                <f:selectItem itemValue="ALQUILER" itemLabel="#{msg['inicio.alquiler']}"/>
+                            </h:selectOneMenu>
+                            <div class="absolute inset-y-0 right-0 pr-3.5 flex items-center pointer-events-none text-slate-400">
+                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Type filter -->
+                    <div>
+                        <label class="block text-xs font-semibold text-slate-500 uppercase tracking-[0.1em] mb-1.5 px-1">#{msg['propiedad.tipo']}</label>
+                        <div class="relative">
+                            <h:selectOneMenu value="#{propiedadBean.tipoInmueble}" 
+                                             styleClass="w-full bg-slate-50 border border-slate-200 text-slate-900 rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:border-black transition-all appearance-none cursor-pointer">
+                                <f:selectItem itemValue="" itemLabel="Todos"/>
+                                <f:selectItems value="#{propiedadBean.listaTipos}" var="t" itemValue="#{t.nombre}" itemLabel="#{t.nombre}"/>
+                            </h:selectOneMenu>
+                            <div class="absolute inset-y-0 right-0 pr-3.5 flex items-center pointer-events-none text-slate-400">
+                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Bedrooms input -->
+                    <div>
+                        <label class="block text-xs font-semibold text-slate-500 uppercase tracking-[0.1em] mb-1.5 px-1">#{msg['propiedad.dormitorios']}</label>
+                        <h:inputText value="#{propiedadBean.dormitorios}" 
+                                     styleClass="w-full bg-slate-50 border border-slate-200 text-slate-900 rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:border-black transition-all" />
+                    </div>
+
+                    <!-- Bathrooms input -->
+                    <div>
+                        <label class="block text-xs font-semibold text-slate-500 uppercase tracking-[0.1em] mb-1.5 px-1">#{msg['propiedad.banos']}</label>
+                        <h:inputText value="#{propiedadBean.banos}" 
+                                     styleClass="w-full bg-slate-50 border border-slate-200 text-slate-900 rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:border-black transition-all" />
+                    </div>
+
+                    <!-- Min Price input -->
+                    <div>
+                        <label class="block text-xs font-semibold text-slate-500 uppercase tracking-[0.1em] mb-1.5 px-1">Precio Min (USD)</label>
+                        <h:inputText value="#{propiedadBean.precioMin}" 
+                                     styleClass="w-full bg-slate-50 border border-slate-200 text-slate-900 rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:border-black transition-all" />
+                    </div>
+
+                    <!-- Max Price input -->
+                    <div>
+                        <label class="block text-xs font-semibold text-slate-500 uppercase tracking-[0.1em] mb-1.5 px-1">Precio Max (USD)</label>
+                        <h:inputText value="#{propiedadBean.precioMax}" 
+                                     styleClass="w-full bg-slate-50 border border-slate-200 text-slate-900 rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:border-black transition-all" />
+                    </div>
+
+                    <!-- Action Buttons -->
+                    <div class="flex items-end gap-2.5">
+                        <h:commandButton action="#{propiedadBean.buscar}" value="#{msg['comun.buscar']}"
+                                         styleClass="flex-1 bg-black hover:bg-slate-800 text-white font-bold py-3 px-4 rounded-xl text-sm transition-all hover:scale-[1.02] shadow-md shadow-black/10 cursor-pointer"/>
+                        <h:commandButton action="#{propiedadBean.limpiar}" value="#{msg['comun.limpiar']}"
+                                         styleClass="bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold py-3 px-4 rounded-xl text-sm transition-all hover:scale-[1.02] cursor-pointer"/>
+                    </div>
+
+                </div>
+            </h:form>
+
+            <!-- Results Grid Section -->
+            <h:panelGroup layout="block" rendered="#{empty propiedadBean.propiedades}">
+                <div class="border border-dashed border-slate-300 rounded-[2rem] p-16 text-center text-slate-500 bg-white">
+                    <svg class="w-12 h-12 text-slate-300 mx-auto mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"></path></svg>
+                    <p class="font-bold text-slate-800">No se encontraron propiedades</p>
+                    <p class="text-sm mt-1">Prueba a limpiar los filtros o realizar una búsqueda con criterios diferentes.</p>
+                </div>
+            </h:panelGroup>
+
+            <h:panelGroup layout="block" rendered="#{not empty propiedadBean.propiedades}">
+                <div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-8 reveal-stagger active">
+                    <ui:repeat value="#{propiedadBean.propiedades}" var="p">
+                        <div class="card-tilt group bg-white border border-slate-200 rounded-[2rem] overflow-hidden shadow-sm flex flex-col">
+                            <div class="relative h-60 overflow-hidden bg-slate-100">
+                                <h:panelGroup layout="block" rendered="#{not empty p.fotoPrincipal}" styleClass="h-full w-full">
+                                    <img src="#{p.fotoPrincipalUrl(request.contextPath)}" alt="#{p.titulo}" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700 ease-out"/>
+                                </h:panelGroup>
+                                <h:panelGroup layout="block" rendered="#{empty p.fotoPrincipal}" styleClass="h-full w-full">
+                                    <div class="w-full h-full flex items-center justify-center text-slate-300 bg-gradient-to-br from-slate-100 to-slate-200">
+                                        <svg class="w-16 h-16" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 0 001 1m-6 0h6"></path></svg>
+                                    </div>
+                                </h:panelGroup>
+                                <div class="absolute inset-0 property-image-overlay"></div>
+                                <div class="absolute top-4 left-4 flex flex-col gap-2">
+                                    <span class="badge-shimmer bg-black text-white text-[10px] font-black uppercase tracking-[0.22em] px-3 py-1.5 rounded-full shadow-md">#{p.operacion}</span>
+                                    <h:panelGroup rendered="#{p.bonoVerde == 1}">
+                                        <span class="badge-shimmer bg-amber-500 text-black text-[9px] font-extrabold uppercase tracking-wider px-2.5 py-1 rounded-full shadow-md">Bono Verde</span>
+                                    </h:panelGroup>
+                                    <h:panelGroup rendered="#{p.destacada}">
+                                        <span class="badge-shimmer bg-purple-600 text-white text-[9px] font-extrabold uppercase tracking-wider px-2.5 py-1 rounded-full shadow-md">Destacado</span>
+                                    </h:panelGroup>
+                                </div>
+                                <div class="absolute bottom-4 left-4 right-4 flex items-end justify-between">
+                                    <span class="text-[11px] font-bold uppercase tracking-[0.22em] text-white/90">#{p.distrito}, #{p.provincia}</span>
+                                    <span class="inline-flex items-center gap-1 rounded-full bg-white/95 px-3 py-1 text-xs font-black text-black shadow-lg backdrop-blur-sm">#{p.areaTechadaM2} m²</span>
+                                </div>
+                            </div>
+
+                            <div class="p-6 flex-grow flex flex-col justify-between">
+                                <div>
+                                    <h3 class="font-title text-lg font-medium text-slate-900 line-clamp-1 mb-2 group-hover:text-black transition-colors">#{p.titulo}</h3>
+                                    <p class="text-sm text-slate-500 line-clamp-2 mb-5 leading-relaxed">#{p.descripcion}</p>
+
+                                    <div class="grid grid-cols-3 gap-2 text-xs text-slate-500 font-semibold mb-5">
+                                        <span class="feature-pill rounded-xl bg-slate-50 px-3 py-2 justify-center">
+                                            <svg class="w-3.5 h-3.5 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"></path></svg>
+                                            #{p.numDormitorios} Dorm.
+                                        </span>
+                                        <span class="feature-pill rounded-xl bg-slate-50 px-3 py-2 justify-center">
+                                            <svg class="w-3.5 h-3.5 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 14v3m4-3v3m4-3v3M3 21h18M3 10h18M3 7l9-4 9 4M4 10h16v11H4V10z"></path></svg>
+                                            #{p.numBanos} Baños
+                                        </span>
+                                        <span class="feature-pill rounded-xl bg-slate-50 px-3 py-2 justify-center">
+                                            <svg class="w-3.5 h-3.5 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 8V4m0 0h4M4 4l5 5m11-1V4m0 0h-4m4 0l-5 5M4 16v4m0 0h4m-4 0l5-5m11 5l-5-5m5 5v-4m0 4h-4"></path></svg>
+                                            #{p.areaTechadaM2} m²
+                                        </span>
+                                    </div>
+                                </div>
+
+                                <div class="flex items-center justify-between border-t border-slate-100 pt-4">
+                                    <div>
+                                        <span class="text-xs text-slate-400 block font-medium">Precio</span>
+                                        <span class="text-xl font-black text-black">
+                                            <c:choose>
+                                                <c:when test="#{p.monedaBase == 'USD'}">US$ #{p.precioUsd}</c:when>
+                                                <c:otherwise>S/. #{p.precioPen}</c:otherwise>
+                                            </c:choose>
+                                        </span>
+                                    </div>
+                                    <a href="#{request.contextPath}/detalle_propiedad.xhtml?id=#{p.id}" class="inline-flex items-center justify-center gap-1.5 bg-black hover:bg-slate-800 text-white text-xs font-bold px-5 py-2.5 rounded-full transition-all hover:scale-[1.03] shadow-md">
+                                        #{msg['propiedad.ver']}
+                                        <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path></svg>
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                    </ui:repeat>
+                </div>
+            </h:panelGroup>
+
+            <!-- Pagination -->
+            <h:panelGroup rendered="#{propiedadBean.totalPaginas > 1}">
+                <h:form class="flex justify-center gap-2 mt-12">
+                    <ui:repeat value="#{propiedadBean.paginas}" var="pag">
+                        <h:commandButton value="#{pag}" action="#{propiedadBean.irPagina}"
+                            styleClass="px-4 py-2.5 min-w-[40px] rounded-full transition-all hover:scale-[1.02] cursor-pointer #{propiedadBean.pagina == pag ? 'bg-black text-white shadow-md' : 'bg-slate-100 hover:bg-slate-200 text-slate-700'} text-xs font-bold">
+                            <f:param name="pagina" value="#{pag}"/>
+                        </h:commandButton>
+                    </ui:repeat>
+                </h:form>
+            </h:panelGroup>
+
+        </div>
+    </ui:define>
+</ui:composition>
+</html>

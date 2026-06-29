@@ -82,16 +82,28 @@ public class UsuarioServlet extends HttpServlet {
             u.setApellidos(apellidos);
             u.setCorreo(correo);
             u.setPasswordHash(password); // El DAO se encarga de hashear
-            
-            if (idRolStr != null && !idRolStr.isEmpty()) {
-                int requestedRol = Integer.parseInt(idRolStr);
-                if (requestedRol == 2 || requestedRol == 3) {
-                    u.setIdRol(requestedRol);
-                } else {
-                    u.setIdRol(2); // Forzar a Comprador por seguridad
+
+            int rolSolicitado = 2;
+            if (idRolStr != null && !idRolStr.trim().isEmpty()) {
+                try {
+                    rolSolicitado = Integer.parseInt(idRolStr.trim());
+                } catch (NumberFormatException ignored) {
+                    rolSolicitado = 2;
                 }
-            } else {
-                u.setIdRol(2);
+            }
+            // Solo se aceptan roles públicos de registro.
+            u.setIdRol((rolSolicitado == 2 || rolSolicitado == 3) ? rolSolicitado : 2);
+
+            String errorValidacion = usuarioFacade.validarUsuario(u);
+            if (errorValidacion != null) {
+                request.setAttribute("error", errorValidacion);
+                request.getRequestDispatcher("/WEB-INF/views/public/registroUsuario.jsp").forward(request, response);
+                return;
+            }
+            if (usuarioFacade.existeCorreo(u.getCorreo())) {
+                request.setAttribute("error", "El correo ya se encuentra registrado.");
+                request.getRequestDispatcher("/WEB-INF/views/public/registroUsuario.jsp").forward(request, response);
+                return;
             }
 
             boolean ok = usuarioFacade.registrarUsuario(u);
@@ -101,7 +113,7 @@ public class UsuarioServlet extends HttpServlet {
                 request.setAttribute("msg", "Usuario registrado correctamente. Por favor, inicie sesión.");
                 request.getRequestDispatcher("/WEB-INF/views/public/login.jsp").forward(request, response);
             } else {
-                request.setAttribute("error", "Error al registrar usuario. El correo podría estar en uso.");
+                request.setAttribute("error", "Error al registrar usuario. Verifique sus datos.");
                 request.getRequestDispatcher("/WEB-INF/views/public/registroUsuario.jsp").forward(request, response);
             }
 
@@ -109,13 +121,20 @@ public class UsuarioServlet extends HttpServlet {
             String correo = request.getParameter("correo");
             String password = request.getParameter("password");
 
+            String errorValidacion = usuarioFacade.validarCredencialesLogin(correo, password);
+            if (errorValidacion != null) {
+                request.setAttribute("error", errorValidacion);
+                request.getRequestDispatcher("/WEB-INF/views/public/login.jsp").forward(request, response);
+                return;
+            }
+
             UsuarioDTO authUser = usuarioFacade.autenticar(correo, password);
 
             if (authUser != null) {
                 // Iniciar sesión
                 HttpSession session = request.getSession();
                 session.setAttribute("usuarioLogueado", authUser);
-                
+
                 auditoriaFacade.registrarEvento(authUser.getIdUsuario(), "usuario", authUser.getIdUsuario(), "LOGIN", request.getRemoteAddr(), request.getHeader("User-Agent"), "{\"status\":\"success\",\"correo\":\"" + authUser.getCorreo() + "\"}");
 
                 // Redirección basada en roles (Sprint 1)
@@ -142,7 +161,7 @@ public class UsuarioServlet extends HttpServlet {
                 return;
             }
             UsuarioDTO loggedIn = (UsuarioDTO) session.getAttribute("usuarioLogueado");
-            
+
             String nombres = request.getParameter("nombres");
             String apellidos = request.getParameter("apellidos");
             String correo = request.getParameter("correo");
@@ -161,4 +180,4 @@ public class UsuarioServlet extends HttpServlet {
             request.getRequestDispatcher("/WEB-INF/views/usuario/perfil.jsp").forward(request, response);
         }
     }
-} 
+}
