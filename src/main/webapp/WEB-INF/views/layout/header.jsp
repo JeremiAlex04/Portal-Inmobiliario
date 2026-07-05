@@ -29,24 +29,26 @@
                     </c:when>
                     <c:otherwise>
                         <!-- Public Navigation Links -->
-                        <a href="${pageContext.request.contextPath}/index.jsp"
+                        <a href="${pageContext.request.contextPath}/index.xhtml"
                             class="text-sm font-semibold ${activePage == 'inicio' ? 'text-white' : 'text-white/80 hover:text-white'} transition-colors">Inicio</a>
-                        <a href="${pageContext.request.contextPath}/propiedades"
+                        <a href="${pageContext.request.contextPath}/propiedades.xhtml"
                             class="text-sm font-semibold ${activePage == 'catalogo' ? 'text-white' : 'text-white/80 hover:text-white'} transition-colors">Catálogo</a>
                         <c:if test="${empty sessionScope.usuarioLogueado || sessionScope.usuarioLogueado.idRol != 2}">
-                            <a href="${pageContext.request.contextPath}/pagos?accion=planes"
+                            <a href="${pageContext.request.contextPath}/planes.xhtml"
                                 class="text-sm font-semibold ${activePage == 'planes' ? 'text-white' : 'text-white/80 hover:text-white'} transition-colors">Planes</a>
-                            <a href="${pageContext.request.contextPath}/propiedades?accion=nuevo"
-                                class="text-sm font-semibold ${activePage == 'publicar' ? 'text-white' : 'text-white/80 hover:text-white'} transition-colors">Publicar</a>
                         </c:if>
                         <c:if test="${not empty sessionScope.usuarioLogueado}">
-                             <a href="${pageContext.request.contextPath}/favorito?accion=listar"
+                             <a href="${pageContext.request.contextPath}/usuario/favoritos.xhtml"
                                  class="text-sm font-semibold ${activePage == 'favoritos' ? 'text-white' : 'text-white/80 hover:text-white'} transition-colors inline-flex items-center gap-1">
                                  <svg class="w-4 h-4 text-red-500 fill-current" viewBox="0 0 24 24"><path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"></path></svg>
                                  Favoritos
                              </a>
                         </c:if>
-                        <a href="${pageContext.request.contextPath}/contacto"
+                        <a href="${pageContext.request.contextPath}/nosotros.xhtml"
+                            class="text-sm font-semibold ${activePage == 'nosotros' ? 'text-white' : 'text-white/80 hover:text-white'} transition-colors">Nosotros</a>
+                        <a href="${pageContext.request.contextPath}/faq.xhtml"
+                            class="text-sm font-semibold ${activePage == 'faq' ? 'text-white' : 'text-white/80 hover:text-white'} transition-colors">FAQ</a>
+                        <a href="${pageContext.request.contextPath}/contacto.xhtml"
                             class="text-sm font-semibold ${activePage == 'contacto' ? 'text-white' : 'text-white/80 hover:text-white'} transition-colors">Contacto</a>
                     </c:otherwise>
                 </c:choose>
@@ -62,9 +64,12 @@
                                 <a href="${pageContext.request.contextPath}/usuario?accion=logout" class="px-4 py-2 rounded-full text-sm font-semibold text-white bg-white/10 hover:bg-white/20 border border-white/15 transition-colors">Cerrar Sesión</a>
                             </c:when>
                             <c:otherwise>
-                                <span class="text-xs font-semibold px-3 py-2 rounded-full bg-white/10 border border-white/15 text-white">Hola, ${sessionScope.usuarioLogueado.nombres}</span>
-                                <c:if test="${sessionScope.usuarioLogueado.idRol == 3 || sessionScope.usuarioLogueado.idRol == 4 || sessionScope.usuarioLogueado.idRol == 5}">
-                                    <a href="${pageContext.request.contextPath}/panel" class="text-sm font-semibold ${activePage == 'panel' ? 'text-white' : 'text-white/80 hover:text-white'} transition-colors">Mi Panel</a>
+                                <span class="text-xs font-semibold px-3 py-2 rounded-full bg-white/10 border border-white/15 text-white">${sessionScope.usuarioLogueado.nombres}</span>
+                                <c:if test="${sessionScope.usuarioLogueado.idRol == 3 || sessionScope.usuarioLogueado.idRol == 4}">
+                                    <a href="${pageContext.request.contextPath}/agente/panel.xhtml" class="text-sm font-semibold ${activePage == 'panel' ? 'text-white' : 'text-white/80 hover:text-white'} transition-colors">Panel</a>
+                                </c:if>
+                                <c:if test="${sessionScope.usuarioLogueado.idRol == 5}">
+                                    <a href="${pageContext.request.contextPath}/admin/dashboard.xhtml" class="text-sm font-semibold text-amber-400 hover:text-amber-300 transition-colors">Admin</a>
                                 </c:if>
                                 <a href="${pageContext.request.contextPath}/usuario?accion=logout" class="px-4 py-2 rounded-full text-sm font-semibold text-white bg-white/10 hover:bg-white/20 border border-white/15 transition-colors">Cerrar Sesión</a>
                             </c:otherwise>
@@ -97,12 +102,14 @@
                     <a href="${pageContext.request.contextPath}/admin?accion=ubicaciones" class="block py-2 text-sm font-semibold ${activePage == 'ubicaciones' ? 'text-white' : 'text-white/80 hover:text-white'}">Ubicaciones</a>
                 </c:when>
                 <c:otherwise>
-                    <a href="${pageContext.request.contextPath}/index.jsp" class="block py-2 text-sm font-semibold ${activePage == 'inicio' ? 'text-white' : 'text-white/80 hover:text-white'}">Inicio</a>
-                    <a href="${pageContext.request.contextPath}/propiedades" class="block py-2 text-sm font-semibold ${activePage == 'catalogo' ? 'text-white' : 'text-white/80 hover:text-white'}">Catálogo</a>
-                    <a href="${pageContext.request.contextPath}/pagos?accion=planes" class="block py-2 text-sm font-semibold ${activePage == 'planes' ? 'text-white' : 'text-white/80 hover:text-white'}">Planes</a>
-                    <a href="${pageContext.request.contextPath}/contacto" class="block py-2 text-sm font-semibold ${activePage == 'contacto' ? 'text-white' : 'text-white/80 hover:text-white'}">Contacto</a>
+                    <a href="${pageContext.request.contextPath}/index.xhtml" class="block py-2 text-sm font-semibold ${activePage == 'inicio' ? 'text-white' : 'text-white/80 hover:text-white'}">Inicio</a>
+                    <a href="${pageContext.request.contextPath}/propiedades.xhtml" class="block py-2 text-sm font-semibold ${activePage == 'catalogo' ? 'text-white' : 'text-white/80 hover:text-white'}">Catálogo</a>
+                    <a href="${pageContext.request.contextPath}/planes.xhtml" class="block py-2 text-sm font-semibold ${activePage == 'planes' ? 'text-white' : 'text-white/80 hover:text-white'}">Planes</a>
+                    <a href="${pageContext.request.contextPath}/nosotros.xhtml" class="block py-2 text-sm font-semibold ${activePage == 'nosotros' ? 'text-white' : 'text-white/80 hover:text-white'}">Nosotros</a>
+                    <a href="${pageContext.request.contextPath}/faq.xhtml" class="block py-2 text-sm font-semibold ${activePage == 'faq' ? 'text-white' : 'text-white/80 hover:text-white'}">FAQ</a>
+                    <a href="${pageContext.request.contextPath}/contacto.xhtml" class="block py-2 text-sm font-semibold ${activePage == 'contacto' ? 'text-white' : 'text-white/80 hover:text-white'}">Contacto</a>
                     <c:if test="${not empty sessionScope.usuarioLogueado}">
-                        <a href="${pageContext.request.contextPath}/favorito?accion=listar" class="block py-2 text-sm font-semibold text-white/80 hover:text-white">Favoritos</a>
+                        <a href="${pageContext.request.contextPath}/usuario/favoritos.xhtml" class="block py-2 text-sm font-semibold text-white/80 hover:text-white">Favoritos</a>
                     </c:if>
                 </c:otherwise>
             </c:choose>

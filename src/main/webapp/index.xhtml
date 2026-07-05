@@ -67,7 +67,7 @@
                 <div class="max-w-4xl">
                     <span class="inline-flex items-center gap-2 px-4 py-2 rounded-full border border-white/15 bg-white/5 text-[11px] font-bold uppercase tracking-[0.25em] text-amber-300 backdrop-blur-sm mb-8 badge-shimmer">
                         <span class="h-1.5 w-1.5 rounded-full bg-amber-400 animate-pulse"></span>
-                        Portal Inmobiliario Premium
+                        Inmobix
                     </span>
 
                     <h1 class="font-title text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-light tracking-tight leading-[1.08] mb-4">
@@ -320,10 +320,17 @@
                                             </c:otherwise>
                                         </c:choose>
                                     </div>
-                                    <a href="#{request.contextPath}/detalle_propiedad.xhtml?id=#{p.id}" class="inline-flex items-center justify-center gap-1.5 bg-black hover:bg-slate-800 text-white text-xs font-bold px-5 py-2.5 rounded-full transition-all hover:scale-[1.03] shadow-md">
-                                        #{msg['propiedad.ver']}
-                                        <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path></svg>
-                                    </a>
+                                    <div class="flex items-center gap-2">
+                                        <h:form rendered="#{authBean.sesionActiva}" styleClass="inline">
+                                            <h:commandButton action="#{favoritoBean.toggleFavorito(p.id)}"
+                                                             value="#{favoritoBean.esFavoritoListado(p.id) ? 'Quitar' : 'Favorito'}"
+                                                             styleClass="inline-flex items-center justify-center text-xs font-bold px-3 py-2.5 rounded-full transition-all #{favoritoBean.esFavoritoListado(p.id) ? 'bg-red-50 text-red-600 hover:bg-red-100 border border-red-200' : 'bg-slate-100 text-slate-700 hover:bg-slate-200 border border-slate-200'}"/>
+                                        </h:form>
+                                        <a href="#{request.contextPath}/detalle_propiedad.xhtml?id=#{p.id}" class="inline-flex items-center justify-center gap-1.5 bg-black hover:bg-slate-800 text-white text-xs font-bold px-5 py-2.5 rounded-full transition-all hover:scale-[1.03] shadow-md">
+                                            #{msg['propiedad.ver']}
+                                            <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path></svg>
+                                        </a>
+                                    </div>
                                 </div>
                             </div>
                         </div>

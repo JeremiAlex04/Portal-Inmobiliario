@@ -45,6 +45,7 @@ public class AuthBean implements Serializable {
             this.logueado = true;
             this.correo = null;
             this.password = null;
+            FacesContext.getCurrentInstance().getExternalContext().getSessionMap().put("usuarioLogueado", u);
 
             FacesContext.getCurrentInstance().addMessage(null,
                     new FacesMessage(FacesMessage.SEVERITY_INFO, "Bienvenido " + u.getNombres(), null));
@@ -101,16 +102,44 @@ public class AuthBean implements Serializable {
         this.logueado = false;
         this.correo = null;
         this.password = null;
+        FacesContext.getCurrentInstance().getExternalContext().getSessionMap().remove("usuarioLogueado");
         FacesContext.getCurrentInstance().getExternalContext().invalidateSession();
         return "/index.xhtml?faces-redirect=true";
     }
 
     public boolean permiteRol(int... roles) {
-        if (!logueado || usuario == null) return false;
+        UsuarioDTO actual = getUsuarioSesion();
+        if (actual == null) return false;
         for (int r : roles) {
-            if (usuario.getIdRol() == r) return true;
+            if (actual.getIdRol() == r) return true;
         }
         return false;
+    }
+
+    public UsuarioDTO getUsuarioSesion() {
+        if (usuario != null) {
+            return usuario;
+        }
+        FacesContext facesContext = FacesContext.getCurrentInstance();
+        if (facesContext == null) {
+            return null;
+        }
+        Object usuarioSesion = facesContext.getExternalContext().getSessionMap().get("usuarioLogueado");
+        return (usuarioSesion instanceof UsuarioDTO) ? (UsuarioDTO) usuarioSesion : null;
+    }
+
+    public boolean isSesionActiva() {
+        return getUsuarioSesion() != null;
+    }
+
+    public String getNombreUsuarioSesion() {
+        UsuarioDTO actual = getUsuarioSesion();
+        return actual != null ? actual.getNombres() : null;
+    }
+
+    public Integer getIdRolSesion() {
+        UsuarioDTO actual = getUsuarioSesion();
+        return actual != null ? actual.getIdRol() : null;
     }
 
     private void limpiarFormularioRegistro() {
@@ -128,10 +157,13 @@ public class AuthBean implements Serializable {
     public String getPassword() { return password; }
     public void setPassword(String password) { this.password = password; }
 
-    public UsuarioDTO getUsuario() { return usuario; }
+    public UsuarioDTO getUsuario() {
+        UsuarioDTO actual = getUsuarioSesion();
+        return actual != null ? actual : usuario;
+    }
     public void setUsuario(UsuarioDTO usuario) { this.usuario = usuario; }
 
-    public boolean isLogueado() { return logueado; }
+    public boolean isLogueado() { return logueado || getUsuarioSesion() != null; }
     public void setLogueado(boolean logueado) { this.logueado = logueado; }
 
     public String getNombres() { return nombres; }

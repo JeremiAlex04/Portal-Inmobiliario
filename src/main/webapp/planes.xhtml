@@ -7,6 +7,29 @@
 <ui:composition template="/WEB-INF/templates/plantilla.xhtml">
     <ui:define name="titulo">#{msg['menu.planes']} - #{msg['app.titulo']}</ui:define>
     <ui:define name="contenido">
+        <!-- Validación de autenticación -->
+        <c:if test="#{not authBean.logueado and empty sessionScope.usuarioLogueado}">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16 md:py-24">
+                <div class="bg-amber-50 border-2 border-amber-200 rounded-2xl p-12 text-center">
+                    <h2 class="text-2xl font-bold text-slate-900 mb-4">Se requiere autenticación</h2>
+                    <p class="text-slate-600 mb-8">Debes iniciar sesión o registrarte para acceder a nuestros planes de publicación.</p>
+                    <div class="flex gap-4 justify-center flex-wrap">
+                        <h:link outcome="login" class="inline-block bg-amber-600 hover:bg-amber-700 text-white py-3 px-8 rounded-lg font-bold transition-colors">
+                            Iniciar sesión
+                        </h:link>
+                        <h:link outcome="registro" class="inline-block bg-slate-900 hover:bg-slate-800 text-white py-3 px-8 rounded-lg font-bold transition-colors">
+                            Registrarse
+                        </h:link>
+                        <h:link outcome="index" class="inline-block bg-gray-300 hover:bg-gray-400 text-slate-900 py-3 px-8 rounded-lg font-bold transition-colors">
+                            Volver al inicio
+                        </h:link>
+                    </div>
+                </div>
+            </div>
+        </c:if>
+
+        <!-- Contenido de planes (solo visible si está autenticado) -->
+        <c:if test="#{authBean.logueado or not empty sessionScope.usuarioLogueado}">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16 md:py-24">
             
             <!-- Header Section -->
@@ -60,7 +83,7 @@
                                     </li>
                                 </ul>
                             </div>
-                            <a href="#{request.contextPath}/pagos.xhtml?accion=formulario&amp;plan=#{plan.id}"
+                            <a href="#{request.contextPath}/pagos?accion=formulario&amp;plan=#{plan.id}"
                                class="block w-full text-center bg-black hover:bg-slate-800 text-white py-3 rounded-2xl font-bold text-sm transition-all hover:scale-[1.02] shadow-md shadow-black/10">Contratar</a>
                         </div>
                     </c:if>
@@ -107,7 +130,7 @@
                                     </li>
                                 </ul>
                             </div>
-                            <a href="#{request.contextPath}/pagos.xhtml?accion=formulario&amp;plan=#{plan.id}"
+                            <a href="#{request.contextPath}/pagos?accion=formulario&amp;plan=#{plan.id}"
                                class="block w-full text-center bg-amber-500 hover:bg-amber-400 text-black py-3 rounded-2xl font-bold text-sm transition-all hover:scale-[1.02] shadow-lg shadow-amber-500/20 btn-glow">Contratar</a>
                         </div>
                     </c:if>
@@ -116,6 +139,7 @@
             </div>
             
         </div>
+        </c:if>
     </ui:define>
 </ui:composition>
 </html>

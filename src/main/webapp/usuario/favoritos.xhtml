@@ -10,17 +10,24 @@
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
             <h1 class="text-2xl font-bold text-gray-900 mb-6 font-playfair">#{msg['usuario.favoritos']}</h1>
 
-            <c:if test="#{empty favoritoBean.listaFavoritos}">
+            <c:if test="#{not authBean.sesionActiva}">
+                <div class="text-center py-16 bg-white border border-slate-200 rounded-2xl">
+                    <p class="text-gray-600 mb-4">Debes iniciar sesión para gestionar tus favoritos.</p>
+                    <a href="#{request.contextPath}/login.xhtml" class="inline-flex bg-black hover:bg-slate-800 text-white py-2.5 px-6 rounded-xl text-sm font-bold transition-all">Iniciar sesión</a>
+                </div>
+            </c:if>
+
+            <c:if test="#{authBean.sesionActiva and empty favoritoBean.listaFavoritos}">
                 <div class="text-center py-16">
                     <svg class="w-16 h-16 mx-auto text-gray-300 mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"/>
                     </svg>
-                    <p class="text-gray-500 mb-4">A\u00FAn no tienes favoritos</p>
+                    <p class="text-gray-500 mb-4">Aun no tienes favoritos</p>
                     <a href="#{request.contextPath}/propiedades.xhtml" class="text-gray-900 font-medium hover:underline">#{msg['menu.catalogo']}</a>
                 </div>
             </c:if>
 
-            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            <h:panelGroup layout="block" rendered="#{authBean.sesionActiva and not empty favoritoBean.listaFavoritos}" styleClass="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                 <c:forEach items="#{favoritoBean.listaFavoritos}" var="p">
                     <div class="bg-white rounded-2xl overflow-hidden shadow-md hover:shadow-xl transition-all">
                         <div class="relative h-48 bg-gray-200">
@@ -39,20 +46,20 @@
                         <div class="p-4">
                             <h3 class="font-semibold text-gray-900 mb-1 truncate">#{p.titulo}</h3>
                             <p class="text-sm text-gray-500 mb-2">#{p.distrito}, #{p.provincia}</p>
-                            <p class="text-lg font-bold text-gray-900">$ #{p.precioUsd}</p>
-                            <p class="text-xs text-gray-400 mb-3">S/ #{p.precioPen}</p>
+                            <p class="text-lg font-bold text-gray-900">$ <h:outputText value="#{p.precioUsd}"><f:convertNumber pattern="#,##0"/></h:outputText></p>
+                            <p class="text-xs text-gray-400 mb-3">S/ <h:outputText value="#{p.precioPen}"><f:convertNumber pattern="#,##0"/></h:outputText></p>
                             <div class="flex gap-2">
                                 <a href="#{request.contextPath}/detalle_propiedad.xhtml?id=#{p.id}"
                                    class="flex-1 text-center bg-gray-900 hover:bg-gray-800 text-white py-2 rounded-xl text-sm font-medium">#{msg['propiedad.ver']}</a>
                                 <h:form style="display:inline">
-                                    <h:commandButton action="#{favoritoBean.removerFavorito(p.id)}" value="✕"
+                                    <h:commandButton action="#{favoritoBean.removerFavorito(p.id)}" value="Quitar"
                                         class="bg-red-50 hover:bg-red-100 text-red-500 px-3 py-2 rounded-xl text-sm"/>
                                 </h:form>
                             </div>
                         </div>
                     </div>
                 </c:forEach>
-            </div>
+            </h:panelGroup>
         </div>
     </ui:define>
 </ui:composition>

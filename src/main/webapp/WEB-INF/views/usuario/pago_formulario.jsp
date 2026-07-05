@@ -24,8 +24,8 @@
             <select name="metodoPago" required class="w-full px-4 py-3 rounded-lg border focus:ring-2 focus:ring-blue-500 outline-none bg-white">
                 <option value="TARJETA">Tarjeta</option><option value="TRANSFERENCIA">Transferencia</option><option value="YAPE">Yape</option><option value="EFECTIVO">Efectivo</option>
             </select></div>
-        <div><label class="block text-sm font-bold text-slate-700 mb-2">Nombre Titular *</label><input type="text" required class="w-full px-4 py-3 rounded-lg border focus:ring-2 focus:ring-blue-500 outline-none"></div>
-        <div><label class="block text-sm font-bold text-slate-700 mb-2">RUC/DNI *</label><input type="text" required class="w-full px-4 py-3 rounded-lg border focus:ring-2 focus:ring-blue-500 outline-none"></div>
+        <div><label class="block text-sm font-bold text-slate-700 mb-2">Nombre Titular *</label><input type="text" name="nombreTitular" required class="w-full px-4 py-3 rounded-lg border focus:ring-2 focus:ring-blue-500 outline-none"></div>
+        <div><label class="block text-sm font-bold text-slate-700 mb-2">RUC/DNI *</label><input type="text" name="documentoTitular" required class="w-full px-4 py-3 rounded-lg border focus:ring-2 focus:ring-blue-500 outline-none"></div>
         <button type="submit" class="w-full bg-brandBtn hover:bg-brandHover text-white font-bold py-4 rounded-xl shadow-lg">Confirmar Pago</button>
     </form>
 </div></main>

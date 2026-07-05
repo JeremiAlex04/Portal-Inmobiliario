@@ -1,8 +1,11 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <%@ taglib uri="jakarta.tags.core" prefix="c" %>
 <%@ page import="org.example.proyectoweb.facade.PropiedadFacade" %>
+<%@ page import="org.example.proyectoweb.facade.FavoritoFacade" %>
 <%@ page import="org.example.proyectoweb.dto.PropiedadDTO" %>
+<%@ page import="org.example.proyectoweb.dto.UsuarioDTO" %>
 <%@ page import="java.util.List" %>
+<%@ page import="java.util.Set" %>
 <%
     try {
         PropiedadFacade facade = new PropiedadFacade();
@@ -10,6 +13,13 @@
         request.setAttribute("destacadas", destacadas);
         request.setAttribute("listaDistritos", facade.obtenerDistritos());
         request.setAttribute("listaTipos", facade.obtenerTiposInmueble());
+
+        UsuarioDTO usuarioSesion = (UsuarioDTO) session.getAttribute("usuarioLogueado");
+        if (usuarioSesion != null) {
+            FavoritoFacade favoritoFacade = new FavoritoFacade();
+            Set<Integer> favoritosIds = favoritoFacade.obtenerIdsFavoritos(usuarioSesion.getIdUsuario());
+            request.setAttribute("favoritosIds", favoritosIds);
+        }
     } catch (Exception e) {
         e.printStackTrace();
         request.setAttribute("destacadas", new java.util.ArrayList<PropiedadDTO>());
@@ -20,7 +30,7 @@
 <!DOCTYPE html>
 <html lang="es" class="scroll-smooth">
 <head>
-    <c:set var="pageTitle" value="Inmobix - Portal Inmobiliario Premium" scope="request" />
+    <c:set var="pageTitle" value="Inmobix - Inicio" scope="request" />
     <jsp:include page="/WEB-INF/views/layout/head.jsp" />
 </head>
 <body class="bg-brandBg text-brandText flex flex-col min-h-screen font-body">
@@ -56,7 +66,7 @@
                 <div class="max-w-4xl">
                     <span class="inline-flex items-center gap-2 px-4 py-2 rounded-full border border-white/15 bg-white/5 text-[11px] font-bold uppercase tracking-[0.25em] text-amber-300 backdrop-blur-sm mb-8 badge-shimmer">
                         <span class="h-1.5 w-1.5 rounded-full bg-amber-400 animate-pulse"></span>
-                        Portal Inmobiliario Premium
+                        Inmobix
                     </span>
 
                     <h1 class="font-title text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-light tracking-tight leading-[1.08] mb-4">
@@ -296,10 +306,27 @@
                                             </c:choose>
                                         </span>
                                     </div>
-                                    <a href="${pageContext.request.contextPath}/propiedades?accion=ver&id=${p.id}" class="inline-flex items-center justify-center gap-1.5 bg-black hover:bg-slate-800 text-white text-xs font-bold px-5 py-2.5 rounded-full transition-all hover:scale-[1.03] shadow-md">
-                                        Ver ficha
-                                        <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path></svg>
-                                    </a>
+                                    <div class="flex items-center gap-2">
+                                        <c:if test="${not empty sessionScope.usuarioLogueado}">
+                                            <form action="${pageContext.request.contextPath}/favorito" method="post" class="inline">
+                                                <input type="hidden" name="id" value="${p.id}" />
+                                                <c:choose>
+                                                    <c:when test="${not empty favoritosIds and favoritosIds.contains(p.id)}">
+                                                        <input type="hidden" name="accion" value="remover" />
+                                                        <button type="submit" class="inline-flex items-center justify-center text-xs font-bold px-3 py-2.5 rounded-full transition-all bg-red-50 text-red-600 hover:bg-red-100 border border-red-200">Quitar</button>
+                                                    </c:when>
+                                                    <c:otherwise>
+                                                        <input type="hidden" name="accion" value="agregar" />
+                                                        <button type="submit" class="inline-flex items-center justify-center text-xs font-bold px-3 py-2.5 rounded-full transition-all bg-slate-100 text-slate-700 hover:bg-slate-200 border border-slate-200">Favorito</button>
+                                                    </c:otherwise>
+                                                </c:choose>
+                                            </form>
+                                        </c:if>
+                                        <a href="${pageContext.request.contextPath}/propiedades?accion=ver&id=${p.id}" class="inline-flex items-center justify-center gap-1.5 bg-black hover:bg-slate-800 text-white text-xs font-bold px-5 py-2.5 rounded-full transition-all hover:scale-[1.03] shadow-md">
+                                            Ver ficha
+                                            <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path></svg>
+                                        </a>
+                                    </div>
                                 </div>
                             </div>
                         </div>

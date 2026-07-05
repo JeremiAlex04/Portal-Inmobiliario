@@ -94,16 +94,20 @@
                                  <!-- Password field -->
                                 <div>
                                     <label class="block text-xs font-black text-slate-400 uppercase tracking-[0.1em] mb-1.5 px-1">#{msg['auth.register.password']}</label>
-                                    <div class="relative">
-                                        <h:inputSecret value="#{authBean.passwordRegistro}" required="true"
-                                                       requiredMessage="Escribe tu contraseña."
-                                                       styleClass="w-full bg-slate-50 border border-slate-200 text-slate-900 rounded-xl pl-4 pr-10 py-3 text-sm focus:outline-none focus:border-black focus:ring-2 focus:ring-black/10 transition-all placeholder:text-slate-400"
-                                                       placeholder="••••••••" />
-                                        <button type="button" onclick="togglePasswordVisibility(this)" class="absolute inset-y-0 right-0 pr-3.5 flex items-center text-slate-400 hover:text-black transition-colors focus:outline-none cursor-pointer">
-                                            <svg class="w-4 h-4 icon-show" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"></path></svg>
-                                            <svg class="w-4 h-4 icon-hide hidden" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13.875 18.825A10.05 10.05 0 0112 19c-4.478 0-8.268-2.943-9.542-7a10.024 10.024 0 014.138-4.757M9.504 9.504a3 3 0 004.243 4.243M9.878 9.878l4.242 4.242M3 3l18 18"></path></svg>
-                                        </button>
-                                    </div>
+                                     <div class="relative">
+                                         <h:inputSecret value="#{authBean.passwordRegistro}" required="true"
+                                                        requiredMessage="Escribe tu contraseña."
+                                                        styleClass="w-full bg-slate-50 border border-slate-200 text-slate-900 rounded-xl pl-4 pr-10 py-3 text-sm focus:outline-none focus:border-black focus:ring-2 focus:ring-black/10 transition-all placeholder:text-slate-400"
+                                                        placeholder="••••••••" />
+                                         <button type="button" onclick="togglePasswordVisibility(this)" class="absolute inset-y-0 right-0 pr-3.5 flex items-center text-slate-400 hover:text-black transition-colors focus:outline-none cursor-pointer">
+                                             <span class="icon-show">
+                                                 <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"></path></svg>
+                                             </span>
+                                             <span class="icon-hide hidden">
+                                                 <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13.875 18.825A10.05 10.05 0 0112 19c-4.478 0-8.268-2.943-9.542-7a10.024 10.024 0 014.138-4.757M9.504 9.504a3 3 0 004.243 4.243M9.878 9.878l4.242 4.242M3 3l18 18"></path></svg>
+                                             </span>
+                                         </button>
+                                     </div>
                                     <p class="mt-1.5 text-[10px] font-semibold text-slate-400 px-1">Mínimo 6 caracteres. Recomendamos una combinación segura.</p>
                                 </div>
 

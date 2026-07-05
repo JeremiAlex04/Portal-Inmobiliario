@@ -19,15 +19,15 @@
                     <a href="#{request.contextPath}/propiedades.xhtml" class="text-sm font-semibold #{facesContext.viewRoot.viewId eq '/propiedades.xhtml' ? 'text-white' : 'text-white/80 hover:text-white'} transition-colors">#{msg['menu.catalogo']}</a>
                     <a href="#{request.contextPath}/planes.xhtml" class="text-sm font-semibold #{facesContext.viewRoot.viewId eq '/planes.xhtml' ? 'text-white' : 'text-white/80 hover:text-white'} transition-colors">#{msg['menu.planes']}</a>
 
-                    <c:if test="#{authBean.logueado}">
+                    <c:if test="#{authBean.sesionActiva}">
                         <a href="#{request.contextPath}/usuario/favoritos.xhtml" class="text-sm font-semibold #{facesContext.viewRoot.viewId eq '/usuario/favoritos.xhtml' ? 'text-white' : 'text-white/80 hover:text-white'} transition-colors inline-flex items-center gap-1">
                             <svg class="w-4 h-4 text-red-400" viewBox="0 0 24 24" fill="currentColor"><path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/></svg>
                             #{msg['menu.favoritos']}
                         </a>
-                        <c:if test="#{authBean.usuario.idRol == 3 or authBean.usuario.idRol == 4}">
+                        <c:if test="#{authBean.idRolSesion == 3 or authBean.idRolSesion == 4}">
                             <a href="#{request.contextPath}/agente/panel.xhtml" class="text-sm font-semibold #{facesContext.viewRoot.viewId eq '/agente/panel.xhtml' ? 'text-white' : 'text-white/80 hover:text-white'} transition-colors">#{msg['menu.panel']}</a>
                         </c:if>
-                        <c:if test="#{authBean.usuario.idRol == 5}">
+                        <c:if test="#{authBean.idRolSesion == 5}">
                             <a href="#{request.contextPath}/admin/dashboard.xhtml" class="text-sm font-semibold text-amber-400 hover:text-amber-300 transition-colors">#{msg['menu.admin']}</a>
                         </c:if>
                     </c:if>
@@ -41,14 +41,14 @@
 
                 <!-- Actions -->
                 <div class="hidden md:flex items-center gap-4">
-                    <c:if test="#{authBean.logueado}">
-                        <span class="text-xs font-semibold px-3 py-2 rounded-full bg-white/10 border border-white/15 text-white">#{authBean.usuario.nombres}</span>
+                    <c:if test="#{authBean.sesionActiva}">
+                        <span class="text-xs font-semibold px-3 py-2 rounded-full bg-white/10 border border-white/15 text-white">#{authBean.nombreUsuarioSesion}</span>
                         <h:form styleClass="inline">
                             <h:commandButton action="#{authBean.logout}" value="#{msg['menu.logout']}"
                                 class="px-4 py-2 rounded-full text-sm font-semibold text-white bg-white/10 hover:bg-white/20 border border-white/15 transition-colors cursor-pointer"/>
                         </h:form>
                     </c:if>
-                    <c:if test="#{not authBean.logueado}">
+                    <c:if test="#{not authBean.sesionActiva}">
                         <a href="#{request.contextPath}/login.xhtml" class="text-sm font-semibold text-white/80 hover:text-white transition-colors">#{msg['menu.login']}</a>
                         <a href="#{request.contextPath}/registro.xhtml" class="px-5 py-2.5 rounded-full text-sm font-semibold bg-white text-black hover:bg-gray-200 transition-colors">#{msg['menu.register']}</a>
                     </c:if>
@@ -73,14 +73,14 @@
                 <a href="#{request.contextPath}/faq.xhtml" class="block py-2 text-sm font-semibold #{facesContext.viewRoot.viewId eq '/faq.xhtml' ? 'text-white' : 'text-white/80 hover:text-white'}">#{msg['menu.faq']}</a>
                 <a href="#{request.contextPath}/contacto.xhtml" class="block py-2 text-sm font-semibold #{facesContext.viewRoot.viewId eq '/contacto.xhtml' ? 'text-white' : 'text-white/80 hover:text-white'}">#{msg['menu.contacto']}</a>
 
-                <c:if test="#{authBean.logueado}">
+                <c:if test="#{authBean.sesionActiva}">
                     <hr class="border-white/10 my-2"/>
                     <a href="#{request.contextPath}/usuario/favoritos.xhtml" class="block py-2 text-sm font-semibold text-white/80 hover:text-white">#{msg['menu.favoritos']}</a>
                     <a href="#{request.contextPath}/usuario/perfil.xhtml" class="block py-2 text-sm font-semibold text-white/80 hover:text-white">#{msg['menu.perfil']}</a>
-                    <c:if test="#{authBean.usuario.idRol == 3 or authBean.usuario.idRol == 4}">
+                    <c:if test="#{authBean.idRolSesion == 3 or authBean.idRolSesion == 4}">
                         <a href="#{request.contextPath}/agente/panel.xhtml" class="block py-2 text-sm font-semibold text-white/80 hover:text-white">#{msg['menu.panel']}</a>
                     </c:if>
-                    <c:if test="#{authBean.usuario.idRol == 5}">
+                    <c:if test="#{authBean.idRolSesion == 5}">
                         <a href="#{request.contextPath}/admin/dashboard.xhtml" class="block py-2 text-sm font-semibold text-amber-400 hover:text-amber-300">#{msg['menu.admin']}</a>
                     </c:if>
                     <hr class="border-white/10 my-2"/>
@@ -89,7 +89,7 @@
                             class="w-full text-left text-sm font-semibold text-red-400 hover:text-red-300 py-2 bg-transparent border-none cursor-pointer"/>
                     </h:form>
                 </c:if>
-                <c:if test="#{not authBean.logueado}">
+                <c:if test="#{not authBean.sesionActiva}">
                     <hr class="border-white/10 my-2"/>
                     <a href="#{request.contextPath}/login.xhtml" class="block py-2 text-sm font-semibold text-white/80 hover:text-white">#{msg['menu.login']}</a>
                     <a href="#{request.contextPath}/registro.xhtml" class="block py-2 text-sm font-semibold text-white">#{msg['menu.register']}</a>

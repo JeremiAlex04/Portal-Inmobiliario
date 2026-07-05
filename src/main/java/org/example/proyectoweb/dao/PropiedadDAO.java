@@ -62,7 +62,9 @@ public class PropiedadDAO {
                     p.setTitulo(rs.getString("titulo"));
                     p.setDescripcion(rs.getString("descripcion"));
                     p.setEstado(rs.getString("estado"));
-                    p.setMonedaBase(rs.getString("moneda_base"));
+                    String monedaBase = rs.getString("moneda_base");
+                    monedaBase = (monedaBase == null || monedaBase.trim().isEmpty()) ? "USD" : monedaBase.trim().toUpperCase();
+                    p.setMonedaBase(monedaBase);
                     p.setPrecioPen(rs.getBigDecimal("precio_pen"));
                     p.setPrecioUsd(rs.getBigDecimal("precio_usd"));
                     p.setTipoInmueble(rs.getString("tipo_inmueble"));
