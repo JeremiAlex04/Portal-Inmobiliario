@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="jakarta.faces.html"
+      xmlns:f="jakarta.faces.core"
+      xmlns:ui="jakarta.faces.facelets"
+      xmlns:c="jakarta.tags.core">
+<ui:composition template="/WEB-INF/templates/plantilla.xhtml">
+    <ui:define name="titulo">Nosotros - #{msg['app.titulo']}</ui:define>
+    <ui:define name="contenido">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16 md:py-24">
+            
+            <!-- Page Header -->
+            <div class="text-center mb-16 md:mb-20">
+                <span class="text-xs font-black uppercase tracking-[0.25em] text-amber-600 block mb-2">Empresa</span>
+                <h1 class="font-title text-3xl md:text-4xl lg:text-5xl font-light tracking-tight text-slate-900 mb-4">Sobre InmobiX</h1>
+                <p class="text-slate-500 max-w-xl mx-auto text-sm md:text-base">Nuestra misión es hacer el proceso de compra, alquiler y publicación de propiedades más transparente, seguro y fluido.</p>
+            </div>
+
+            <!-- Story Section (Two columns) -->
+            <div class="grid grid-cols-1 lg:grid-cols-12 gap-12 items-center mb-24 reveal-stagger active">
+                
+                <!-- Story Text -->
+                <div class="lg:col-span-6 space-y-6">
+                    <span class="text-xs font-black uppercase tracking-[0.25em] text-slate-400 block">Nuestra Historia</span>
+                    <h2 class="font-title text-2xl md:text-4xl font-light text-slate-900 leading-tight">Revolucionando el mercado inmobiliario peruano.</h2>
+                    <p class="text-slate-600 text-sm md:text-base leading-relaxed">
+                        Fundado en 2026, <strong>InmobiX</strong> nació con el objetivo de resolver los principales problemas de confianza y lentitud del sector inmobiliario en el Perú. Creemos que buscar un hogar o publicar un proyecto no debe ser un proceso estresante ni lleno de incertidumbres.
+                    </p>
+                    <p class="text-slate-600 text-sm md:text-base leading-relaxed">
+                        Combinamos tecnología de vanguardia, como filtros de búsqueda avanzada y maquetaciones interactivas premium, con rigurosos procesos de validación de partidas en SUNARP. Esto nos permite garantizar que cada anuncio cumpla con los estándares de seguridad que tu inversión merece.
+                    </p>
+                    <div class="border-l-4 border-amber-500 pl-4 py-2 italic text-slate-500 text-sm">
+                        "La tecnología debe estar al servicio de la tranquilidad de tu familia. En InmobiX creamos puentes de confianza entre agentes, propietarios y compradores."
+                    </div>
+                </div>
+
+                <!-- Story Image (Professional Team Image generated with AI) -->
+                <div class="lg:col-span-6">
+                    <div class="relative rounded-3xl overflow-hidden shadow-2xl border border-slate-200 p-2 bg-slate-50">
+                        <img src="#{request.contextPath}/assets/img/professional_team.png" 
+                             alt="Equipo InmobiX" 
+                             class="rounded-2xl w-full h-auto object-cover" />
+                    </div>
+                </div>
+
+            </div>
+
+            <!-- Core Values Section -->
+            <div class="bg-slate-50 rounded-[2.5rem] border border-slate-200/50 p-8 md:p-16 mb-24 reveal">
+                <div class="text-center mb-12">
+                    <span class="text-xs font-black uppercase tracking-[0.25em] text-amber-600 block mb-2">Valores</span>
+                    <h2 class="font-title text-3xl font-light text-slate-900">Pilares fundamentales</h2>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+                    <!-- Value 1 -->
+                    <div class="bg-white rounded-2xl p-6 md:p-8 shadow-sm border border-slate-100">
+                        <div class="w-12 h-12 rounded-xl bg-black text-white flex items-center justify-center mb-6">
+                            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"></path></svg>
+                        </div>
+                        <h3 class="font-title text-lg font-bold text-slate-900 mb-2">Seguridad Absoluta</h3>
+                        <p class="text-xs text-slate-500 leading-relaxed">
+                            Validamos los datos registrales de las propiedades publicadas para mitigar fraudes e inconsistencias jurídicas en todo el proceso.
+                        </p>
+                    </div>
+
+                    <!-- Value 2 -->
+                    <div class="bg-white rounded-2xl p-6 md:p-8 shadow-sm border border-slate-100">
+                        <div class="w-12 h-12 rounded-xl bg-black text-white flex items-center justify-center mb-6">
+                            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path></svg>
+                        </div>
+                        <h3 class="font-title text-lg font-bold text-slate-900 mb-2">Innovación Constante</h3>
+                        <p class="text-xs text-slate-500 leading-relaxed">
+                            Aplicamos tecnología de renderizado rápido, autocompletado inteligente y optimizaciones visuales para ofrecer la mejor navegación.
+                        </p>
+                    </div>
+
+                    <!-- Value 3 -->
+                    <div class="bg-white rounded-2xl p-6 md:p-8 shadow-sm border border-slate-100">
+                        <div class="w-12 h-12 rounded-xl bg-black text-white flex items-center justify-center mb-6">
+                            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"></path></svg>
+                        </div>
+                        <h3 class="font-title text-lg font-bold text-slate-900 mb-2">Trato Directo y Justo</h3>
+                        <p class="text-xs text-slate-500 leading-relaxed">
+                            Fomentamos la comunicación fluida y sin barreras artificiales entre agentes, constructoras y compradores directos.
+                        </p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Stats Block -->
+            <div class="grid grid-cols-2 lg:grid-cols-4 gap-6 text-center reveal-stagger active">
+                <div class="border-b-2 border-slate-100 pb-6 md:border-b-0 md:border-r border-slate-100 last:border-0">
+                    <div class="text-4xl font-black text-slate-900">#{adminBean.totalPropiedades}</div>
+                    <div class="text-xs text-slate-400 font-bold uppercase tracking-wider mt-1.5">Inmuebles registrados</div>
+                </div>
+                <div class="border-b-2 border-slate-100 pb-6 md:border-b-0 md:border-r border-slate-100 last:border-0">
+                    <div class="text-4xl font-black text-slate-900">#{adminBean.totalAgentes}</div>
+                    <div class="text-xs text-slate-400 font-bold uppercase tracking-wider mt-1.5">Agentes autorizados</div>
+                </div>
+                <div class="border-b-2 border-slate-100 pb-6 md:border-b-0 md:border-r border-slate-100 last:border-0">
+                    <div class="text-4xl font-black text-slate-900">99%</div>
+                    <div class="text-xs text-slate-400 font-bold uppercase tracking-wider mt-1.5">Clientes satisfechos</div>
+                </div>
+                <div class="pb-6 last:border-0">
+                    <div class="text-4xl font-black text-slate-900">24/7</div>
+                    <div class="text-xs text-slate-400 font-bold uppercase tracking-wider mt-1.5">Monitoreo y Soporte</div>
+                </div>
+            </div>
+
+        </div>
+    </ui:define>
+</ui:composition>
+</html>

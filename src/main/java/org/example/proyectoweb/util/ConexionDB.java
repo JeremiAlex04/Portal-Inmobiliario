@@ -12,20 +12,16 @@ public class ConexionDB {
     private static final String PASSWORD = "200319";
 
     public static Connection getConnection() {
-        Connection conn = null;
         try {
-            // Registrar explícitamente el driver de MySQL (Requerido en algunos entornos Servlet antiguos/clásicos)
             Class.forName("com.mysql.cj.jdbc.Driver");
-            conn = DriverManager.getConnection(URL, USER, PASSWORD);
-            System.out.println("Conexión exitosa a la base de datos inmobix_db");
+            Connection conn = DriverManager.getConnection(URL, USER, PASSWORD);
+            return conn;
         } catch (ClassNotFoundException e) {
-            System.err.println("Error: No se encontró el driver de MySQL.");
-            e.printStackTrace();
+            throw new RuntimeException("Error: No se encontró el driver de MySQL.", e);
         } catch (SQLException e) {
-            System.err.println(
-                    "Error: Fallo al conectar con la base de datos. Verifica credenciales y que el servidor MySQL esté corriendo.");
-            e.printStackTrace();
+            throw new RuntimeException(
+                    "Error: Fallo al conectar con la base de datos. Verifica que MySQL esté corriendo en localhost:3306 y que la BD 'inmobix_db' exista. Credenciales: root/200319",
+                    e);
         }
-        return conn;
     }
 }

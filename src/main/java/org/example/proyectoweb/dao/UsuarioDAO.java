@@ -7,6 +7,7 @@ import org.mindrot.jbcrypt.BCrypt;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
+import java.util.Locale;
 
 public class UsuarioDAO {
 
@@ -21,7 +22,7 @@ public class UsuarioDAO {
             stmt.setInt(1, rol);
             stmt.setString(2, u.getNombres());
             stmt.setString(3, u.getApellidos());
-            stmt.setString(4, u.getCorreo());
+            stmt.setString(4, normalizarCorreo(u.getCorreo()));
 
             // Generar el hash de la contraseña usando BCrypt
             String hash = BCrypt.hashpw(u.getPasswordHash(), BCrypt.gensalt());
@@ -35,15 +36,18 @@ public class UsuarioDAO {
     }
 
     public UsuarioDTO autenticar(String correo, String passwordEnClaro) {
-        String sql = "SELECT id_usuario, id_rol, nombres, apellidos, correo, password_hash FROM usuario WHERE correo = ? AND activo = 1";
+        String sql = "SELECT id_usuario, id_rol, nombres, apellidos, correo, password_hash, activo FROM usuario WHERE LOWER(correo) = ? AND activo = 1";
 
         try (Connection conn = ConexionDB.getConnection();
                 PreparedStatement stmt = conn.prepareStatement(sql)) {
 
-            stmt.setString(1, correo);
+            stmt.setString(1, normalizarCorreo(correo));
             try (ResultSet rs = stmt.executeQuery()) {
                 if (rs.next()) {
                     String hashBD = rs.getString("password_hash");
+                    if (hashBD == null || passwordEnClaro == null) {
+                        return null;
+                    }
                     // Verificamos si la contraseña coincide con el hash
                     if (BCrypt.checkpw(passwordEnClaro, hashBD)) {
                         UsuarioDTO u = new UsuarioDTO();
@@ -53,6 +57,7 @@ public class UsuarioDAO {
                         u.setApellidos(rs.getString("apellidos"));
                         u.setCorreo(rs.getString("correo"));
                         u.setPasswordHash(hashBD);
+                        u.setActivo(rs.getInt("activo"));
                         return u;
                     }
                 }
@@ -61,6 +66,24 @@ public class UsuarioDAO {
             e.printStackTrace();
         }
         return null;
+    }
+
+    public boolean existeCorreo(String correo) {
+        String sql = "SELECT COUNT(*) FROM usuario WHERE LOWER(correo) = ?";
+        try (Connection conn = ConexionDB.getConnection();
+             PreparedStatement stmt = conn.prepareStatement(sql)) {
+            stmt.setString(1, normalizarCorreo(correo));
+            try (ResultSet rs = stmt.executeQuery()) {
+                return rs.next() && rs.getInt(1) > 0;
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return false;
+    }
+
+    private String normalizarCorreo(String correo) {
+        return correo == null ? "" : correo.trim().toLowerCase(Locale.ROOT);
     }
 
     // ==========================================

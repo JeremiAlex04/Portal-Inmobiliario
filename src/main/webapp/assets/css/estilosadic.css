@@ -1,3 +1,6 @@
+/* ============================================ */
+/* FUENTES TIPOGRÁFICAS                          */
+/* ============================================ */
 .font-title {
     font-family: 'Playfair Display', serif;
 }
@@ -5,40 +8,412 @@
     font-family: 'Inter', sans-serif;
 }
 
+/* ============================================ */
+/* SCROLL REVEAL ANIMATIONS                      */
+/* ============================================ */
 .reveal {
     opacity: 0;
-    transform: translateY(40px);
-    transition: opacity 1s cubic-bezier(0.215, 0.61, 0.355, 1), transform 1s cubic-bezier(0.215, 0.61, 0.355, 1);
+    transform: translateY(40px) scale(0.98);
+    transition: opacity 0.9s cubic-bezier(0.215, 0.61, 0.355, 1),
+                transform 0.9s cubic-bezier(0.215, 0.61, 0.355, 1);
 }
 
 .reveal.active {
     opacity: 1;
-    transform: translateY(0);
+    transform: translateY(0) scale(1);
 }
 
 .reveal-stagger > * {
     opacity: 0;
-    transform: translateY(30px);
-    transition: opacity 0.8s cubic-bezier(0.215, 0.61, 0.355, 1), transform 0.8s cubic-bezier(0.215, 0.61, 0.355, 1);
+    transform: translateY(30px) scale(0.97);
+    transition: opacity 0.7s cubic-bezier(0.215, 0.61, 0.355, 1),
+                transform 0.7s cubic-bezier(0.215, 0.61, 0.355, 1);
 }
 
 .reveal-stagger.active > * {
     opacity: 1;
-    transform: translateY(0);
+    transform: translateY(0) scale(1);
 }
 
-.reveal-stagger.active > *:nth-child(1) { transition-delay: 100ms; }
-.reveal-stagger.active > *:nth-child(2) { transition-delay: 250ms; }
-.reveal-stagger.active > *:nth-child(3) { transition-delay: 400ms; }
+.reveal-stagger.active > *:nth-child(1) { transition-delay: 80ms; }
+.reveal-stagger.active > *:nth-child(2) { transition-delay: 200ms; }
+.reveal-stagger.active > *:nth-child(3) { transition-delay: 320ms; }
+.reveal-stagger.active > *:nth-child(4) { transition-delay: 440ms; }
 
+/* ============================================ */
+/* TYPING CURSOR                                 */
+/* ============================================ */
 @keyframes blink {
     50% { border-color: transparent; }
 }
 .typing-cursor {
-    border-right: 2px solid #FFFFFF;
+    border-right: 2px solid #fbbf24;
     animation: blink 0.75s step-end infinite;
     white-space: nowrap;
 }
 .typing-cursor::before {
     content: '\200B';
+}
+
+/* ============================================ */
+/* PARALLAX HERO                                 */
+/* ============================================ */
+.hero-parallax-bg {
+    will-change: transform;
+    transition: transform 0.1s linear;
+}
+
+/* ============================================ */
+/* FLOATING PARTICLES (CSS-only)                 */
+/* ============================================ */
+@keyframes floatParticle {
+    0%, 100% { transform: translateY(0px) translateX(0px) scale(1); opacity: 0.4; }
+    25% { transform: translateY(-30px) translateX(15px) scale(1.1); opacity: 0.7; }
+    50% { transform: translateY(-20px) translateX(-10px) scale(0.95); opacity: 0.5; }
+    75% { transform: translateY(-40px) translateX(20px) scale(1.05); opacity: 0.6; }
+}
+
+.hero-particle {
+    position: absolute;
+    border-radius: 50%;
+    pointer-events: none;
+    animation: floatParticle ease-in-out infinite;
+}
+
+.hero-particle--1 {
+    width: 6px; height: 6px;
+    background: rgba(251, 191, 36, 0.5);
+    top: 20%; left: 15%;
+    animation-duration: 7s;
+    animation-delay: 0s;
+}
+.hero-particle--2 {
+    width: 4px; height: 4px;
+    background: rgba(251, 191, 36, 0.4);
+    top: 60%; left: 45%;
+    animation-duration: 9s;
+    animation-delay: 1s;
+}
+.hero-particle--3 {
+    width: 8px; height: 8px;
+    background: rgba(255, 255, 255, 0.15);
+    top: 35%; left: 75%;
+    animation-duration: 11s;
+    animation-delay: 2s;
+}
+.hero-particle--4 {
+    width: 3px; height: 3px;
+    background: rgba(251, 191, 36, 0.6);
+    top: 75%; left: 25%;
+    animation-duration: 8s;
+    animation-delay: 3s;
+}
+.hero-particle--5 {
+    width: 5px; height: 5px;
+    background: rgba(255, 255, 255, 0.12);
+    top: 15%; left: 85%;
+    animation-duration: 10s;
+    animation-delay: 0.5s;
+}
+.hero-particle--6 {
+    width: 4px; height: 4px;
+    background: rgba(251, 191, 36, 0.35);
+    top: 50%; left: 65%;
+    animation-duration: 12s;
+    animation-delay: 4s;
+}
+
+/* ============================================ */
+/* SHIMMER BADGE EFFECT                          */
+/* ============================================ */
+@keyframes shimmer {
+    0% { background-position: -200% center; }
+    100% { background-position: 200% center; }
+}
+
+.badge-shimmer {
+    position: relative;
+    overflow: hidden;
+}
+.badge-shimmer::after {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0; bottom: 0;
+    background: linear-gradient(
+        90deg,
+        transparent 0%,
+        rgba(255, 255, 255, 0.25) 50%,
+        transparent 100%
+    );
+    background-size: 200% 100%;
+    animation: shimmer 3s ease-in-out infinite;
+    pointer-events: none;
+}
+
+/* ============================================ */
+/* SEARCH BAR FLOATING                           */
+/* ============================================ */
+.search-bar-floating {
+    background: rgba(255, 255, 255, 0.97);
+    backdrop-filter: blur(20px);
+    box-shadow: 0 25px 60px -12px rgba(0, 0, 0, 0.25),
+                0 0 0 1px rgba(0, 0, 0, 0.05);
+    transition: box-shadow 0.3s ease, transform 0.3s ease;
+}
+.search-bar-floating:hover {
+    box-shadow: 0 30px 70px -10px rgba(0, 0, 0, 0.3),
+                0 0 0 1px rgba(0, 0, 0, 0.08);
+    transform: translateY(-2px);
+}
+
+/* ============================================ */
+/* 3D TILT CARD HOVER                            */
+/* ============================================ */
+.card-tilt {
+    transition: transform 0.4s cubic-bezier(0.215, 0.61, 0.355, 1),
+                box-shadow 0.4s ease;
+    transform-style: preserve-3d;
+    will-change: transform;
+}
+.card-tilt:hover {
+    transform: translateY(-8px) rotateX(2deg) rotateY(-2deg);
+    box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.2),
+                0 0 0 1px rgba(0, 0, 0, 0.05);
+}
+
+/* ============================================ */
+/* EXPLORE-TYPE CARDS — FILL HOVER               */
+/* ============================================ */
+.explore-card {
+    position: relative;
+    overflow: hidden;
+    transition: all 0.4s cubic-bezier(0.215, 0.61, 0.355, 1);
+}
+.explore-card::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: #000000;
+    transform: scaleY(0);
+    transform-origin: bottom;
+    transition: transform 0.4s cubic-bezier(0.215, 0.61, 0.355, 1);
+    z-index: 0;
+    border-radius: inherit;
+}
+.explore-card:hover::before {
+    transform: scaleY(1);
+}
+.explore-card:hover {
+    border-color: #000000;
+}
+.explore-card > * {
+    position: relative;
+    z-index: 1;
+}
+.explore-card:hover .explore-icon {
+    color: #fbbf24 !important;
+    transform: scale(1.1);
+    transition: all 0.3s ease;
+}
+.explore-card:hover .explore-title {
+    color: #ffffff !important;
+}
+.explore-card:hover .explore-desc {
+    color: rgba(255, 255, 255, 0.7) !important;
+}
+
+/* ============================================ */
+/* VALUE CARD — ICON BOUNCE ON REVEAL            */
+/* ============================================ */
+@keyframes iconBounce {
+    0% { transform: scale(0.5) rotate(-10deg); opacity: 0; }
+    60% { transform: scale(1.15) rotate(2deg); opacity: 1; }
+    80% { transform: scale(0.95) rotate(-1deg); }
+    100% { transform: scale(1) rotate(0deg); opacity: 1; }
+}
+
+.value-icon-animated {
+    opacity: 0;
+    transform: scale(0.5);
+}
+.reveal-stagger.active .value-icon-animated {
+    animation: iconBounce 0.6s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+}
+.reveal-stagger.active > *:nth-child(1) .value-icon-animated { animation-delay: 200ms; }
+.reveal-stagger.active > *:nth-child(2) .value-icon-animated { animation-delay: 400ms; }
+.reveal-stagger.active > *:nth-child(3) .value-icon-animated { animation-delay: 600ms; }
+
+/* Value card center (inverted) */
+.value-card-inverted {
+    background: #0a0a0a !important;
+    border-color: #1a1a1a !important;
+}
+.value-card-inverted h3 {
+    color: #ffffff !important;
+}
+.value-card-inverted p {
+    color: rgba(255, 255, 255, 0.6) !important;
+}
+
+/* Value card hover */
+.value-card {
+    transition: all 0.4s cubic-bezier(0.215, 0.61, 0.355, 1);
+}
+.value-card:hover {
+    transform: translateY(-6px);
+    box-shadow: 0 20px 40px -10px rgba(0, 0, 0, 0.15);
+}
+.value-card:hover .value-icon-animated {
+    animation: none;
+    opacity: 1;
+    transform: scale(1.08);
+    transition: transform 0.3s ease;
+}
+
+/* Connector line between value cards */
+.value-connector {
+    position: relative;
+}
+.value-connector::before {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 10%;
+    right: 10%;
+    height: 2px;
+    background: linear-gradient(90deg, transparent, #fbbf24, transparent);
+    opacity: 0.2;
+    z-index: 0;
+}
+@media (max-width: 768px) {
+    .value-connector::before {
+        display: none;
+    }
+}
+
+/* ============================================ */
+/* CTA GLOW BUTTON                               */
+/* ============================================ */
+@keyframes glowPulse {
+    0%, 100% { box-shadow: 0 0 20px rgba(251, 191, 36, 0.3), 0 0 40px rgba(251, 191, 36, 0.1); }
+    50% { box-shadow: 0 0 30px rgba(251, 191, 36, 0.5), 0 0 60px rgba(251, 191, 36, 0.2); }
+}
+
+.btn-glow {
+    animation: glowPulse 2.5s ease-in-out infinite;
+    transition: all 0.3s ease;
+}
+.btn-glow:hover {
+    animation: none;
+    box-shadow: 0 0 35px rgba(251, 191, 36, 0.6), 0 0 70px rgba(251, 191, 36, 0.25);
+    transform: translateY(-2px);
+}
+
+/* Dot grid pattern */
+.dot-grid-pattern {
+    background-image:
+        radial-gradient(circle, rgba(255,255,255,0.06) 1px, transparent 1px);
+    background-size: 24px 24px;
+}
+
+/* ============================================ */
+/* STAT COUNTER STYLES                           */
+/* ============================================ */
+.stat-item {
+    position: relative;
+    overflow: hidden;
+}
+.stat-item::after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 0;
+    height: 2px;
+    background: #fbbf24;
+    transition: width 0.5s ease;
+}
+.stat-item:hover::after {
+    width: 60%;
+}
+
+/* ============================================ */
+/* PROPERTY IMAGE OVERLAY GRADIENT               */
+/* ============================================ */
+.property-image-overlay {
+    background: linear-gradient(
+        to top,
+        rgba(0, 0, 0, 0.7) 0%,
+        rgba(0, 0, 0, 0.2) 40%,
+        rgba(0, 0, 0, 0.05) 70%,
+        transparent 100%
+    );
+}
+
+/* ============================================ */
+/* FEATURE PILL STYLES                           */
+/* ============================================ */
+.feature-pill {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.35rem;
+    transition: all 0.25s ease;
+}
+.feature-pill:hover {
+    background-color: #f1f5f9;
+    transform: translateY(-1px);
+}
+
+/* ============================================ */
+/* SMOOTH SCROLL                                 */
+/* ============================================ */
+html {
+    scroll-behavior: smooth;
+}
+
+/* ============================================ */
+/* RESPONSIVE SEARCH BAR                         */
+/* ============================================ */
+@media (max-width: 768px) {
+    .search-bar-floating {
+        margin-top: -2rem !important;
+    }
+    .search-bar-inner {
+        flex-direction: column !important;
+    }
+    .search-bar-inner > * {
+        width: 100% !important;
+        border-right: none !important;
+        border-bottom: 1px solid #e2e8f0;
+        padding: 0.75rem 1rem !important;
+    }
+    .search-bar-inner > *:last-child {
+        border-bottom: none;
+    }
+}
+
+/* ============================================ */
+/* HERO CAROUSEL DOTS                           */
+/* ============================================ */
+.hero-carousel-dot {
+    transition: width 0.3s ease, background-color 0.3s ease;
+}
+
+/* ============================================ */
+/* KEN BURNS ANIMATION                          */
+/* ============================================ */
+@keyframes kenBurns {
+    0% {
+        transform: scale(1.05) translate(0, 0);
+    }
+    50% {
+        transform: scale(1.12) translate(-1%, -0.5%);
+    }
+    100% {
+        transform: scale(1.05) translate(0, 0);
+    }
+}
+.ken-burns-active {
+    animation: kenBurns 25s infinite ease-in-out;
 }

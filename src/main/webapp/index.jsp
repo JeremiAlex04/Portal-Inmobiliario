@@ -1,8 +1,11 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <%@ taglib uri="jakarta.tags.core" prefix="c" %>
 <%@ page import="org.example.proyectoweb.facade.PropiedadFacade" %>
+<%@ page import="org.example.proyectoweb.facade.FavoritoFacade" %>
 <%@ page import="org.example.proyectoweb.dto.PropiedadDTO" %>
+<%@ page import="org.example.proyectoweb.dto.UsuarioDTO" %>
 <%@ page import="java.util.List" %>
+<%@ page import="java.util.Set" %>
 <%
     try {
         PropiedadFacade facade = new PropiedadFacade();
@@ -10,6 +13,13 @@
         request.setAttribute("destacadas", destacadas);
         request.setAttribute("listaDistritos", facade.obtenerDistritos());
         request.setAttribute("listaTipos", facade.obtenerTiposInmueble());
+
+        UsuarioDTO usuarioSesion = (UsuarioDTO) session.getAttribute("usuarioLogueado");
+        if (usuarioSesion != null) {
+            FavoritoFacade favoritoFacade = new FavoritoFacade();
+            Set<Integer> favoritosIds = favoritoFacade.obtenerIdsFavoritos(usuarioSesion.getIdUsuario());
+            request.setAttribute("favoritosIds", favoritosIds);
+        }
     } catch (Exception e) {
         e.printStackTrace();
         request.setAttribute("destacadas", new java.util.ArrayList<PropiedadDTO>());
@@ -18,341 +28,493 @@
     }
 %>
 <!DOCTYPE html>
-    <html lang="es" class="scroll-smooth">
-
-    <head>
-        <c:set var="pageTitle" value="Inmobix - Portal Inmobiliario" scope="request" />
-        <jsp:include page="/WEB-INF/views/layout/head.jsp" />
-    </head>
-
-    <body class="bg-brandBg text-brandText flex flex-col min-h-screen font-body">
-
-        <!-- Navbar Premium con Glassmorphism -->
-            <c:set var="activePage" value="inicio" scope="request" />
+<html lang="es" class="scroll-smooth">
+<head>
+    <c:set var="pageTitle" value="Inmobix - Inicio" scope="request" />
+    <jsp:include page="/WEB-INF/views/layout/head.jsp" />
+</head>
+<body class="bg-brandBg text-brandText flex flex-col min-h-screen font-body">
+    <c:set var="activePage" value="inicio" scope="request" />
     <jsp:include page="/WEB-INF/views/layout/header.jsp" />
 
-        <!-- Hero Section -->
-        <main class="flex-grow pt-20">
-            <div class="relative min-h-[80vh] flex items-center justify-center overflow-hidden">
-                <!-- Background Image -->
-                <div class="absolute inset-0 z-0">
-                    <!-- Imagen de Header-->
-                    <img src="https://www.ciudaris.com/blog/wp-content/uploads/elegir-mejor-inmobiliaria-peru-ciudaris.jpg"
-                        alt="Hero Background" class="w-full h-full object-cover" />
-                    <div class="absolute inset-0 bg-gradient-to-r from-black/85 via-black/50 to-transparent">
+    <main class="flex-grow pt-20">
+
+        <!-- ========================================== -->
+        <!-- HERO SECTION — PARALLAX + TYPING           -->
+        <!-- ========================================== -->
+        <section id="hero-section" class="relative overflow-hidden bg-slate-950 text-white">
+            <!-- Background Image with Parallax -->
+            <div class="absolute inset-0">
+                <img id="hero-bg-img"
+                     src="https://www.ciudaris.com/blog/wp-content/uploads/elegir-mejor-inmobiliaria-peru-ciudaris.jpg"
+                     alt="Inmobix Hero"
+                     class="h-full w-full object-cover opacity-30 hero-parallax-bg" style="transform: scale(1.1);" />
+                <div class="absolute inset-0 bg-gradient-to-br from-black/90 via-slate-950/80 to-black/90"></div>
+                <div class="absolute inset-0 bg-[radial-gradient(circle_at_top_right,_rgba(251,191,36,.15),_transparent_35%),radial-gradient(circle_at_bottom_left,_rgba(255,255,255,.06),_transparent_40%)]"></div>
+            </div>
+
+            <!-- Floating Particles -->
+            <div class="hero-particle hero-particle--1"></div>
+            <div class="hero-particle hero-particle--2"></div>
+            <div class="hero-particle hero-particle--3"></div>
+            <div class="hero-particle hero-particle--4"></div>
+            <div class="hero-particle hero-particle--5"></div>
+            <div class="hero-particle hero-particle--6"></div>
+
+            <!-- Hero Content -->
+            <div class="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-24 md:py-32 lg:py-40">
+                <div class="max-w-4xl">
+                    <span class="inline-flex items-center gap-2 px-4 py-2 rounded-full border border-white/15 bg-white/5 text-[11px] font-bold uppercase tracking-[0.25em] text-amber-300 backdrop-blur-sm mb-8 badge-shimmer">
+                        <span class="h-1.5 w-1.5 rounded-full bg-amber-400 animate-pulse"></span>
+                        Inmobix
+                    </span>
+
+                    <h1 class="font-title text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-light tracking-tight leading-[1.08] mb-4">
+                        El lugar perfecto
+                    </h1>
+                    <h2 class="font-title text-3xl sm:text-4xl md:text-5xl lg:text-6xl italic text-amber-200/90 tracking-tight leading-[1.08] mb-8 min-h-[1.2em]">
+                        <span id="typed-text" class="typing-cursor"></span>
+                    </h2>
+
+                    <p class="text-base sm:text-lg lg:text-xl text-slate-300 leading-relaxed max-w-2xl mb-10">
+                        Descubre propiedades exclusivas en las mejores zonas del Perú.
+                        Comprar, alquilar o vender nunca fue tan fácil y seguro.
+                    </p>
+
+                    <div class="flex flex-wrap gap-3 text-sm">
+                        <span class="rounded-full border border-white/10 bg-white/5 px-4 py-2 text-slate-200 backdrop-blur-sm">
+                            <svg class="w-3.5 h-3.5 inline mr-1 text-amber-400" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"></path></svg>
+                            Búsqueda inteligente
+                        </span>
+                        <span class="rounded-full border border-white/10 bg-white/5 px-4 py-2 text-slate-200 backdrop-blur-sm">
+                            <svg class="w-3.5 h-3.5 inline mr-1 text-amber-400" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"></path></svg>
+                            Propiedades verificadas
+                        </span>
+                        <span class="rounded-full border border-white/10 bg-white/5 px-4 py-2 text-slate-200 backdrop-blur-sm">
+                            <svg class="w-3.5 h-3.5 inline mr-1 text-amber-400" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"></path></svg>
+                            Contacto directo
+                        </span>
                     </div>
                 </div>
 
-                <div class="relative z-10 w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col items-start text-left gap-10">
-                    <div class="max-w-2xl">
-                        <span class="px-4 py-1.5 rounded-full bg-white/10 border border-white/20 text-white text-xs font-semibold tracking-wide mb-6 backdrop-blur-sm inline-block">Encuentra tu próximo hogar</span>
-                        <h1 class="font-title text-3xl sm:text-4xl md:text-6xl lg:text-7xl font-light text-white leading-tight mb-6 tracking-tight">
-                            El lugar perfecto <br /> <span id="typed-text" class="typing-cursor italic text-zinc-300"></span>
-                        </h1>
-                        <p class="text-lg md:text-xl text-slate-300 max-w-lg leading-relaxed">
-                            Descubre propiedades exclusivas en las mejores zonas del Perú. Comprar, alquilar o vender nunca fue tan fácil y seguro.
-                        </p>
+                <!-- Stats — Animated Counters -->
+                <div id="stats-section" class="grid grid-cols-2 lg:grid-cols-4 gap-4 mt-16 lg:mt-20 reveal">
+                    <div class="stat-item rounded-2xl border border-white/10 bg-white/5 backdrop-blur p-5 text-center">
+                        <div class="text-3xl font-black text-white stat-counter" data-target="1500" data-suffix="+">0</div>
+                        <div class="text-[11px] uppercase tracking-[0.2em] text-slate-400 mt-1.5 font-bold">Inmuebles activos</div>
                     </div>
-
-                    <!-- Buscador Inteligente Premium -->
-                    <div class="w-full max-w-4xl bg-black/45 backdrop-blur-md border border-white/15 rounded-3xl p-6 shadow-2xl transition-all hover:border-white/25">
-                        <form action="${pageContext.request.contextPath}/propiedades" method="get" class="flex flex-col gap-4">
-                            <!-- Pestañas Compra / Alquiler -->
-                            <div class="flex items-center gap-2 border-b border-white/10 pb-4">
-                                <input type="hidden" name="operacion" id="search-operacion" value="VENTA" />
-                                <button type="button" onclick="setSearchOperacion('VENTA')" id="btn-tab-venta" class="px-6 py-2 rounded-full text-xs font-bold bg-white text-black shadow-md transition-all duration-300 hover:scale-105">Comprar</button>
-                                <button type="button" onclick="setSearchOperacion('ALQUILER')" id="btn-tab-alquiler" class="px-6 py-2 rounded-full text-xs font-bold text-white/80 hover:text-white hover:bg-white/10 transition-all duration-300 hover:scale-105">Alquilar</button>
-                            </div>
-
-                            <!-- Columnas del Buscador -->
-                            <div class="grid grid-cols-1 md:grid-cols-12 gap-4 items-end">
-                                <!-- Ubicación / Distrito -->
-                                <div class="md:col-span-6 relative">
-                                    <label class="block text-[10px] font-black text-zinc-300 uppercase tracking-widest mb-1.5">¿Dónde deseas buscar?</label>
-                                    <div class="relative">
-                                        <div class="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-zinc-400">
-                                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"></path></svg>
-                                        </div>
-                                        <input type="text" name="q" id="search-keyword" autocomplete="off" placeholder="Escribe el distrito o provincia..." class="w-full bg-white/10 border border-white/10 text-white rounded-xl pl-10 pr-4 py-3.5 text-sm focus:outline-none focus:border-white/35 focus:bg-white/15 transition-all" />
-                                        <!-- Sugerencias Inteligentes -->
-                                        <div id="suggestions-box" class="hidden absolute left-0 right-0 top-full mt-2 bg-zinc-950/95 border border-white/15 rounded-2xl shadow-2xl overflow-hidden max-h-60 overflow-y-auto z-50 backdrop-blur-lg">
-                                            <!-- Cargado vía JS -->
-                                        </div>
-                                    </div>
-                                </div>
-
-                                <!-- Tipo de Propiedad -->
-                                <div class="md:col-span-4">
-                                    <label class="block text-[10px] font-black text-zinc-300 uppercase tracking-widest mb-1.5">Tipo de Inmueble</label>
-                                    <div class="relative">
-                                        <select name="tipo" class="w-full bg-white/10 border border-white/10 text-white rounded-xl px-4 py-3.5 text-sm focus:outline-none focus:border-white/35 transition-all appearance-none cursor-pointer">
-                                            <option value="" class="bg-zinc-900 text-white">Todos los tipos</option>
-                                            <c:forEach var="t" items="${listaTipos}">
-                                                <option value="${t.nombre}" class="bg-zinc-900 text-white">${t.nombre}</option>
-                                            </c:forEach>
-                                        </select>
-                                        <div class="absolute inset-y-0 right-0 pr-3.5 flex items-center pointer-events-none text-zinc-400">
-                                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
-                                        </div>
-                                    </div>
-                                </div>
-
-                                <!-- Botón Buscar -->
-                                <div class="md:col-span-2">
-                                    <button type="submit" class="w-full bg-white hover:bg-zinc-200 text-black font-black py-3.5 rounded-xl text-sm transition-all hover:scale-105 flex items-center justify-center gap-2 shadow-lg shadow-white/5">
-                                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg>
-                                        Buscar
-                                    </button>
-                                </div>
-                            </div>
-                        </form>
+                    <div class="stat-item rounded-2xl border border-white/10 bg-white/5 backdrop-blur p-5 text-center">
+                        <div class="text-3xl font-black text-white stat-counter" data-target="80" data-suffix="+">0</div>
+                        <div class="text-[11px] uppercase tracking-[0.2em] text-slate-400 mt-1.5 font-bold">Agentes autorizados</div>
+                    </div>
+                    <div class="stat-item rounded-2xl border border-white/10 bg-white/5 backdrop-blur p-5 text-center">
+                        <div class="text-3xl font-black text-white stat-counter" data-target="99" data-suffix="%">0</div>
+                        <div class="text-[11px] uppercase tracking-[0.2em] text-slate-400 mt-1.5 font-bold">Clientes satisfechos</div>
+                    </div>
+                    <div class="stat-item rounded-2xl border border-white/10 bg-white/5 backdrop-blur p-5 text-center">
+                        <div class="text-3xl font-black text-white stat-counter" data-target="24" data-suffix="h">0</div>
+                        <div class="text-[11px] uppercase tracking-[0.2em] text-slate-400 mt-1.5 font-bold">Tiempo de respuesta</div>
                     </div>
                 </div>
             </div>
+        </section>
 
-            <!-- Propiedades Destacadas (Carga Dinámica) -->
-            <section class="reveal max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-24">
-                <div class="flex flex-col md:flex-row md:items-end justify-between mb-12">
-                    <div>
-                        <span class="text-xs font-bold uppercase tracking-widest text-slate-400 block mb-2">Exclusividad</span>
-                        <h2 class="font-title text-3xl md:text-4xl lg:text-5xl font-light tracking-tight text-slate-900">Propiedades Destacadas</h2>
+        <!-- ========================================== -->
+        <!-- FLOATING SEARCH BAR                        -->
+        <!-- ========================================== -->
+        <section class="relative z-20 max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 -mt-10">
+            <div class="search-bar-floating rounded-2xl p-2 md:p-3">
+                <form action="${pageContext.request.contextPath}/propiedades" method="get">
+                    <input type="hidden" name="operacion" id="search-operacion" value="VENTA" />
+
+                    <div class="flex flex-col md:flex-row items-stretch search-bar-inner">
+                        <!-- Tabs -->
+                        <div class="flex gap-1.5 p-2 md:pr-4 md:border-r border-slate-200 shrink-0">
+                            <button type="button" onclick="setSearchOperacion('VENTA')" id="btn-tab-venta"
+                                    class="px-5 py-2.5 rounded-xl text-xs font-bold bg-black text-white shadow-md transition-all duration-300 hover:scale-[1.02]">
+                                Comprar
+                            </button>
+                            <button type="button" onclick="setSearchOperacion('ALQUILER')" id="btn-tab-alquiler"
+                                    class="px-5 py-2.5 rounded-xl text-xs font-bold text-slate-500 hover:text-black hover:bg-slate-100 transition-all duration-300 hover:scale-[1.02] border border-slate-200">
+                                Alquilar
+                            </button>
+                        </div>
+
+                        <!-- Location Input -->
+                        <div class="relative flex-1 p-2">
+                            <label class="block text-[10px] font-black text-slate-400 uppercase tracking-[0.2em] mb-1 px-1">Ubicación</label>
+                            <div class="relative">
+                                <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-slate-400">
+                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"></path></svg>
+                                </div>
+                                <input type="text" name="q" id="search-keyword" autocomplete="off"
+                                       placeholder="Distrito, provincia o referencia..."
+                                       class="w-full bg-slate-50 border border-slate-200 text-slate-900 rounded-xl pl-10 pr-4 py-3 text-sm focus:outline-none focus:border-black focus:ring-2 focus:ring-black/10 transition-all placeholder:text-slate-400" />
+                                <div id="suggestions-box" class="hidden absolute left-0 right-0 top-full mt-2 bg-white border border-slate-200 rounded-xl shadow-2xl overflow-hidden max-h-60 overflow-y-auto z-50"></div>
+                            </div>
+                        </div>
+
+                        <!-- Type Select -->
+                        <div class="relative p-2 md:border-l border-slate-200">
+                            <label class="block text-[10px] font-black text-slate-400 uppercase tracking-[0.2em] mb-1 px-1">Tipo de inmueble</label>
+                            <div class="relative">
+                                <select name="tipo" class="w-full md:w-48 bg-slate-50 border border-slate-200 text-slate-900 rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-black focus:ring-2 focus:ring-black/10 transition-all appearance-none cursor-pointer">
+                                    <option value="">Todos los tipos</option>
+                                    <c:forEach var="t" items="${listaTipos}">
+                                        <option value="${t.nombre}">${t.nombre}</option>
+                                    </c:forEach>
+                                </select>
+                                <div class="absolute inset-y-0 right-0 pr-3 flex items-center pointer-events-none text-slate-400">
+                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Search Button -->
+                        <div class="p-2 flex items-end shrink-0">
+                            <button type="submit" class="w-full md:w-auto inline-flex items-center justify-center gap-2 bg-black hover:bg-slate-800 text-white font-bold py-3 px-8 rounded-xl text-sm transition-all hover:scale-[1.02] shadow-lg shadow-black/20">
+                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg>
+                                Buscar
+                            </button>
+                        </div>
                     </div>
-                    <a href="${pageContext.request.contextPath}/propiedades" class="text-sm font-bold text-black border-b-2 border-black pb-1 hover:text-slate-500 hover:border-slate-500 transition-all mt-4 md:mt-0 flex items-center gap-1">
+                </form>
+            </div>
+        </section>
+
+        <!-- ========================================== -->
+        <!-- EXPLORE BY TYPE                            -->
+        <!-- ========================================== -->
+        <section class="reveal max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20 md:py-24">
+            <div class="text-center mb-12">
+                <span class="text-xs font-black uppercase tracking-[0.25em] text-amber-600 block mb-2">Categorías</span>
+                <h2 class="font-title text-3xl md:text-4xl lg:text-5xl font-light tracking-tight text-slate-900">Explora por tipo de propiedad</h2>
+                <p class="text-slate-500 mt-3 max-w-xl mx-auto text-sm md:text-base">Encuentra exactamente lo que buscas. Filtra por categoría y descubre las mejores opciones disponibles.</p>
+            </div>
+
+            <div class="grid grid-cols-2 lg:grid-cols-4 gap-4 md:gap-6 reveal-stagger">
+                <!-- Departamento -->
+                <a href="${pageContext.request.contextPath}/propiedades?tipo=Departamento" class="explore-card bg-white border border-slate-200 rounded-2xl p-6 md:p-8 text-center cursor-pointer group">
+                    <div class="explore-icon w-14 h-14 mx-auto mb-4 flex items-center justify-center rounded-2xl bg-slate-100 text-slate-700 transition-all">
+                        <svg class="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"></path></svg>
+                    </div>
+                    <h3 class="explore-title font-bold text-sm text-slate-900 mb-1 transition-colors">Departamento</h3>
+                    <p class="explore-desc text-xs text-slate-400 transition-colors">Urbanos y modernos</p>
+                </a>
+
+                <!-- Casa -->
+                <a href="${pageContext.request.contextPath}/propiedades?tipo=Casa" class="explore-card bg-white border border-slate-200 rounded-2xl p-6 md:p-8 text-center cursor-pointer group">
+                    <div class="explore-icon w-14 h-14 mx-auto mb-4 flex items-center justify-center rounded-2xl bg-slate-100 text-slate-700 transition-all">
+                        <svg class="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"></path></svg>
+                    </div>
+                    <h3 class="explore-title font-bold text-sm text-slate-900 mb-1 transition-colors">Casa</h3>
+                    <p class="explore-desc text-xs text-slate-400 transition-colors">Espacios familiares</p>
+                </a>
+
+                <!-- Terreno -->
+                <a href="${pageContext.request.contextPath}/propiedades?tipo=Terreno" class="explore-card bg-white border border-slate-200 rounded-2xl p-6 md:p-8 text-center cursor-pointer group">
+                    <div class="explore-icon w-14 h-14 mx-auto mb-4 flex items-center justify-center rounded-2xl bg-slate-100 text-slate-700 transition-all">
+                        <svg class="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9 20l-5.447-2.724A1 1 0 013 16.382V5.618a1 1 0 011.447-.894L9 7m0 13l6-3m-6 3V7m6 10l4.553 2.276A1 1 0 0021 18.382V7.618a1 1 0 00-.553-.894L15 4m0 13V4m0 0L9 7"></path></svg>
+                    </div>
+                    <h3 class="explore-title font-bold text-sm text-slate-900 mb-1 transition-colors">Terreno</h3>
+                    <p class="explore-desc text-xs text-slate-400 transition-colors">Para tu proyecto</p>
+                </a>
+
+                <!-- Local Comercial -->
+                <a href="${pageContext.request.contextPath}/propiedades?tipo=Local Comercial" class="explore-card bg-white border border-slate-200 rounded-2xl p-6 md:p-8 text-center cursor-pointer group">
+                    <div class="explore-icon w-14 h-14 mx-auto mb-4 flex items-center justify-center rounded-2xl bg-slate-100 text-slate-700 transition-all">
+                        <svg class="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z"></path></svg>
+                    </div>
+                    <h3 class="explore-title font-bold text-sm text-slate-900 mb-1 transition-colors">Local Comercial</h3>
+                    <p class="explore-desc text-xs text-slate-400 transition-colors">Para tu negocio</p>
+                </a>
+            </div>
+        </section>
+
+        <!-- ========================================== -->
+        <!-- FEATURED PROPERTIES                        -->
+        <!-- ========================================== -->
+        <section class="reveal bg-slate-50/50 border-y border-slate-200/50 py-20 md:py-24">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                <div class="flex flex-col lg:flex-row lg:items-end justify-between gap-6 mb-12">
+                    <div>
+                        <span class="text-xs font-black uppercase tracking-[0.25em] text-amber-600 block mb-2">Exclusividad</span>
+                        <h2 class="font-title text-3xl md:text-4xl lg:text-5xl font-light tracking-tight text-slate-900">Propiedades destacadas</h2>
+                        <p class="text-slate-500 mt-3 max-w-2xl text-sm md:text-base">Propiedades seleccionadas para ofrecer una experiencia visual más clara, elegante y orientada a conversión.</p>
+                    </div>
+                    <a href="${pageContext.request.contextPath}/propiedades" class="inline-flex items-center gap-2 text-sm font-bold text-black border-b-2 border-black pb-1 hover:text-amber-600 hover:border-amber-600 transition-all w-fit">
                         Ver todo el catálogo
                         <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"></path></svg>
                     </a>
                 </div>
 
-                <div class="grid grid-cols-1 md:grid-cols-3 gap-8 reveal-stagger">
+                <div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-8 reveal-stagger">
                     <c:forEach var="p" items="${destacadas}">
-                        <div class="bg-white border border-slate-200 rounded-3xl overflow-hidden shadow-sm hover:shadow-xl transition-all duration-300 flex flex-col group">
-                            <!-- Image -->
+                        <div class="card-tilt group bg-white border border-slate-200 rounded-[2rem] overflow-hidden shadow-sm flex flex-col">
                             <div class="relative h-64 overflow-hidden bg-slate-100">
                                 <c:choose>
                                     <c:when test="${not empty p.fotoPrincipal}">
-                                        <img src="${p.getFotoPrincipalUrl(pageContext.request.contextPath)}" alt="${p.titulo}" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500">
+                                        <img src="${p.getFotoPrincipalUrl(pageContext.request.contextPath)}" alt="${p.titulo}" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700 ease-out">
                                     </c:when>
                                     <c:otherwise>
-                                        <div class="w-full h-full flex items-center justify-center text-slate-300">
-                                            <svg class="w-16 h-16" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"></path>
-                                            </svg>
+                                        <div class="w-full h-full flex items-center justify-center text-slate-300 bg-gradient-to-br from-slate-100 to-slate-200">
+                                            <svg class="w-16 h-16" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"></path></svg>
                                         </div>
                                     </c:otherwise>
                                 </c:choose>
-                                <!-- Badges overlay -->
+                                <div class="absolute inset-0 property-image-overlay"></div>
                                 <div class="absolute top-4 left-4 flex flex-col gap-2">
-                                    <span class="bg-black text-white text-[10px] font-black uppercase tracking-widest px-3 py-1.5 rounded-full shadow-md">${p.operacion}</span>
+                                    <span class="badge-shimmer bg-black text-white text-[10px] font-black uppercase tracking-[0.22em] px-3 py-1.5 rounded-full shadow-md">${p.operacion}</span>
                                     <c:if test="${p.bonoVerde == 1}">
-                                        <span class="bg-emerald-500 text-white text-[9px] font-extrabold uppercase tracking-wider px-2.5 py-1 rounded-full shadow-md">Bono Verde</span>
+                                        <span class="badge-shimmer bg-amber-500 text-black text-[9px] font-extrabold uppercase tracking-wider px-2.5 py-1 rounded-full shadow-md">Bono Verde</span>
                                     </c:if>
+                                </div>
+                                <div class="absolute bottom-4 left-4 right-4 flex items-end justify-between">
+                                    <span class="text-[11px] font-bold uppercase tracking-[0.22em] text-white/90">${p.distrito}, ${p.provincia}</span>
+                                    <span class="inline-flex items-center gap-1 rounded-full bg-white/95 px-3 py-1 text-xs font-black text-black shadow-lg backdrop-blur-sm">${p.areaTotalM2} m²</span>
                                 </div>
                             </div>
 
-                            <!-- Details -->
                             <div class="p-6 flex-grow flex flex-col justify-between">
                                 <div>
-                                    <span class="text-xs text-slate-400 block font-semibold mb-1">${p.distrito}, ${p.provincia}</span>
-                                    <h3 class="font-title text-lg font-medium text-slate-800 line-clamp-1 mb-2 group-hover:text-black transition-colors">${p.titulo}</h3>
-                                    <p class="text-xs text-slate-500 line-clamp-2 mb-4 leading-relaxed">${p.descripcion}</p>
-                                </div>
+                                    <h3 class="font-title text-lg font-medium text-slate-900 line-clamp-1 mb-2 group-hover:text-black transition-colors">${p.titulo}</h3>
+                                    <p class="text-sm text-slate-500 line-clamp-2 mb-5 leading-relaxed">${p.descripcion}</p>
 
-                                <div class="mt-4">
-                                    <div class="flex items-center justify-between border-t border-slate-100 pt-4 mb-4 text-xs text-slate-500 font-semibold">
-                                        <span class="inline-flex items-center gap-1">
-                                            <svg class="w-4 h-4 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"></path></svg>
+                                    <div class="grid grid-cols-3 gap-2 text-xs text-slate-500 font-semibold mb-5">
+                                        <span class="feature-pill rounded-xl bg-slate-50 px-3 py-2 justify-center">
+                                            <svg class="w-3.5 h-3.5 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"></path></svg>
                                             ${p.numDormitorios} Dorm.
                                         </span>
-                                        <span class="inline-flex items-center gap-1">
-                                            <svg class="w-4 h-4 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 14v3m4-3v3m4-3v3M3 21h18M3 10h18M3 7l9-4 9 4M4 10h16v11H4V10z"></path></svg>
+                                        <span class="feature-pill rounded-xl bg-slate-50 px-3 py-2 justify-center">
+                                            <svg class="w-3.5 h-3.5 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 14v3m4-3v3m4-3v3M3 21h18M3 10h18M3 7l9-4 9 4M4 10h16v11H4V10z"></path></svg>
                                             ${p.numBanos} Baños
                                         </span>
-                                        <span class="inline-flex items-center gap-1">
-                                            <svg class="w-4 h-4 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 8V4m0 0h4M4 4l5 5m11-1V4m0 0h-4m4 0l-5 5M4 16v4m0 0h4m-4 0l5-5m11 5v-4m0 4h-4m4 0l-5-5"></path></svg>
+                                        <span class="feature-pill rounded-xl bg-slate-50 px-3 py-2 justify-center">
+                                            <svg class="w-3.5 h-3.5 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 8V4m0 0h4M4 4l5 5m11-1V4m0 0h-4m4 0l-5 5M4 16v4m0 0h4m-4 0l5-5m11 5l-5-5m5 5v-4m0 4h-4"></path></svg>
                                             ${p.areaTotalM2} m²
                                         </span>
                                     </div>
+                                </div>
 
-                                    <div class="flex items-center justify-between">
-                                        <div>
-                                            <span class="text-xs text-slate-400 block font-medium">Precio</span>
-                                            <span class="text-lg font-black text-black">
+                                <div class="flex items-center justify-between border-t border-slate-100 pt-4">
+                                    <div>
+                                        <span class="text-xs text-slate-400 block font-medium">Precio</span>
+                                        <span class="text-xl font-black text-black">
+                                            <c:choose>
+                                                <c:when test="${p.monedaBase == 'USD'}">US$ ${p.precioUsd}</c:when>
+                                                <c:otherwise>S/. ${p.precioPen}</c:otherwise>
+                                            </c:choose>
+                                        </span>
+                                    </div>
+                                    <div class="flex items-center gap-2">
+                                        <c:if test="${not empty sessionScope.usuarioLogueado}">
+                                            <form action="${pageContext.request.contextPath}/favorito" method="post" class="inline">
+                                                <input type="hidden" name="id" value="${p.id}" />
                                                 <c:choose>
-                                                    <c:when test="${p.monedaBase == 'USD'}">US$ ${p.precioUsd}</c:when>
-                                                    <c:otherwise>S/. ${p.precioPen}</c:otherwise>
+                                                    <c:when test="${not empty favoritosIds and favoritosIds.contains(p.id)}">
+                                                        <input type="hidden" name="accion" value="remover" />
+                                                        <button type="submit" class="inline-flex items-center justify-center text-xs font-bold px-3 py-2.5 rounded-full transition-all bg-red-50 text-red-600 hover:bg-red-100 border border-red-200">Quitar</button>
+                                                    </c:when>
+                                                    <c:otherwise>
+                                                        <input type="hidden" name="accion" value="agregar" />
+                                                        <button type="submit" class="inline-flex items-center justify-center text-xs font-bold px-3 py-2.5 rounded-full transition-all bg-slate-100 text-slate-700 hover:bg-slate-200 border border-slate-200">Favorito</button>
+                                                    </c:otherwise>
                                                 </c:choose>
-                                            </span>
-                                        </div>
-                                        <a href="${pageContext.request.contextPath}/propiedades?accion=ver&id=${p.id}" class="bg-black hover:bg-zinc-800 text-white text-xs font-bold px-4 py-2.5 rounded-full transition-all">Ver Ficha</a>
+                                            </form>
+                                        </c:if>
+                                        <a href="${pageContext.request.contextPath}/propiedades?accion=ver&id=${p.id}" class="inline-flex items-center justify-center gap-1.5 bg-black hover:bg-slate-800 text-white text-xs font-bold px-5 py-2.5 rounded-full transition-all hover:scale-[1.03] shadow-md">
+                                            Ver ficha
+                                            <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path></svg>
+                                        </a>
                                     </div>
                                 </div>
                             </div>
                         </div>
                     </c:forEach>
 
-                    <!-- Fallback si no hay propiedades registradas aún -->
                     <c:if test="${empty destacadas}">
-                        <div class="col-span-3 border border-dashed border-slate-300 rounded-3xl p-16 text-center text-slate-500">
-                            <svg class="w-12 h-12 text-slate-300 mx-auto mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"></path>
-                            </svg>
-                            <p class="font-bold">No hay propiedades disponibles en este momento.</p>
-                            <p class="text-xs mt-1">Crea una cuenta de agente y publica tu primera propiedad para verla en la página principal.</p>
+                        <div class="md:col-span-2 xl:col-span-3 border border-dashed border-slate-300 rounded-[2rem] p-16 text-center text-slate-500 bg-white">
+                            <svg class="w-12 h-12 text-slate-300 mx-auto mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"></path></svg>
+                            <p class="font-bold text-slate-800">No hay propiedades disponibles en este momento.</p>
+                            <p class="text-sm mt-1">Crea una cuenta de agente y publica tu primera propiedad para verla en la página principal.</p>
                         </div>
                     </c:if>
                 </div>
-            </section>
+            </div>
+        </section>
 
-            <!-- Propuesta de Valor -->
-            <section class="reveal bg-zinc-50 border-y border-slate-200/60 py-24">
-                <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-                    <span class="text-xs font-bold uppercase tracking-widest text-slate-400 block mb-3">Valor</span>
-                    <h2 class="font-title text-3xl md:text-4xl lg:text-5xl font-light tracking-tight text-slate-900 mb-4">¿Por qué confiar en Inmobix?</h2>
-                    <p class="text-slate-500 max-w-xl mx-auto mb-16 text-sm">Ofrecemos una plataforma robusta y transparente tanto para compradores exigentes como para agentes inmobiliarios independientes.</p>
+        <!-- ========================================== -->
+        <!-- WHY TRUST US — VALUE PROPOSITION            -->
+        <!-- ========================================== -->
+        <section class="reveal py-20 md:py-24">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+                <span class="text-xs font-black uppercase tracking-[0.25em] text-amber-600 block mb-3">Valor</span>
+                <h2 class="font-title text-3xl md:text-4xl lg:text-5xl font-light tracking-tight text-slate-900 mb-4">¿Por qué confiar en Inmobix?</h2>
+                <p class="text-slate-500 max-w-2xl mx-auto mb-16 text-sm md:text-base">Una plataforma pensada para presentar inmuebles con claridad, seguridad y una navegación que impulsa la conversión.</p>
 
-                    <div class="grid grid-cols-1 md:grid-cols-3 gap-12 reveal-stagger">
-                        <div class="space-y-4 flex flex-col items-center">
-                            <div class="w-16 h-16 rounded-full bg-white border border-slate-200 flex items-center justify-center text-black shadow-sm mb-2">
+                <div class="value-connector relative">
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-8 xl:gap-10 reveal-stagger relative z-10">
+                        <!-- Card 1: Seguridad -->
+                        <div class="value-card rounded-[2rem] border border-slate-200 bg-white p-8 md:p-10 shadow-sm">
+                            <div class="value-icon-animated w-16 h-16 rounded-2xl bg-slate-100 flex items-center justify-center text-slate-800 mx-auto mb-6">
                                 <svg class="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"></path></svg>
                             </div>
-                            <h3 class="font-title text-xl font-medium text-slate-800">Seguridad Garantizada</h3>
-                            <p class="text-xs text-slate-500 max-w-xs leading-relaxed">Verificamos las partidas registrales de cada propiedad mediante la SUNARP, asegurando la validez jurídica de la información.</p>
+                            <h3 class="font-title text-xl font-medium text-slate-900 mb-3">Seguridad garantizada</h3>
+                            <p class="text-sm text-slate-500 leading-relaxed">Validamos la información y la partida registral para que cada publicación tenga respaldo y confianza.</p>
                         </div>
 
-                        <div class="space-y-4 flex flex-col items-center">
-                            <div class="w-16 h-16 rounded-full bg-white border border-slate-200 flex items-center justify-center text-black shadow-sm mb-2">
+                        <!-- Card 2: Rapidez (INVERTED) -->
+                        <div class="value-card value-card-inverted rounded-[2rem] border border-slate-800 bg-black p-8 md:p-10 shadow-xl">
+                            <div class="value-icon-animated w-16 h-16 rounded-2xl bg-amber-500 flex items-center justify-center text-black mx-auto mb-6">
                                 <svg class="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path></svg>
                             </div>
-                            <h3 class="font-title text-xl font-medium text-slate-800">Rapidez y Fluidez</h3>
-                            <p class="text-xs text-slate-500 max-w-xs leading-relaxed">Filtros de búsqueda avanzada responsivos y un comparador dinámico para encontrar la propiedad ideal en pocos clics.</p>
+                            <h3 class="font-title text-xl font-medium text-white mb-3">Rapidez y fluidez</h3>
+                            <p class="text-sm text-white/60 leading-relaxed">Búsquedas rápidas, filtros claros y una visualización enfocada en encontrar la propiedad ideal sin fricción.</p>
                         </div>
 
-                        <div class="space-y-4 flex flex-col items-center">
-                            <div class="w-16 h-16 rounded-full bg-white border border-slate-200 flex items-center justify-center text-black shadow-sm mb-2">
+                        <!-- Card 3: Contacto -->
+                        <div class="value-card rounded-[2rem] border border-slate-200 bg-white p-8 md:p-10 shadow-sm">
+                            <div class="value-icon-animated w-16 h-16 rounded-2xl bg-slate-100 flex items-center justify-center text-slate-800 mx-auto mb-6">
                                 <svg class="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8h2a2 2 0 012 2v6a2 2 0 01-2 2h-2v4l-4-4H9a1.994 1.994 0 01-1.414-.586m0 0L11 14h4a2 2 0 002-2V6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2v4l.586-.586z"></path></svg>
                             </div>
-                            <h3 class="font-title text-xl font-medium text-slate-800">Contacto Directo</h3>
-                            <p class="text-xs text-slate-500 max-w-xs leading-relaxed">Sin intermediarios opacos. Comunícate directamente por correo o mensajería de WhatsApp con el agente responsable.</p>
+                            <h3 class="font-title text-xl font-medium text-slate-900 mb-3">Contacto directo</h3>
+                            <p class="text-sm text-slate-500 leading-relaxed">Conecta con agentes y propietarios desde un flujo simple, moderno y preparado para cerrar oportunidades.</p>
                         </div>
                     </div>
                 </div>
-            </section>
+            </div>
+        </section>
 
-            <!-- Estadísticas -->
-            <section id="stats-section" class="reveal max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20 text-center">
-                <div class="grid grid-cols-2 md:grid-cols-4 gap-8">
-                    <div class="border-r border-slate-200 last:border-0 p-4">
-                        <span class="stat-counter text-4xl md:text-5xl font-black text-black block mb-2" data-target="1500" data-suffix="+">0+</span>
-                        <span class="text-xs font-bold text-slate-400 uppercase tracking-wider">Inmuebles Activos</span>
-                    </div>
-                    <div class="border-r border-slate-200 last:border-0 p-4">
-                        <span class="stat-counter text-4xl md:text-5xl font-black text-black block mb-2" data-target="80" data-suffix="+">0+</span>
-                        <span class="text-xs font-bold text-slate-400 uppercase tracking-wider">Agentes Autorizados</span>
-                    </div>
-                    <div class="border-r border-slate-200 last:border-0 p-4">
-                        <span class="stat-counter text-4xl md:text-5xl font-black text-black block mb-2" data-target="99" data-suffix="%">0%</span>
-                        <span class="text-xs font-bold text-slate-400 uppercase tracking-wider">Clientes Satisfechos</span>
-                    </div>
-                    <div class="border-r border-slate-200 last:border-0 p-4">
-                        <span class="stat-counter text-4xl md:text-5xl font-black text-black block mb-2" data-target="24" data-suffix="h">0h</span>
-                        <span class="text-xs font-bold text-slate-400 uppercase tracking-wider">Tiempo de Respuesta</span>
-                    </div>
-                </div>
-            </section>
+        <!-- ========================================== -->
+        <!-- CTA — JOIN US                              -->
+        <!-- ========================================== -->
+        <c:if test="${empty sessionScope.usuarioLogueado || sessionScope.usuarioLogueado.idRol != 2}">
+        <section class="reveal max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 md:py-16">
+            <div class="relative overflow-hidden rounded-[2rem] bg-slate-950 text-white shadow-2xl border border-slate-800 p-10 md:p-16 text-center dot-grid-pattern">
+                <!-- Decorative Glows -->
+                <div class="absolute -right-20 -top-20 w-96 h-96 rounded-full bg-amber-500/10 blur-[80px]"></div>
+                <div class="absolute -left-20 -bottom-20 w-96 h-96 rounded-full bg-white/5 blur-[80px]"></div>
 
-            <!-- Call to Action -->
-            <c:if test="${empty sessionScope.usuarioLogueado || sessionScope.usuarioLogueado.idRol != 2}">
-            <section class="reveal max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pb-24">
-                <div class="bg-black text-white rounded-3xl p-12 text-center shadow-2xl relative overflow-hidden flex flex-col items-center">
-                    <div class="absolute -right-20 -top-20 w-80 h-80 rounded-full bg-zinc-800 opacity-20 filter blur-3xl"></div>
-                    <div class="absolute -left-20 -bottom-20 w-80 h-80 rounded-full bg-zinc-800 opacity-20 filter blur-3xl"></div>
+                <div class="relative z-10 max-w-2xl mx-auto">
+                    <span class="text-xs font-black uppercase tracking-[0.25em] text-amber-300 block mb-4">Únete a nosotros</span>
+                    <h2 class="font-title text-3xl md:text-4xl lg:text-5xl font-light tracking-tight mb-4">¿Deseas vender o alquilar una propiedad?</h2>
+                    <p class="text-slate-300 text-sm md:text-base mb-4 leading-relaxed">Crea tu cuenta de agente, selecciona tu plan preferido y publica tus propiedades en minutos con una experiencia visual de nivel premium.</p>
 
-                    <div class="relative z-10 max-w-xl">
-                        <span class="text-xs font-bold uppercase tracking-widest text-zinc-400 block mb-3">Únete a nosotros</span>
-                        <h2 class="font-title text-3xl md:text-4xl lg:text-5xl font-light tracking-tight mb-4">¿Deseas vender o alquilar una propiedad?</h2>
-                        <p class="text-zinc-400 text-sm mb-8 leading-relaxed">Crea tu cuenta de agente, selecciona tu plan preferido y publica tus propiedades en el portal inmobiliario líder del país en minutos.</p>
-                        <div class="flex flex-wrap justify-center gap-4">
-                            <a href="${pageContext.request.contextPath}/usuario?accion=registro" class="bg-brandBtn hover:bg-brandHover text-white px-8 py-3.5 rounded-full font-bold text-sm shadow-md transition-all hover:-translate-y-0.5">Comenzar Gratis</a>
-                            <a href="${pageContext.request.contextPath}/pagos?accion=planes" class="bg-transparent hover:bg-white/10 text-white border border-white/30 px-8 py-3.5 rounded-full font-bold text-sm transition-all hover:-translate-y-0.5">Ver Planes de Publicación</a>
-                        </div>
+                    <!-- Social Proof -->
+                    <div class="inline-flex items-center gap-2 bg-white/10 border border-white/15 rounded-full px-4 py-2 text-xs text-amber-200 font-semibold mb-8 backdrop-blur-sm">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"></path></svg>
+                        Únete a 80+ agentes verificados
+                    </div>
+
+                    <div class="flex flex-wrap justify-center gap-4">
+                        <a href="${pageContext.request.contextPath}/usuario?accion=registro" class="btn-glow bg-amber-500 hover:bg-amber-400 text-black px-8 py-3.5 rounded-full font-bold text-sm transition-all">
+                            Comenzar Gratis
+                        </a>
+                        <a href="${pageContext.request.contextPath}/pagos?accion=planes" class="bg-transparent hover:bg-white/10 text-white border border-white/20 px-8 py-3.5 rounded-full font-bold text-sm transition-all hover:-translate-y-0.5">
+                            Ver Planes de Publicación
+                        </a>
                     </div>
                 </div>
-            </section>
-            </c:if>
-        </main>
+            </div>
+        </section>
+        </c:if>
+    </main>
 
-        <!-- Footer -->
-        <jsp:include page="/WEB-INF/views/layout/footer.jsp" />
+    <jsp:include page="/WEB-INF/views/layout/footer.jsp" />
 
-        <!-- Script Autocomplete del Buscador Inteligente -->
-        <script>
-            // Exponer distritos de la base de datos a JS
-            const availableDistricts = [
-                <c:forEach var="d" items="${listaDistritos}" varStatus="status">
-                    "${d.nombre}"${not status.last ? ',' : ''}
-                </c:forEach>
-            ];
+    <script>
+        /* ============================================ */
+        /* DISTRICT AUTOCOMPLETE DATA                   */
+        /* ============================================ */
+        const availableDistricts = [
+            <c:forEach var="d" items="${listaDistritos}" varStatus="status">
+                "${d.nombre}"${not status.last ? ',' : ''}
+            </c:forEach>
+        ];
 
-            function setSearchOperacion(op) {
-                document.getElementById('search-operacion').value = op;
-                const btnVenta = document.getElementById('btn-tab-venta');
-                const btnAlquiler = document.getElementById('btn-tab-alquiler');
-                if (op === 'VENTA') {
-                    btnVenta.className = 'px-6 py-2 rounded-full text-xs font-bold bg-white text-black shadow-md transition-all duration-300 hover:scale-105';
-                    btnAlquiler.className = 'px-6 py-2 rounded-full text-xs font-bold text-white/80 hover:text-white hover:bg-white/10 transition-all duration-300 hover:scale-105';
-                } else {
-                    btnAlquiler.className = 'px-6 py-2 rounded-full text-xs font-bold bg-white text-black shadow-md transition-all duration-300 hover:scale-105';
-                    btnVenta.className = 'px-6 py-2 rounded-full text-xs font-bold text-white/80 hover:text-white hover:bg-white/10 transition-all duration-300 hover:scale-105';
-                }
+        /* ============================================ */
+        /* SEARCH OPERATION TABS                        */
+        /* ============================================ */
+        function setSearchOperacion(op) {
+            document.getElementById('search-operacion').value = op;
+            const btnVenta = document.getElementById('btn-tab-venta');
+            const btnAlquiler = document.getElementById('btn-tab-alquiler');
+            if (op === 'VENTA') {
+                btnVenta.className = 'px-5 py-2.5 rounded-xl text-xs font-bold bg-black text-white shadow-md transition-all duration-300 hover:scale-[1.02]';
+                btnAlquiler.className = 'px-5 py-2.5 rounded-xl text-xs font-bold text-slate-500 hover:text-black hover:bg-slate-100 transition-all duration-300 hover:scale-[1.02] border border-slate-200';
+            } else {
+                btnAlquiler.className = 'px-5 py-2.5 rounded-xl text-xs font-bold bg-black text-white shadow-md transition-all duration-300 hover:scale-[1.02]';
+                btnVenta.className = 'px-5 py-2.5 rounded-xl text-xs font-bold text-slate-500 hover:text-black hover:bg-slate-100 transition-all duration-300 hover:scale-[1.02] border border-slate-200';
             }
+        }
 
-            document.addEventListener('DOMContentLoaded', () => {
-                const searchInput = document.getElementById('search-keyword');
-                const suggestionsBox = document.getElementById('suggestions-box');
+        /* ============================================ */
+        /* AUTOCOMPLETE SUGGESTIONS                     */
+        /* ============================================ */
+        document.addEventListener('DOMContentLoaded', () => {
+            const searchInput = document.getElementById('search-keyword');
+            const suggestionsBox = document.getElementById('suggestions-box');
+            if (!searchInput || !suggestionsBox) return;
 
-                if (!searchInput || !suggestionsBox) return;
+            searchInput.addEventListener('input', () => {
+                const val = searchInput.value.toLowerCase().trim();
+                if (!val || val.length < 2) {
+                    suggestionsBox.classList.add('hidden');
+                    return;
+                }
 
-                searchInput.addEventListener('input', () => {
-                    const val = searchInput.value.toLowerCase().trim();
-                    if (!val || val.length < 2) {
+                const filtered = availableDistricts.filter(d => d.toLowerCase().includes(val)).slice(0, 5);
+                if (filtered.length === 0) {
+                    suggestionsBox.classList.add('hidden');
+                    return;
+                }
+
+                suggestionsBox.innerHTML = '';
+                filtered.forEach(d => {
+                    const div = document.createElement('div');
+                    div.className = 'px-4 py-3 hover:bg-slate-50 cursor-pointer text-sm border-b border-slate-100 last:border-b-0 transition-colors text-left text-slate-700';
+                    const cleanName = d.split(' (')[0];
+                    div.innerHTML = '<svg class="w-3.5 h-3.5 inline mr-2 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"></path></svg>' +
+                        '<span class="font-semibold text-slate-900">' + cleanName + '</span> <span class="text-slate-400 text-xs">' + (d.includes('(') ? '(' + d.split(' (')[1] : '') + '</span>';
+                    div.addEventListener('click', () => {
+                        searchInput.value = cleanName;
                         suggestionsBox.classList.add('hidden');
-                        return;
-                    }
-
-                    // Filtrar distritos que contengan la entrada
-                    const filtered = availableDistricts.filter(d => d.toLowerCase().includes(val)).slice(0, 5);
-
-                    if (filtered.length === 0) {
-                        suggestionsBox.classList.add('hidden');
-                        return;
-                    }
-
-                    suggestionsBox.innerHTML = '';
-                    filtered.forEach(d => {
-                        const div = document.createElement('div');
-                        div.className = 'px-4 py-3 hover:bg-white/10 cursor-pointer text-sm border-b border-white/5 last:border-b-0 transition-colors text-left text-white';
-                        
-                        // Separar distrito de provincia
-                        const cleanName = d.split(' (')[0];
-                        div.innerHTML = `<span class="font-bold">${cleanName}</span> <span class="text-zinc-400 text-xs">${d.includes('(') ? '(' + d.split(' (')[1] : ''}</span>`;
-                        
-                        div.addEventListener('click', () => {
-                            searchInput.value = cleanName;
-                            suggestionsBox.classList.add('hidden');
-                        });
-                        suggestionsBox.appendChild(div);
                     });
-
-                    suggestionsBox.classList.remove('hidden');
+                    suggestionsBox.appendChild(div);
                 });
-
-                // Cerrar sugerencias si se hace clic fuera
-                document.addEventListener('click', (e) => {
-                    if (!searchInput.contains(e.target) && !suggestionsBox.contains(e.target)) {
-                        suggestionsBox.classList.add('hidden');
-                    }
-                });
+                suggestionsBox.classList.remove('hidden');
             });
-        </script>
-    </body>
+
+            document.addEventListener('click', (e) => {
+                if (!searchInput.contains(e.target) && !suggestionsBox.contains(e.target)) {
+                    suggestionsBox.classList.add('hidden');
+                }
+            });
+        });
+
+        /* ============================================ */
+        /* PARALLAX EFFECT ON HERO                      */
+        /* ============================================ */
+        (function() {
+            const heroBg = document.getElementById('hero-bg-img');
+            const heroSection = document.getElementById('hero-section');
+            if (!heroBg || !heroSection) return;
+
+            let ticking = false;
+            window.addEventListener('scroll', () => {
+                if (!ticking) {
+                    requestAnimationFrame(() => {
+                        const rect = heroSection.getBoundingClientRect();
+                        if (rect.bottom > 0) {
+                            const scrolled = window.scrollY;
+                            heroBg.style.transform = 'scale(1.1) translateY(' + (scrolled * 0.25) + 'px)';
+                        }
+                        ticking = false;
+                    });
+                    ticking = true;
+                }
+            });
+        })();
+    </script>
+</body>
 </html>

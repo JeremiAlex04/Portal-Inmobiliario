@@ -39,8 +39,18 @@ public class PagoServlet extends HttpServlet {
                 break;
 
             case "formulario":
-                int idPlan = Integer.parseInt(request.getParameter("plan"));
+                int idPlan;
+                try {
+                    idPlan = Integer.parseInt(request.getParameter("plan"));
+                } catch (NumberFormatException e) {
+                    response.sendRedirect(request.getContextPath() + "/planes.xhtml");
+                    return;
+                }
                 PlanDTO plan = pagoDAO.obtenerPlan(idPlan);
+                if (plan == null) {
+                    response.sendRedirect(request.getContextPath() + "/planes.xhtml");
+                    return;
+                }
                 request.setAttribute("planSeleccionado", plan);
                 request.getRequestDispatcher("/WEB-INF/views/usuario/pago_formulario.jsp").forward(request, response);
                 break;
@@ -75,7 +85,13 @@ public class PagoServlet extends HttpServlet {
         }
 
         if ("procesar".equals(accion)) {
-            int idPlan = Integer.parseInt(request.getParameter("idPlan"));
+            int idPlan;
+            try {
+                idPlan = Integer.parseInt(request.getParameter("idPlan"));
+            } catch (NumberFormatException e) {
+                response.sendRedirect(request.getContextPath() + "/planes.xhtml");
+                return;
+            }
             String metodoPago = request.getParameter("metodoPago");
             boolean ok = pagoDAO.registrarPago(user.getIdUsuario(), idPlan, metodoPago);
             if (ok) {

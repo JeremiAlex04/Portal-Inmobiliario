@@ -1,0 +1,164 @@
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="jakarta.faces.html"
+      xmlns:f="jakarta.faces.core"
+      xmlns:ui="jakarta.faces.facelets"
+      xmlns:c="jakarta.tags.core">
+<ui:composition template="/WEB-INF/templates/plantilla_admin.xhtml">
+    <ui:define name="titulo">#{msg['admin.usuarios']} - #{msg['app.titulo']}</ui:define>
+    <ui:define name="contenido">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
+            
+            <!-- Page Title Header -->
+            <div class="mb-8 select-none">
+                <span class="text-[9px] font-black uppercase tracking-[0.2em] text-amber-600 block mb-1">Control de Accesos</span>
+                <h1 class="font-title text-3xl font-light text-slate-900 leading-tight">Administración de Usuarios</h1>
+                <p class="text-xs text-slate-400 mt-1">Crea, edita, bloquea y gestiona los roles del portal</p>
+            </div>
+
+            <!-- Header Action + Search Area -->
+            <div class="bg-white rounded-3xl p-6 border border-slate-150 shadow-sm mb-6 flex flex-col md:flex-row justify-between items-stretch md:items-center gap-4">
+                
+                <!-- Search Form -->
+                <h:form class="flex flex-wrap flex-1 gap-3 items-center">
+                    <div class="relative shrink-0">
+                        <h:selectOneMenu value="#{adminBean.filtroUsuario}" class="pl-3 pr-8 py-2 bg-slate-50 border border-slate-200 rounded-xl text-xs font-bold focus:outline-none focus:border-black cursor-pointer appearance-none">
+                            <f:selectItem itemValue="nombre" itemLabel="Filtrar por Nombre"/>
+                            <f:selectItem itemValue="correo" itemLabel="Filtrar por Correo"/>
+                            <f:selectItem itemValue="rol" itemLabel="Filtrar por Rol"/>
+                        </h:selectOneMenu>
+                        <div class="absolute inset-y-0 right-3 flex items-center pointer-events-none text-slate-400">
+                            <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M19 9l-7 7-7-7"></path></svg>
+                        </div>
+                    </div>
+                    
+                    <h:inputText value="#{adminBean.busquedaUsuario}" class="flex-1 min-w-[12rem] px-4 py-2 bg-slate-50 border border-slate-200 rounded-xl text-xs font-semibold focus:outline-none focus:border-black placeholder-slate-400" placeholder="Escribe tu búsqueda aquí..."/>
+                    
+                    <h:commandButton action="#{adminBean.buscarUsuarios}" value="#{msg['comun.buscar']}"
+                        class="bg-slate-900 hover:bg-slate-800 text-white px-5 py-2 rounded-xl text-xs font-bold cursor-pointer transition-all hover:scale-[1.02] shadow-sm"/>
+                </h:form>
+
+                <button onclick="openModal('usuarioModal')" class="bg-amber-500 hover:bg-amber-600 text-slate-950 px-5 py-2.5 rounded-xl text-xs font-black tracking-wider uppercase transition-all hover:scale-[1.02] shadow-md flex items-center justify-center gap-1.5 cursor-pointer">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M12 4v16m8-8H4"></path></svg>
+                    Nuevo Usuario
+                </button>
+            </div>
+
+            <!-- Table Card -->
+            <div class="bg-white rounded-3xl shadow-sm border border-slate-150 overflow-hidden">
+                <div class="overflow-x-auto">
+                    <table class="w-full text-sm">
+                        <thead class="bg-slate-50 border-b border-slate-100 text-slate-500 font-bold uppercase text-[9px] tracking-wider">
+                            <tr>
+                                <th class="px-6 py-4 text-left">ID</th>
+                                <th class="px-6 py-4 text-left">Nombre Completo</th>
+                                <th class="px-6 py-4 text-left">Correo Electrónico</th>
+                                <th class="px-6 py-4 text-left">Rol de Usuario</th>
+                                <th class="px-6 py-4 text-left">Estado</th>
+                                <th class="px-6 py-4 text-center">Acciones</th>
+                            </tr>
+                        </thead>
+                        <tbody class="divide-y divide-slate-100 text-slate-700 font-medium">
+                            <c:forEach items="#{adminBean.usuariosFiltrados}" var="u">
+                                <tr class="hover:bg-slate-50/50 transition-colors">
+                                    <td class="px-6 py-4 text-slate-400 font-mono text-xs">##{u.idUsuario}</td>
+                                    <td class="px-6 py-4 text-slate-900 font-bold">#{u.nombres} #{u.apellidos}</td>
+                                    <td class="px-6 py-4 text-slate-600">#{u.correo}</td>
+                                    <td class="px-6 py-4">
+                                        <h:form class="inline-block relative">
+                                            <h:selectOneMenu value="#{u.idRol}" onchange="this.form.submit()"
+                                                class="pl-2 pr-7 py-1 bg-slate-50 border border-slate-250 rounded-lg text-[10px] font-bold text-slate-800 focus:outline-none focus:border-amber-500 cursor-pointer appearance-none">
+                                                <f:selectItem itemValue="1" itemLabel="Comprador"/>
+                                                <f:selectItem itemValue="3" itemLabel="Agente"/>
+                                                <f:selectItem itemValue="5" itemLabel="Admin"/>
+                                            </h:selectOneMenu>
+                                            <div class="absolute inset-y-0 right-2 flex items-center pointer-events-none text-slate-400">
+                                                <svg class="w-2.5 h-2.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M19 9l-7 7-7-7"></path></svg>
+                                            </div>
+                                            <h:commandButton action="#{adminBean.cambiarRolUsuario(u.idUsuario, u.idRol)}" style="display:none"/>
+                                        </h:form>
+                                    </td>
+                                    <td class="px-6 py-4">
+                                        <span class="px-2.5 py-1 text-[9px] font-black uppercase tracking-wider rounded-full #{u.activo == 1 ? 'bg-emerald-100 text-emerald-800' : 'bg-rose-100 text-rose-800'}">
+                                            #{u.activo == 1 ? 'Activo' : 'Bloqueado'}
+                                        </span>
+                                    </td>
+                                    <td class="px-6 py-4">
+                                        <div class="flex justify-center items-center gap-2">
+                                            <h:form style="display:inline">
+                                                <h:commandButton action="#{adminBean.cambiarEstadoUsuario(u.idUsuario, u.activo == 1 ? 0 : 1)}"
+                                                    value="#{u.activo == 1 ? 'Bloquear' : 'Activar'}"
+                                                    class="text-[9px] font-black uppercase tracking-wider px-3 py-1.5 rounded-full transition-all cursor-pointer #{u.activo == 1 ? 'bg-rose-50 text-rose-600 hover:bg-rose-100' : 'bg-emerald-50 text-emerald-600 hover:bg-emerald-100'}"/>
+                                            </h:form>
+                                            <h:form style="display:inline">
+                                                <h:commandButton action="#{adminBean.eliminarUsuario(u.idUsuario)}" value="Eliminar"
+                                                    class="text-[9px] font-black uppercase tracking-wider px-3 py-1.5 rounded-full bg-slate-100 text-slate-600 hover:bg-rose-150 hover:text-rose-600 transition-all cursor-pointer"/>
+                                            </h:form>
+                                        </div>
+                                    </td>
+                                </tr>
+                            </c:forEach>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <!-- Nuevo Usuario Modal (Premium Glassmorphism Overlay) -->
+        <div id="usuarioModal" class="fixed inset-0 bg-slate-950/40 backdrop-blur-sm hidden items-center justify-center z-50">
+            <div class="bg-white rounded-3xl p-8 w-full max-w-md shadow-2xl border border-slate-100 hover:scale-[1.01] transition-transform duration-300">
+                <div class="flex justify-between items-center mb-6">
+                    <h3 class="text-base font-black uppercase tracking-wider text-slate-900">Crear Nuevo Usuario</h3>
+                    <button type="button" onclick="closeModal('usuarioModal')" class="text-slate-400 hover:text-slate-600 focus:outline-none cursor-pointer">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M6 18L18 6M6 6l12 12"></path></svg>
+                    </button>
+                </div>
+                
+                <h:form>
+                    <div class="space-y-4">
+                        <div>
+                            <label class="block text-[10px] font-black uppercase tracking-wider text-slate-400 mb-1.5">Nombres</label>
+                            <h:inputText value="#{adminBean.nNombres}" class="w-full px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-xs font-semibold focus:outline-none focus:border-black focus:bg-white transition-all"/>
+                        </div>
+                        <div>
+                            <label class="block text-[10px] font-black uppercase tracking-wider text-slate-400 mb-1.5">Apellidos</label>
+                            <h:inputText value="#{adminBean.nApellidos}" class="w-full px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-xs font-semibold focus:outline-none focus:border-black focus:bg-white transition-all"/>
+                        </div>
+                        <div>
+                            <label class="block text-[10px] font-black uppercase tracking-wider text-slate-400 mb-1.5">Correo Electrónico</label>
+                            <h:inputText value="#{adminBean.nCorreo}" class="w-full px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-xs font-semibold focus:outline-none focus:border-black focus:bg-white transition-all"/>
+                        </div>
+                        <div>
+                            <label class="block text-[10px] font-black uppercase tracking-wider text-slate-400 mb-1.5">Contraseña</label>
+                            <h:inputSecret value="#{adminBean.nPassword}" class="w-full px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-xs font-semibold focus:outline-none focus:border-black focus:bg-white transition-all"/>
+                        </div>
+                        <div>
+                            <label class="block text-[10px] font-black uppercase tracking-wider text-slate-400 mb-1.5">Rol Inicial</label>
+                            <div class="relative">
+                                <h:selectOneMenu value="#{adminBean.nIdRol}" class="w-full pl-4 pr-10 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-xs font-semibold focus:outline-none focus:border-black appearance-none cursor-pointer">
+                                    <f:selectItem itemValue="1" itemLabel="Comprador"/>
+                                    <f:selectItem itemValue="3" itemLabel="Agente"/>
+                                    <f:selectItem itemValue="5" itemLabel="Administrador"/>
+                                </h:selectOneMenu>
+                                <div class="absolute inset-y-0 right-3 flex items-center pointer-events-none text-slate-400">
+                                    <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M19 9l-7 7-7-7"></path></svg>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="flex gap-3 pt-4 border-t border-slate-100 mt-6">
+                            <h:commandButton action="#{adminBean.registrarUsuario}" value="Guardar"
+                                class="flex-1 bg-slate-900 hover:bg-slate-800 text-white py-3 rounded-xl text-xs font-bold cursor-pointer transition-all hover:scale-[1.02] shadow-sm"/>
+                            <button type="button" onclick="closeModal('usuarioModal')" class="flex-1 bg-slate-100 hover:bg-slate-250 text-slate-700 py-3 rounded-xl text-xs font-bold cursor-pointer transition-all">Cancelar</button>
+                        </div>
+                    </div>
+                </h:form>
+            </div>
+        </div>
+
+        <script>
+            function openModal(id) { document.getElementById(id).classList.remove('hidden'); document.getElementById(id).classList.add('flex'); }
+            function closeModal(id) { document.getElementById(id).classList.remove('flex'); document.getElementById(id).classList.add('hidden'); }
+        </script>
+    </ui:define>
+</ui:composition>
+</html>

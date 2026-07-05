@@ -4,6 +4,7 @@ import org.example.proyectoweb.dao.UsuarioDAO;
 import org.example.proyectoweb.dto.UsuarioDTO;
 
 import java.util.List;
+import java.util.Locale;
 
 public class UsuarioFacade {
 
@@ -25,31 +26,60 @@ public class UsuarioFacade {
      * @return null si es válido, o un mensaje de error si hay violación.
      */
     public String validarUsuario(UsuarioDTO u) {
+        if (u == null) {
+            return "Solicitud inválida.";
+        }
+
+        u.setNombres(limpiarTexto(u.getNombres()));
+        u.setApellidos(limpiarTexto(u.getApellidos()));
+        u.setCorreo(normalizarCorreo(u.getCorreo()));
+
         // RN-01: Nombres obligatorios
-        if (u.getNombres() == null || u.getNombres().trim().isEmpty()) {
+        if (u.getNombres() == null || u.getNombres().isEmpty()) {
             return "El nombre es obligatorio.";
         }
 
         // RN-02: Apellidos obligatorios
-        if (u.getApellidos() == null || u.getApellidos().trim().isEmpty()) {
+        if (u.getApellidos() == null || u.getApellidos().isEmpty()) {
             return "Los apellidos son obligatorios.";
         }
 
         // RN-03: Correo obligatorio y con formato válido
-        if (u.getCorreo() == null || u.getCorreo().trim().isEmpty()) {
+        if (u.getCorreo() == null || u.getCorreo().isEmpty()) {
             return "El correo es obligatorio.";
         }
         if (!u.getCorreo().matches("^[\\w._%+-]+@[\\w.-]+\\.[a-zA-Z]{2,}$")) {
             return "El formato del correo electrónico no es válido.";
         }
 
-        // RN-04: Contraseña obligatoria (mínimo 6 caracteres) solo en registro
-        if (u.getPasswordHash() != null && !u.getPasswordHash().isEmpty()
-                && u.getPasswordHash().length() < 6) {
+        // RN-04: Contraseña obligatoria (mínimo 6 caracteres)
+        if (u.getPasswordHash() == null || u.getPasswordHash().trim().isEmpty()) {
+            return "La contraseña es obligatoria.";
+        }
+        if (u.getPasswordHash().trim().length() < 6) {
             return "La contraseña debe tener al menos 6 caracteres.";
         }
 
+        // RN-05: Solo permitir auto-registro para Comprador/Agente
+        if (u.getIdRol() != 2 && u.getIdRol() != 3) {
+            u.setIdRol(2);
+        }
+
         return null; // Todo válido
+    }
+
+    public String validarCredencialesLogin(String correo, String password) {
+        String correoNormalizado = normalizarCorreo(correo);
+        if (correoNormalizado.isEmpty()) {
+            return "El correo es obligatorio.";
+        }
+        if (!correoNormalizado.matches("^[\\w._%+-]+@[\\w.-]+\\.[a-zA-Z]{2,}$")) {
+            return "El formato del correo electrónico no es válido.";
+        }
+        if (password == null || password.trim().isEmpty()) {
+            return "La contraseña es obligatoria.";
+        }
+        return null;
     }
 
     // =========================================================
@@ -62,11 +92,35 @@ public class UsuarioFacade {
         if (error != null) {
             return false;
         }
+        if (usuarioDAO.existeCorreo(u.getCorreo())) {
+            return false;
+        }
         return usuarioDAO.registrarUsuario(u);
     }
 
     public UsuarioDTO autenticar(String correo, String password) {
-        return usuarioDAO.autenticar(correo, password);
+        String correoNormalizado = normalizarCorreo(correo);
+        String passwordNormalizado = password == null ? null : password.trim();
+        if (correoNormalizado.isEmpty() || passwordNormalizado == null || passwordNormalizado.isEmpty()) {
+            return null;
+        }
+        return usuarioDAO.autenticar(correoNormalizado, passwordNormalizado);
+    }
+
+    public boolean existeCorreo(String correo) {
+        return usuarioDAO.existeCorreo(normalizarCorreo(correo));
+    }
+
+    private String limpiarTexto(String valor) {
+        if (valor == null) {
+            return null;
+        }
+        String limpio = valor.trim().replaceAll("\\s+", " ");
+        return limpio.isEmpty() ? null : limpio;
+    }
+
+    private String normalizarCorreo(String correo) {
+        return correo == null ? "" : correo.trim().toLowerCase(Locale.ROOT);
     }
 
     public List<UsuarioDTO> listarUsuarios() {

@@ -1,0 +1,135 @@
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="jakarta.faces.html"
+      xmlns:f="jakarta.faces.core"
+      xmlns:ui="jakarta.faces.facelets"
+      xmlns:c="jakarta.tags.core">
+<ui:composition template="/WEB-INF/templates/plantilla_admin.xhtml">
+    <ui:define name="titulo">#{msg['admin.ubicaciones']} - #{msg['app.titulo']}</ui:define>
+    <ui:define name="contenido">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
+            
+            <!-- Page Title Header -->
+            <div class="mb-8 select-none">
+                <span class="text-[9px] font-black uppercase tracking-[0.2em] text-amber-600 block mb-1">Estructura Geográfica</span>
+                <h1 class="font-title text-3xl font-light text-slate-900 leading-tight">Administración de Ubicaciones</h1>
+                <p class="text-xs text-slate-400 mt-1">Configuración ubigeo del Perú: Departamentos, Provincias y Distritos</p>
+            </div>
+
+            <!-- Category Switcher + New Location Button -->
+            <div class="bg-white rounded-3xl p-6 border border-slate-150 shadow-sm mb-6 flex flex-col md:flex-row justify-between items-stretch md:items-center gap-4">
+                <!-- Location Categories -->
+                <div class="flex flex-wrap bg-slate-100 p-1 rounded-2xl border border-slate-200/50 text-xs font-bold gap-1">
+                    <a href="#{request.contextPath}/admin/ubicaciones.xhtml?tipo=DEPARTAMENTO"
+                       class="px-4 py-2 rounded-xl transition-all #{param.tipo == 'PROVINCIA' or param.tipo == 'DISTRITO' ? 'text-slate-500 hover:text-slate-900' : 'bg-slate-900 text-white shadow-sm' }">Departamentos</a>
+                    <a href="#{request.contextPath}/admin/ubicaciones.xhtml?tipo=PROVINCIA"
+                       class="px-4 py-2 rounded-xl transition-all #{param.tipo == 'PROVINCIA' ? 'bg-slate-900 text-white shadow-sm' : 'text-slate-500 hover:text-slate-900'}">Provincias</a>
+                    <a href="#{request.contextPath}/admin/ubicaciones.xhtml?tipo=DISTRITO"
+                       class="px-4 py-2 rounded-xl transition-all #{param.tipo == 'DISTRITO' ? 'bg-slate-900 text-white shadow-sm' : 'text-slate-500 hover:text-slate-900'}">Distritos</a>
+                </div>
+
+                <button onclick="openModal('ubiModal')" class="bg-amber-500 hover:bg-amber-600 text-slate-950 px-5 py-2.5 rounded-xl text-xs font-black tracking-wider uppercase transition-all hover:scale-[1.02] shadow-md flex items-center justify-center gap-1.5 cursor-pointer">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M12 4v16m8-8H4"></path></svg>
+                    Nueva Ubicación
+                </button>
+            </div>
+
+            <!-- Table Card -->
+            <div class="bg-white rounded-3xl shadow-sm border border-slate-150 overflow-hidden">
+                <div class="overflow-x-auto">
+                    <table class="w-full text-sm">
+                        <thead class="bg-slate-50 border-b border-slate-100 text-slate-500 font-bold uppercase text-[9px] tracking-wider">
+                            <tr>
+                                <th class="px-6 py-4 text-left">ID</th>
+                                <th class="px-6 py-4 text-left">Nombre Geográfico</th>
+                                <th class="px-6 py-4 text-left">Código Ubigeo (INEI)</th>
+                                <th class="px-6 py-4 text-left">Jurisdicción Superior (Padre)</th>
+                                <th class="px-6 py-4 text-center">Acciones</th>
+                            </tr>
+                        </thead>
+                        <tbody class="divide-y divide-slate-100 text-slate-700 font-medium">
+                            <c:forEach items="#{adminBean.listaUbicaciones}" var="u">
+                                <tr class="hover:bg-slate-50/50 transition-colors">
+                                    <td class="px-6 py-4 text-slate-400 font-mono text-xs">##{u.id}</td>
+                                    <td class="px-6 py-4 text-slate-900 font-bold">#{u.nombre}</td>
+                                    <td class="px-6 py-4 text-slate-500 font-mono">#{u.codigoUbigeo}</td>
+                                    <td class="px-6 py-4">
+                                        <h:panelGroup rendered="#{not empty u.parentNombre}">
+                                            <span class="px-2.5 py-1 text-[9px] font-bold rounded-full bg-slate-100 text-slate-700">
+                                                #{u.parentNombre}
+                                            </span>
+                                        </h:panelGroup>
+                                        <h:panelGroup rendered="#{empty u.parentNombre}">
+                                            <span class="text-slate-300 text-xs italic">-</span>
+                                        </h:panelGroup>
+                                    </td>
+                                    <td class="px-6 py-4 text-center">
+                                        <h:form style="display:inline">
+                                            <h:commandButton action="#{adminBean.eliminarUbicacion(u.id, adminBean.tipoUbicacion)}" value="Eliminar"
+                                                class="text-[9px] font-black uppercase tracking-wider px-3 py-1.5 rounded-full bg-rose-50 text-rose-600 hover:bg-rose-100 transition-all cursor-pointer"/>
+                                        </h:form>
+                                    </td>
+                                </tr>
+                            </c:forEach>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <!-- New Location Modal (Premium Glassmorphism Overlay) -->
+        <div id="ubiModal" class="fixed inset-0 bg-slate-950/40 backdrop-blur-sm hidden items-center justify-center z-50">
+            <div class="bg-white rounded-3xl p-8 w-full max-w-md shadow-2xl border border-slate-100 hover:scale-[1.01] transition-transform duration-300">
+                <div class="flex justify-between items-center mb-6">
+                    <h3 class="text-base font-black uppercase tracking-wider text-slate-900">Nueva #{adminBean.tipoUbicacion}</h3>
+                    <button type="button" onclick="closeModal('ubiModal')" class="text-slate-400 hover:text-slate-600 focus:outline-none cursor-pointer">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M6 18L18 6M6 6l12 12"></path></svg>
+                    </button>
+                </div>
+                
+                <h:form>
+                    <div class="space-y-4">
+                        <div>
+                            <label class="block text-[10px] font-black uppercase tracking-wider text-slate-400 mb-1.5">Nombre</label>
+                            <h:inputText value="#{adminBean.ubiForm.nombre}" class="w-full px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-xs font-semibold focus:outline-none focus:border-black focus:bg-white transition-all"/>
+                        </div>
+                        <div>
+                            <label class="block text-[10px] font-black uppercase tracking-wider text-slate-400 mb-1.5">Código Ubigeo (Código INEI)</label>
+                            <h:inputText value="#{adminBean.ubiForm.codigoUbigeo}" class="w-full px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-xs font-semibold focus:outline-none focus:border-black focus:bg-white transition-all"/>
+                        </div>
+                        
+                        <c:if test="#{adminBean.tipoUbicacion == 'PROVINCIA' or adminBean.tipoUbicacion == 'DISTRITO'}">
+                            <div>
+                                <label class="block text-[10px] font-black uppercase tracking-wider text-slate-400 mb-1.5">Jurisdicción Superior (Padre)</label>
+                                <div class="relative">
+                                    <h:selectOneMenu value="#{adminBean.ubiForm.parentId}" class="w-full pl-4 pr-10 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-xs font-semibold focus:outline-none focus:border-black appearance-none cursor-pointer">
+                                        <f:selectItem itemValue="0" itemLabel="Seleccionar padre..."/>
+                                        <c:forEach items="#{adminBean.listaPadres}" var="padre">
+                                            <f:selectItem itemValue="#{padre.id}" itemLabel="#{padre.nombre}"/>
+                                        </c:forEach>
+                                    </h:selectOneMenu>
+                                    <div class="absolute inset-y-0 right-3 flex items-center pointer-events-none text-slate-400">
+                                        <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M19 9l-7 7-7-7"></path></svg>
+                                    </div>
+                                </div>
+                            </div>
+                        </c:if>
+                        
+                        <h:inputHidden value="#{adminBean.tipoUbicacion}" binding="#{adminBean.ubiForm.tipo}"/>
+                        
+                        <div class="flex gap-3 pt-4 border-t border-slate-100 mt-6">
+                            <h:commandButton action="#{adminBean.guardarUbicacion}" value="Guardar"
+                                class="flex-1 bg-slate-900 hover:bg-slate-800 text-white py-3 rounded-xl text-xs font-bold cursor-pointer transition-all hover:scale-[1.02] shadow-sm"/>
+                            <button type="button" onclick="closeModal('ubiModal')" class="flex-1 bg-slate-100 hover:bg-slate-250 text-slate-700 py-3 rounded-xl text-xs font-bold cursor-pointer transition-all">Cancelar</button>
+                        </div>
+                    </div>
+                </h:form>
+            </div>
+        </div>
+
+        <script>
+            function openModal(id) { document.getElementById(id).classList.remove('hidden'); document.getElementById(id).classList.add('flex'); }
+            function closeModal(id) { document.getElementById(id).classList.remove('flex'); document.getElementById(id).classList.add('hidden'); }
+        </script>
+    </ui:define>
+</ui:composition>
+</html>
