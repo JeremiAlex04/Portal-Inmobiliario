@@ -12,9 +12,9 @@
 
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <maven.compiler.target>17</maven.compiler.target>
-        <maven.compiler.source>17</maven.compiler.source>
+        <maven.compiler.release>17</maven.compiler.release>
         <junit.version>5.13.2</junit.version>
+        <cargo.tomcat.version>10.1.55</cargo.tomcat.version>
     </properties>
 
     <dependencies>
@@ -32,6 +32,11 @@
         <dependency>
             <groupId>org.glassfish.jersey.media</groupId>
             <artifactId>jersey-media-json-jackson</artifactId>
+            <version>4.0.0-M2</version>
+        </dependency>
+        <dependency>
+            <groupId>org.glassfish.jersey.inject</groupId>
+            <artifactId>jersey-hk2</artifactId>
             <version>4.0.0-M2</version>
         </dependency>
 
@@ -82,8 +87,16 @@
     </dependencies>
 
     <build>
-        <finalName>proyectoweb</finalName>
+        <finalName>ROOT</finalName>
         <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <version>3.11.0</version>
+                <configuration>
+                    <release>${maven.compiler.release}</release>
+                </configuration>
+            </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-war-plugin</artifactId>
@@ -97,7 +110,11 @@
                     <container>
                         <containerId>tomcat10x</containerId>
                         <type>installed</type>
-                        <home>C:\Users\Antonio\Documents\apache-tomcat-10.1.55</home>
+                        <zipUrlInstaller>
+                            <url>https://archive.apache.org/dist/tomcat/tomcat-10/v${cargo.tomcat.version}/bin/apache-tomcat-${cargo.tomcat.version}.zip</url>
+                            <downloadDir>${project.build.directory}/cargo-downloads</downloadDir>
+                            <extractDir>${project.build.directory}/cargo-extract</extractDir>
+                        </zipUrlInstaller>
                     </container>
                     <configuration>
                         <properties>
@@ -105,6 +122,16 @@
                             <cargo.jvmargs>-Xmx512m -Xms256m</cargo.jvmargs>
                         </properties>
                     </configuration>
+                    <deployables>
+                        <deployable>
+                            <groupId>${project.groupId}</groupId>
+                            <artifactId>${project.artifactId}</artifactId>
+                            <type>war</type>
+                            <properties>
+                                <context>/</context>
+                            </properties>
+                        </deployable>
+                    </deployables>
                 </configuration>
             </plugin>
         </plugins>

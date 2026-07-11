@@ -192,6 +192,15 @@ A continuación se presentan las capturas de pantalla que sustentan la funcional
 # Compilar
 ./mvnw.cmd compile
 
+# Empaquetar WAR
+./mvnw.cmd clean package
+
+# Ejecutar con Cargo (descarga Tomcat automáticamente)
+./mvnw.cmd cargo:start -DskipTests
+
+# Detener servidor iniciado por Cargo
+./mvnw.cmd cargo:stop
+
 # Base de datos
 # 1. Iniciar MySQL en puerto 3306
 # 2. Importar inmobix_db.sql
@@ -200,3 +209,7 @@ A continuación se presentan las capturas de pantalla que sustentan la funcional
 # Desplegar WAR en Tomcat 10+ con contexto /proyectoweb
 # Acceder en http://localhost:8080/proyectoweb
 ```
+
+Notas:
+- El proyecto está compilado para Java 17 (release 17).
+- Si prefieres Tomcat local manual, despliega `target/proyectoweb.war` en `webapps/`.

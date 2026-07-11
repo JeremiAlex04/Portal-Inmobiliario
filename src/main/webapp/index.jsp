@@ -9,7 +9,7 @@
 <%
     try {
         PropiedadFacade facade = new PropiedadFacade();
-        List<PropiedadDTO> destacadas = facade.obtenerPropiedadesDestacadas(3);
+        List<PropiedadDTO> destacadas = facade.obtenerPropiedadesDestacadas(6);
         request.setAttribute("destacadas", destacadas);
         request.setAttribute("listaDistritos", facade.obtenerDistritos());
         request.setAttribute("listaTipos", facade.obtenerTiposInmueble());
@@ -43,15 +43,60 @@
         <!-- HERO SECTION — PARALLAX + TYPING           -->
         <!-- ========================================== -->
         <section id="hero-section" class="relative overflow-hidden bg-slate-950 text-white">
-            <!-- Background Image with Parallax -->
-            <div class="absolute inset-0">
-                <img id="hero-bg-img"
-                     src="https://www.ciudaris.com/blog/wp-content/uploads/elegir-mejor-inmobiliaria-peru-ciudaris.jpg"
-                     alt="Inmobix Hero"
-                     class="h-full w-full object-cover opacity-30 hero-parallax-bg" style="transform: scale(1.1);" />
+            <!-- Background Images Carousel with Parallax -->
+            <div class="absolute inset-0 overflow-hidden">
+                <div id="hero-carousel-container" class="absolute inset-0 hero-parallax-bg">
+                    <c:forEach var="hero" items="${destacadas}" varStatus="hs">
+                        <c:choose>
+                            <c:when test="${not empty hero.fotoPrincipal}">
+                                <img class="hero-slide absolute inset-0 w-full h-full object-cover ${hs.first ? 'opacity-30' : 'opacity-0'} transition-all duration-1000 ease-in-out"
+                                     src="${hero.getFotoPrincipalUrl(pageContext.request.contextPath)}" alt="${hero.titulo}" />
+                            </c:when>
+                            <c:otherwise>
+                                <img class="hero-slide absolute inset-0 w-full h-full object-cover ${hs.first ? 'opacity-30' : 'opacity-0'} transition-all duration-1000 ease-in-out"
+                                     src="${pageContext.request.contextPath}/assets/img/carousel/luxury_villa.png" alt="${hero.titulo}" />
+                            </c:otherwise>
+                        </c:choose>
+                    </c:forEach>
+                    <c:if test="${empty destacadas}">
+                        <img class="hero-slide absolute inset-0 w-full h-full object-cover opacity-30 transition-all duration-1000 ease-in-out"
+                             src="${pageContext.request.contextPath}/assets/img/carousel/luxury_villa.png" alt="Propiedad destacada" />
+                        <img class="hero-slide absolute inset-0 w-full h-full object-cover opacity-0 transition-all duration-1000 ease-in-out"
+                             src="${pageContext.request.contextPath}/assets/img/carousel/penthouse_living.png" alt="Propiedad destacada" />
+                        <img class="hero-slide absolute inset-0 w-full h-full object-cover opacity-0 transition-all duration-1000 ease-in-out"
+                             src="${pageContext.request.contextPath}/assets/img/carousel/modern_house.png" alt="Propiedad destacada" />
+                    </c:if>
+                </div>
                 <div class="absolute inset-0 bg-gradient-to-br from-black/90 via-slate-950/80 to-black/90"></div>
                 <div class="absolute inset-0 bg-[radial-gradient(circle_at_top_right,_rgba(251,191,36,.15),_transparent_35%),radial-gradient(circle_at_bottom_left,_rgba(255,255,255,.06),_transparent_40%)]"></div>
             </div>
+
+            <!-- Prev / Next Navigation Buttons -->
+            <div class="absolute inset-y-0 left-4 md:left-8 z-30 flex items-center pointer-events-none">
+                <button type="button" onclick="changeHeroSlide(-1)" class="pointer-events-auto w-10 h-10 rounded-full bg-black/35 hover:bg-white/10 text-white flex items-center justify-center transition-all border border-white/10 focus:outline-none cursor-pointer backdrop-blur-sm shadow-md shadow-black/10">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M15 19l-7-7 7-7"></path></svg>
+                </button>
+            </div>
+            <div class="absolute inset-y-0 right-4 md:right-8 z-30 flex items-center pointer-events-none">
+                <button type="button" onclick="changeHeroSlide(1)" class="pointer-events-auto w-10 h-10 rounded-full bg-black/35 hover:bg-white/10 text-white flex items-center justify-center transition-all border border-white/10 focus:outline-none cursor-pointer backdrop-blur-sm shadow-md shadow-black/10">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M9 5l7 7-7 7"></path></svg>
+                </button>
+            </div>
+
+            <!-- Carousel Indicators -->
+            <div class="absolute bottom-8 right-8 z-30 flex gap-2">
+                <c:forEach var="hero" items="${destacadas}" varStatus="hd">
+                    <button type="button" onclick="setHeroSlide(${hd.index})" class="hero-carousel-dot w-2 h-2 rounded-full ${hd.first ? 'bg-white w-4' : 'bg-white/40'} hover:bg-white/75 transition-all duration-300" aria-label="Slide ${hd.count}"></button>
+                </c:forEach>
+                <c:if test="${empty destacadas}">
+                    <button type="button" onclick="setHeroSlide(0)" class="hero-carousel-dot w-2 h-2 rounded-full bg-white w-4 transition-all duration-300" aria-label="Slide 1"></button>
+                    <button type="button" onclick="setHeroSlide(1)" class="hero-carousel-dot w-2 h-2 rounded-full bg-white/40 hover:bg-white/75 transition-all duration-300" aria-label="Slide 2"></button>
+                    <button type="button" onclick="setHeroSlide(2)" class="hero-carousel-dot w-2 h-2 rounded-full bg-white/40 hover:bg-white/75 transition-all duration-300" aria-label="Slide 3"></button>
+                </c:if>
+            </div>
+
+            <!-- Progress Bar Timeline -->
+            <div class="absolute bottom-0 left-0 h-1 bg-gradient-to-r from-amber-500 to-amber-400 z-30" id="carousel-progress-bar" style="width: 0%; transition: width 6000ms linear;"></div>
 
             <!-- Floating Particles -->
             <div class="hero-particle hero-particle--1"></div>
@@ -248,97 +293,108 @@
                     </a>
                 </div>
 
-                <div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-8 reveal-stagger">
-                    <c:forEach var="p" items="${destacadas}">
-                        <div class="card-tilt group bg-white border border-slate-200 rounded-[2rem] overflow-hidden shadow-sm flex flex-col">
-                            <div class="relative h-64 overflow-hidden bg-slate-100">
-                                <c:choose>
-                                    <c:when test="${not empty p.fotoPrincipal}">
-                                        <img src="${p.getFotoPrincipalUrl(pageContext.request.contextPath)}" alt="${p.titulo}" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700 ease-out">
-                                    </c:when>
-                                    <c:otherwise>
-                                        <div class="w-full h-full flex items-center justify-center text-slate-300 bg-gradient-to-br from-slate-100 to-slate-200">
-                                            <svg class="w-16 h-16" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"></path></svg>
-                                        </div>
-                                    </c:otherwise>
-                                </c:choose>
-                                <div class="absolute inset-0 property-image-overlay"></div>
-                                <div class="absolute top-4 left-4 flex flex-col gap-2">
-                                    <span class="badge-shimmer bg-black text-white text-[10px] font-black uppercase tracking-[0.22em] px-3 py-1.5 rounded-full shadow-md">${p.operacion}</span>
-                                    <c:if test="${p.bonoVerde == 1}">
-                                        <span class="badge-shimmer bg-amber-500 text-black text-[9px] font-extrabold uppercase tracking-wider px-2.5 py-1 rounded-full shadow-md">Bono Verde</span>
-                                    </c:if>
-                                </div>
-                                <div class="absolute bottom-4 left-4 right-4 flex items-end justify-between">
-                                    <span class="text-[11px] font-bold uppercase tracking-[0.22em] text-white/90">${p.distrito}, ${p.provincia}</span>
-                                    <span class="inline-flex items-center gap-1 rounded-full bg-white/95 px-3 py-1 text-xs font-black text-black shadow-lg backdrop-blur-sm">${p.areaTotalM2} m²</span>
-                                </div>
-                            </div>
-
-                            <div class="p-6 flex-grow flex flex-col justify-between">
-                                <div>
-                                    <h3 class="font-title text-lg font-medium text-slate-900 line-clamp-1 mb-2 group-hover:text-black transition-colors">${p.titulo}</h3>
-                                    <p class="text-sm text-slate-500 line-clamp-2 mb-5 leading-relaxed">${p.descripcion}</p>
-
-                                    <div class="grid grid-cols-3 gap-2 text-xs text-slate-500 font-semibold mb-5">
-                                        <span class="feature-pill rounded-xl bg-slate-50 px-3 py-2 justify-center">
-                                            <svg class="w-3.5 h-3.5 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"></path></svg>
-                                            ${p.numDormitorios} Dorm.
-                                        </span>
-                                        <span class="feature-pill rounded-xl bg-slate-50 px-3 py-2 justify-center">
-                                            <svg class="w-3.5 h-3.5 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 14v3m4-3v3m4-3v3M3 21h18M3 10h18M3 7l9-4 9 4M4 10h16v11H4V10z"></path></svg>
-                                            ${p.numBanos} Baños
-                                        </span>
-                                        <span class="feature-pill rounded-xl bg-slate-50 px-3 py-2 justify-center">
-                                            <svg class="w-3.5 h-3.5 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 8V4m0 0h4M4 4l5 5m11-1V4m0 0h-4m4 0l-5 5M4 16v4m0 0h4m-4 0l5-5m11 5l-5-5m5 5v-4m0 4h-4"></path></svg>
-                                            ${p.areaTotalM2} m²
-                                        </span>
-                                    </div>
-                                </div>
-
-                                <div class="flex items-center justify-between border-t border-slate-100 pt-4">
-                                    <div>
-                                        <span class="text-xs text-slate-400 block font-medium">Precio</span>
-                                        <span class="text-xl font-black text-black">
+                <!-- Featured Properties Carousel -->
+                <div class="featured-carousel relative">
+                    <!-- Carousel Track -->
+                    <div class="featured-carousel-track overflow-hidden">
+                        <div class="featured-carousel-slides flex transition-transform duration-500 ease-in-out" id="featured-carousel-slides">
+                            <c:forEach var="p" items="${destacadas}">
+                                <div class="featured-carousel-slide flex-shrink-0 w-full md:w-1/2 xl:w-1/3 px-4">
+                                    <div class="card-tilt group bg-white border border-slate-200 rounded-[2rem] overflow-hidden shadow-sm flex flex-col h-full">
+                                        <div class="relative h-64 overflow-hidden bg-slate-100">
                                             <c:choose>
-                                                <c:when test="${p.monedaBase == 'USD'}">US$ ${p.precioUsd}</c:when>
-                                                <c:otherwise>S/. ${p.precioPen}</c:otherwise>
+                                                <c:when test="${not empty p.fotoPrincipal}">
+                                                    <img src="${p.getFotoPrincipalUrl(pageContext.request.contextPath)}" alt="${p.titulo}" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700 ease-out">
+                                                </c:when>
+                                                <c:otherwise>
+                                                    <div class="w-full h-full flex items-center justify-center text-slate-300 bg-gradient-to-br from-slate-100 to-slate-200">
+                                                        <svg class="w-16 h-16" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"></path></svg>
+                                                    </div>
+                                                </c:otherwise>
                                             </c:choose>
-                                        </span>
-                                    </div>
-                                    <div class="flex items-center gap-2">
-                                        <c:if test="${not empty sessionScope.usuarioLogueado}">
-                                            <form action="${pageContext.request.contextPath}/favorito" method="post" class="inline">
-                                                <input type="hidden" name="id" value="${p.id}" />
-                                                <c:choose>
-                                                    <c:when test="${not empty favoritosIds and favoritosIds.contains(p.id)}">
-                                                        <input type="hidden" name="accion" value="remover" />
-                                                        <button type="submit" class="inline-flex items-center justify-center text-xs font-bold px-3 py-2.5 rounded-full transition-all bg-red-50 text-red-600 hover:bg-red-100 border border-red-200">Quitar</button>
-                                                    </c:when>
-                                                    <c:otherwise>
-                                                        <input type="hidden" name="accion" value="agregar" />
-                                                        <button type="submit" class="inline-flex items-center justify-center text-xs font-bold px-3 py-2.5 rounded-full transition-all bg-slate-100 text-slate-700 hover:bg-slate-200 border border-slate-200">Favorito</button>
-                                                    </c:otherwise>
-                                                </c:choose>
-                                            </form>
-                                        </c:if>
-                                        <a href="${pageContext.request.contextPath}/propiedades?accion=ver&id=${p.id}" class="inline-flex items-center justify-center gap-1.5 bg-black hover:bg-slate-800 text-white text-xs font-bold px-5 py-2.5 rounded-full transition-all hover:scale-[1.03] shadow-md">
-                                            Ver ficha
-                                            <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path></svg>
-                                        </a>
+                                            <div class="absolute inset-0 property-image-overlay"></div>
+                                            <div class="absolute top-4 left-4 flex flex-col gap-2">
+                                                <span class="badge-shimmer bg-black text-white text-[10px] font-black uppercase tracking-[0.22em] px-3 py-1.5 rounded-full shadow-md">${p.operacion}</span>
+                                                <c:if test="${p.bonoVerde == 1}">
+                                                    <span class="badge-shimmer bg-amber-500 text-black text-[9px] font-extrabold uppercase tracking-wider px-2.5 py-1 rounded-full shadow-md">Bono Verde</span>
+                                                </c:if>
+                                            </div>
+                                            <div class="absolute bottom-4 left-4 right-4 flex items-end justify-between">
+                                                <span class="text-[11px] font-bold uppercase tracking-[0.22em] text-white/90">${p.distrito}, ${p.provincia}</span>
+                                                <span class="inline-flex items-center gap-1 rounded-full bg-white/95 px-3 py-1 text-xs font-black text-black shadow-lg backdrop-blur-sm">${p.areaTotalM2} m²</span>
+                                            </div>
+                                        </div>
+
+                                        <div class="p-6 flex-grow flex flex-col justify-between">
+                                            <div>
+                                                <h3 class="font-title text-lg font-medium text-slate-900 line-clamp-1 mb-2 group-hover:text-black transition-colors">${p.titulo}</h3>
+                                                <p class="text-sm text-slate-500 line-clamp-2 mb-5 leading-relaxed">${p.descripcion}</p>
+
+                                                <div class="grid grid-cols-3 gap-2 text-xs text-slate-500 font-semibold mb-5">
+                                                    <span class="feature-pill rounded-xl bg-slate-50 px-3 py-2 justify-center">
+                                                        <svg class="w-3.5 h-3.5 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"></path></svg>
+                                                        ${p.numDormitorios} Dorm.
+                                                    </span>
+                                                    <span class="feature-pill rounded-xl bg-slate-50 px-3 py-2 justify-center">
+                                                        <svg class="w-3.5 h-3.5 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 14v3m4-3v3m4-3v3M3 21h18M3 10h18M3 7l9-4 9 4M4 10h16v11H4V10z"></path></svg>
+                                                        ${p.numBanos} Baños
+                                                    </span>
+                                                    <span class="feature-pill rounded-xl bg-slate-50 px-3 py-2 justify-center">
+                                                        <svg class="w-3.5 h-3.5 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 8V4m0 0h4M4 4l5 5m11-1V4m0 0h-4m4 0l-5 5M4 16v4m0 0h4m-4 0l5-5m11 5l-5-5m5 5v-4m0 4h-4"></path></svg>
+                                                        ${p.areaTotalM2} m²
+                                                    </span>
+                                                </div>
+                                            </div>
+
+                                            <div class="flex items-center justify-between border-t border-slate-100 pt-4">
+                                                <div>
+                                                    <span class="text-xs text-slate-400 block font-medium">Precio</span>
+                                                    <span class="text-xl font-black text-black">
+                                                        <c:choose>
+                                                            <c:when test="${p.monedaBase == 'USD'}">US$ ${p.precioUsd}</c:when>
+                                                            <c:otherwise>S/. ${p.precioPen}</c:otherwise>
+                                                        </c:choose>
+                                                    </span>
+                                                </div>
+                                                <div class="flex items-center gap-2">
+                                                    <c:if test="${not empty sessionScope.usuarioLogueado}">
+                                                        <form action="${pageContext.request.contextPath}/favorito" method="post" class="inline">
+                                                            <input type="hidden" name="id" value="${p.id}" />
+                                                            <c:choose>
+                                                                <c:when test="${not empty favoritosIds and favoritosIds.contains(p.id)}">
+                                                                    <input type="hidden" name="accion" value="remover" />
+                                                                    <button type="submit" class="inline-flex items-center justify-center text-xs font-bold px-3 py-2.5 rounded-full transition-all bg-red-50 text-red-600 hover:bg-red-100 border border-red-200">Quitar</button>
+                                                                </c:when>
+                                                                <c:otherwise>
+                                                                    <input type="hidden" name="accion" value="agregar" />
+                                                                    <button type="submit" class="inline-flex items-center justify-center text-xs font-bold px-3 py-2.5 rounded-full transition-all bg-slate-100 text-slate-700 hover:bg-slate-200 border border-slate-200">Favorito</button>
+                                                                </c:otherwise>
+                                                            </c:choose>
+                                                        </form>
+                                                    </c:if>
+                                                    <a href="${pageContext.request.contextPath}/propiedades?accion=ver&id=${p.id}" class="inline-flex items-center justify-center gap-1.5 bg-black hover:bg-slate-800 text-white text-xs font-bold px-5 py-2.5 rounded-full transition-all hover:scale-[1.03] shadow-md">
+                                                        Ver ficha
+                                                        <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path></svg>
+                                                    </a>
+                                                </div>
+                                            </div>
+                                        </div>
                                     </div>
                                 </div>
-                            </div>
+                            </c:forEach>
                         </div>
-                    </c:forEach>
+                    </div>
 
-                    <c:if test="${empty destacadas}">
-                        <div class="md:col-span-2 xl:col-span-3 border border-dashed border-slate-300 rounded-[2rem] p-16 text-center text-slate-500 bg-white">
-                            <svg class="w-12 h-12 text-slate-300 mx-auto mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"></path></svg>
-                            <p class="font-bold text-slate-800">No hay propiedades disponibles en este momento.</p>
-                            <p class="text-sm mt-1">Crea una cuenta de agente y publica tu primera propiedad para verla en la página principal.</p>
-                        </div>
-                    </c:if>
+                    <!-- Carousel Navigation Arrows -->
+                    <button type="button" onclick="changeFeaturedSlide(-1)" class="featured-carousel-prev absolute left-0 top-1/2 -translate-y-1/2 -ml-4 z-20 w-11 h-11 rounded-full bg-white border border-slate-200 shadow-lg flex items-center justify-center text-slate-600 hover:text-black hover:shadow-xl transition-all cursor-pointer">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M15 19l-7-7 7-7"></path></svg>
+                    </button>
+                    <button type="button" onclick="changeFeaturedSlide(1)" class="featured-carousel-next absolute right-0 top-1/2 -translate-y-1/2 -mr-4 z-20 w-11 h-11 rounded-full bg-white border border-slate-200 shadow-lg flex items-center justify-center text-slate-600 hover:text-black hover:shadow-xl transition-all cursor-pointer">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M9 5l7 7-7 7"></path></svg>
+                    </button>
+
+                    <!-- Carousel Dots -->
+                    <div class="featured-carousel-dots flex justify-center gap-2 mt-8" id="featured-carousel-dots"></div>
                 </div>
             </div>
         </section>
@@ -493,10 +549,183 @@
         });
 
         /* ============================================ */
+        /* HERO BACKGROUND CAROUSEL                     */
+        /* ============================================ */
+        let currentHeroSlide = 0;
+        const heroSlides = document.querySelectorAll('.hero-slide');
+        const heroDots = document.querySelectorAll('.hero-carousel-dot');
+        let heroCarouselInterval;
+
+        function setHeroSlide(index) {
+            if (!heroSlides.length) return;
+            currentHeroSlide = index;
+
+            heroSlides.forEach((slide, i) => {
+                if (i === index) {
+                    slide.classList.remove('opacity-0');
+                    slide.classList.add('opacity-30', 'ken-burns-active');
+                } else {
+                    slide.classList.remove('opacity-30', 'ken-burns-active');
+                    slide.classList.add('opacity-0');
+                }
+            });
+
+            heroDots.forEach((dot, i) => {
+                if (i === index) {
+                    dot.classList.remove('bg-white/40');
+                    dot.classList.add('bg-white', 'w-4');
+                } else {
+                    dot.classList.remove('bg-white', 'w-4');
+                    dot.classList.add('bg-white/40');
+                }
+            });
+
+            resetProgressBar();
+        }
+
+        function resetProgressBar() {
+            const bar = document.getElementById('carousel-progress-bar');
+            if (!bar) return;
+            bar.style.transition = 'none';
+            bar.style.width = '0%';
+            void bar.offsetWidth;
+            bar.style.transition = 'width 6000ms linear';
+            bar.style.width = '100%';
+        }
+
+        window.changeHeroSlide = function(direction) {
+            if (!heroSlides.length) return;
+            let next = currentHeroSlide + direction;
+            if (next < 0) next = heroSlides.length - 1;
+            if (next >= heroSlides.length) next = 0;
+            setHeroSlide(next);
+            startHeroCarousel();
+        };
+
+        window.setHeroSlide = setHeroSlide;
+
+        function startHeroCarousel() {
+            clearInterval(heroCarouselInterval);
+            heroCarouselInterval = setInterval(() => {
+                let next = (currentHeroSlide + 1) % heroSlides.length;
+                setHeroSlide(next);
+            }, 6000);
+        }
+
+        /* ============================================ */
+        /* FEATURED PROPERTIES CAROUSEL                 */
+        /* ============================================ */
+        let currentFeaturedSlide = 0;
+        let featuredCarouselInterval;
+        const featuredSlidesContainer = document.getElementById('featured-carousel-slides');
+        let featuredSlides = [];
+        let featuredSlidesCount = 0;
+        let featuredVisibleCount = 3;
+
+        function getFeaturedVisibleCount() {
+            if (window.innerWidth < 768) return 1;
+            if (window.innerWidth < 1280) return 2;
+            return 3;
+        }
+
+        function initFeaturedCarousel() {
+            if (!featuredSlidesContainer) return;
+            featuredSlides = featuredSlidesContainer.querySelectorAll('.featured-carousel-slide');
+            featuredSlidesCount = featuredSlides.length;
+            if (featuredSlidesCount === 0) return;
+
+            featuredVisibleCount = getFeaturedVisibleCount();
+            currentFeaturedSlide = 0;
+
+            buildFeaturedDots();
+            updateFeaturedCarousel();
+            startFeaturedAutoPlay();
+        }
+
+        function buildFeaturedDots() {
+            const dotsContainer = document.getElementById('featured-carousel-dots');
+            if (!dotsContainer) return;
+            dotsContainer.innerHTML = '';
+            const totalDots = Math.max(1, featuredSlidesCount - featuredVisibleCount + 1);
+            for (let i = 0; i < totalDots; i++) {
+                const dot = document.createElement('button');
+                dot.type = 'button';
+                dot.className = 'featured-dot w-2 h-2 rounded-full transition-all duration-300 ' + (i === 0 ? 'bg-black w-5' : 'bg-slate-300 hover:bg-slate-400');
+                dot.setAttribute('aria-label', 'Slide ' + (i + 1));
+                dot.addEventListener('click', () => {
+                    currentFeaturedSlide = i;
+                    updateFeaturedCarousel();
+                    startFeaturedAutoPlay();
+                });
+                dotsContainer.appendChild(dot);
+            }
+        }
+
+        function updateFeaturedCarousel() {
+            if (!featuredSlidesContainer || featuredSlidesCount === 0) return;
+            featuredVisibleCount = getFeaturedVisibleCount();
+            const maxSlide = Math.max(0, featuredSlidesCount - featuredVisibleCount);
+            if (currentFeaturedSlide > maxSlide) currentFeaturedSlide = maxSlide;
+
+            const slideWidth = 100 / featuredVisibleCount;
+            const offset = -(currentFeaturedSlide * slideWidth);
+            featuredSlidesContainer.style.transform = 'translateX(' + offset + '%)';
+
+            const dots = document.querySelectorAll('.featured-dot');
+            dots.forEach((dot, i) => {
+                if (i === currentFeaturedSlide) {
+                    dot.classList.remove('bg-slate-300');
+                    dot.classList.add('bg-black', 'w-5');
+                } else {
+                    dot.classList.remove('bg-black', 'w-5');
+                    dot.classList.add('bg-slate-300');
+                }
+            });
+        }
+
+        window.changeFeaturedSlide = function(direction) {
+            if (featuredSlidesCount === 0) return;
+            featuredVisibleCount = getFeaturedVisibleCount();
+            const maxSlide = Math.max(0, featuredSlidesCount - featuredVisibleCount);
+            let next = currentFeaturedSlide + direction;
+            if (next < 0) next = maxSlide;
+            if (next > maxSlide) next = 0;
+            currentFeaturedSlide = next;
+            updateFeaturedCarousel();
+            startFeaturedAutoPlay();
+        };
+
+        function startFeaturedAutoPlay() {
+            clearInterval(featuredCarouselInterval);
+            featuredCarouselInterval = setInterval(() => {
+                featuredVisibleCount = getFeaturedVisibleCount();
+                const maxSlide = Math.max(0, featuredSlidesCount - featuredVisibleCount);
+                let next = currentFeaturedSlide + 1;
+                if (next > maxSlide) next = 0;
+                currentFeaturedSlide = next;
+                updateFeaturedCarousel();
+            }, 5000);
+        }
+
+        window.addEventListener('resize', () => {
+            featuredVisibleCount = getFeaturedVisibleCount();
+            buildFeaturedDots();
+            updateFeaturedCarousel();
+        });
+
+        document.addEventListener('DOMContentLoaded', () => {
+            if (heroSlides.length) {
+                setHeroSlide(0);
+                startHeroCarousel();
+            }
+            initFeaturedCarousel();
+        });
+
+        /* ============================================ */
         /* PARALLAX EFFECT ON HERO                      */
         /* ============================================ */
         (function() {
-            const heroBg = document.getElementById('hero-bg-img');
+            const heroBg = document.getElementById('hero-carousel-container');
             const heroSection = document.getElementById('hero-section');
             if (!heroBg || !heroSection) return;
 
