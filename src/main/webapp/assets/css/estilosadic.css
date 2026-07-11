@@ -401,6 +401,44 @@ html {
 }
 
 /* ============================================ */
+/* FEATURED PROPERTIES CAROUSEL                 */
+/* ============================================ */
+.featured-carousel {
+    position: relative;
+    padding: 0 2.5rem;
+}
+.featured-carousel-track {
+    margin: 0 -0.5rem;
+}
+.featured-carousel-slide {
+    transition: opacity 0.3s ease;
+}
+.featured-carousel-slides {
+    will-change: transform;
+}
+.featured-carousel-prev,
+.featured-carousel-next {
+    transition: all 0.25s ease;
+}
+.featured-carousel-prev:hover,
+.featured-carousel-next:hover {
+    transform: translateY(-50%) scale(1.08);
+}
+.featured-dot {
+    transition: width 0.3s ease, background-color 0.3s ease;
+}
+
+@media (max-width: 768px) {
+    .featured-carousel {
+        padding: 0 1rem;
+    }
+    .featured-carousel-prev,
+    .featured-carousel-next {
+        display: none;
+    }
+}
+
+/* ============================================ */
 /* KEN BURNS ANIMATION                          */
 /* ============================================ */
 @keyframes kenBurns {

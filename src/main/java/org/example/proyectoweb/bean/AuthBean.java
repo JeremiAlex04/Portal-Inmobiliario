@@ -107,6 +107,10 @@ public class AuthBean implements Serializable {
         return "/index.xhtml?faces-redirect=true";
     }
 
+    public String cerrarSesion() {
+        return logout();
+    }
+
     public boolean permiteRol(int... roles) {
         UsuarioDTO actual = getUsuarioSesion();
         if (actual == null) return false;
