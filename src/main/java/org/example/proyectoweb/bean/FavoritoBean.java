@@ -78,17 +78,10 @@ public class FavoritoBean {
         }
 
         String viewId = context.getViewRoot().getViewId();
-        Map<String, String> params = context.getExternalContext().getRequestParameterMap();
-        if (params != null && !params.isEmpty()) {
-            StringBuilder query = new StringBuilder();
-            for (Map.Entry<String, String> entry : params.entrySet()) {
-                if (entry.getKey() == null || entry.getValue() == null) continue;
-                if (query.length() > 0) query.append("&");
-                query.append(entry.getKey()).append("=").append(entry.getValue());
-            }
-            if (query.length() > 0) {
-                return viewId + "?" + query + "&faces-redirect=true";
-            }
+        jakarta.servlet.http.HttpServletRequest req = (jakarta.servlet.http.HttpServletRequest) context.getExternalContext().getRequest();
+        String queryString = req.getQueryString();
+        if (queryString != null && !queryString.isEmpty()) {
+            return viewId + "?" + queryString + "&faces-redirect=true";
         }
         return viewId + "?faces-redirect=true";
     }

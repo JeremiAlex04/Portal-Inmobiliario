@@ -5,6 +5,7 @@
          version="6.0">
 
     <display-name>Inmobix Portal Inmobiliario</display-name>
+    <!-- Force context reload v4 -->
 
     <!-- CDI / Weld Listener para iniciar CDI en Tomcat -->
     <listener>

@@ -56,6 +56,8 @@ public class DetallePropiedadBean {
         galeria = galeriaDAO.obtenerFotos(id);
     }
 
+    private org.example.proyectoweb.dao.WhatsAppDAO whatsAppDAO = new org.example.proyectoweb.dao.WhatsAppDAO();
+
     public String enviarConsulta() {
         ConsultaDTO c = new ConsultaDTO();
         c.setIdPropiedad(id);
@@ -72,6 +74,34 @@ public class DetallePropiedadBean {
             FacesContext.getCurrentInstance().getExternalContext().getFlash().put("errorConsulta", true);
         }
         return "/detalle_propiedad.xhtml?id=" + id + "&faces-redirect=true";
+    }
+
+    public String contactarWhatsApp() {
+        Integer idUsuario = authBean.isLogueado() ? authBean.getUsuario().getIdUsuario() : null;
+        whatsAppDAO.registrarContacto(id, idUsuario);
+
+        String telefono = propiedad.getAgenteTelefono();
+        if (telefono != null) {
+            telefono = telefono.replaceAll("[^0-9]", "");
+        } else {
+            telefono = "";
+        }
+
+        if (!telefono.startsWith("51") && telefono.length() == 9) {
+            telefono = "51" + telefono;
+        }
+
+        String mensaje = "Hola, estoy interesado en tu propiedad \"" + propiedad.getTitulo() + "\" que vi en InmobiX.";
+        String urlEncodedMensaje = URLEncoder.encode(mensaje, java.nio.charset.StandardCharsets.UTF_8);
+        String whatsappUrl = "https://wa.me/" + telefono + "?text=" + urlEncodedMensaje;
+
+        try {
+            FacesContext.getCurrentInstance().getExternalContext().redirect(whatsappUrl);
+            FacesContext.getCurrentInstance().responseComplete();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return null;
     }
 
     // Chart.js data helpers
