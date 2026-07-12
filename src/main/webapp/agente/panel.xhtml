@@ -1,115 +1,1037 @@
-<!DOCTYPE html>
 <html xmlns="http://www.w3.org/1999/xhtml"
       xmlns:h="jakarta.faces.html"
       xmlns:f="jakarta.faces.core"
-      xmlns:ui="jakarta.faces.facelets"
-      xmlns:c="jakarta.tags.core">
-<ui:composition template="/WEB-INF/templates/plantilla.xhtml">
+      xmlns:ui="jakarta.faces.facelets">
+<ui:composition template="/WEB-INF/templates/plantilla_agente.xhtml">
+    <f:metadata>
+        <f:viewParam name="seccion" value="#{agenteBean.seccion}"/>
+        <f:viewParam name="id" value="#{agenteBean.idEdicion}"/>
+        <f:viewAction action="#{agenteBean.inicializarEdicionPanel}"/>
+    </f:metadata>
+    
     <ui:define name="titulo">#{msg['agente.panel']} - #{msg['app.titulo']}</ui:define>
+    
     <ui:define name="contenido">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-            <h1 class="text-2xl font-bold text-gray-900 mb-6">#{msg['agente.panel']}</h1>
+        <div class="space-y-8">
+            
+            <!-- Success/Error Alerts for Property Actions -->
+            <h:panelGroup id="alertsGroup" layout="block">
+                <h:panelGroup layout="block" rendered="#{flash.propiedadPublicada or agenteBean.propiedadGuardadaExito}" styleClass="bg-emerald-50 border-l-4 border-emerald-500 p-4 rounded-r-xl text-xs text-emerald-800 font-bold mb-6 border border-emerald-100 flex items-center gap-2 shadow-sm shadow-emerald-500/5">
+                    <svg class="w-4 h-4 text-emerald-500 shrink-0" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"></path></svg>
+                    ¡Propiedad guardada exitosamente! Se han guardado todos los cambios en el catálogo.
+                </h:panelGroup>
+                <h:panelGroup layout="block" rendered="#{flash.errorPublicacion or agenteBean.errorPublicacion}" styleClass="bg-red-50 border-l-4 border-red-500 p-4 rounded-r-xl text-xs text-red-800 font-bold mb-6 border border-red-100 flex items-center gap-2 shadow-sm shadow-red-500/5">
+                    <svg class="w-4 h-4 text-red-500 shrink-0" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z" clip-rule="evenodd"></path></svg>
+                    <h:outputText value="#{not empty agenteBean.mensajeError ? agenteBean.mensajeError : 'Ocurrió un error al intentar guardar la propiedad. Por favor, verifica todos los campos.'}" />
+                </h:panelGroup>
+                <h:panelGroup layout="block" rendered="#{flash.limiteAlcanzado or agenteBean.limiteAlcanzado}" styleClass="bg-amber-50 border-l-4 border-amber-500 p-4 rounded-r-xl text-xs text-amber-800 font-bold mb-6 border border-amber-100 flex items-center gap-2 shadow-sm shadow-amber-500/5">
+                    <svg class="w-4 h-4 text-amber-500 shrink-0" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z" clip-rule="evenodd"></path></svg>
+                    Has alcanzado el límite máximo de anuncios activos para tu plan de suscripción actual.
+                </h:panelGroup>
+                <h:panelGroup layout="block" rendered="#{flash.estadoCambiado}" styleClass="bg-slate-900 text-white p-4 rounded-2xl text-xs font-bold mb-6 flex items-center gap-2 shadow-sm">
+                    <svg class="w-4 h-4 text-emerald-400 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0"/></svg>
+                    El estado de la propiedad se ha actualizado exitosamente.
+                </h:panelGroup>
+                <h:panelGroup layout="block" rendered="#{flash.propiedadEliminada}" styleClass="bg-slate-900 text-white p-4 rounded-2xl text-xs font-bold mb-6 flex items-center gap-2 shadow-sm">
+                    <svg class="w-4 h-4 text-rose-400 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/></svg>
+                    La propiedad ha sido eliminada definitivamente de tu catálogo.
+                </h:panelGroup>
+            </h:panelGroup>
 
-            <!-- Stats -->
-            <div class="grid grid-cols-2 gap-4 mb-6">
-                <div class="bg-white rounded-xl shadow-sm p-4 border border-gray-100">
-                    <p class="text-2xl font-bold text-amber-600">#{agenteBean.consultasPendientes}</p>
-                    <p class="text-sm text-gray-500">Consultas Pendientes</p>
+            <!-- Dashboard Welcome Header -->
+            <h:panelGroup layout="block" rendered="#{agenteBean.seccion != 'perfil'}"
+                          styleClass="bg-white rounded-3xl p-8 border border-slate-200/60 shadow-sm flex flex-col md:flex-row justify-between items-start md:items-center gap-6">
+                <div class="flex items-center gap-4">
+                    <div class="w-14 h-14 rounded-full bg-slate-900 text-white flex items-center justify-center font-bold text-xl select-none uppercase shadow-md shrink-0">
+                        #{agenteBean.agente.nombres.substring(0,1)}#{agenteBean.agente.apellidos.substring(0,1)}
+                    </div>
+                    <div>
+                        <h1 class="font-title text-2xl font-light text-slate-900 leading-snug">
+                            ¡Hola de nuevo, <span class="font-bold">#{agenteBean.agente.nombres} #{agenteBean.agente.apellidos}</span>!
+                        </h1>
+                        <p class="text-slate-400 text-xs mt-1 font-semibold uppercase tracking-wider flex items-center gap-1.5">
+                            <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
+                            #{agenteBean.agente.rolNombre != null ? agenteBean.agente.rolNombre : 'Agente Inmobiliario Verificado'}
+                        </p>
+                    </div>
                 </div>
-                <div class="bg-white rounded-xl shadow-sm p-4 border border-gray-100">
-                    <p class="text-2xl font-bold text-green-600">#{agenteBean.whatsappSemana}</p>
-                    <p class="text-sm text-gray-500">WhatsApp Semana</p>
+            </h:panelGroup>
+
+            <!-- KPI Cards Grid -->
+            <h:panelGroup id="kpiGrid" layout="block" rendered="#{agenteBean.seccion != 'perfil'}" styleClass="grid grid-cols-1 md:grid-cols-3 gap-6">
+                <!-- Card 1: Total Listings -->
+                <div class="bg-white rounded-3xl p-6 border border-slate-200/60 shadow-sm flex items-center justify-between hover:scale-[1.01] transition-all">
+                    <div class="space-y-1">
+                        <span class="text-[9px] font-black text-slate-400 uppercase tracking-widest block">Mis Inmuebles</span>
+                        <h2 class="text-3xl font-black text-slate-950">#{agenteBean.misPropiedades.size()}</h2>
+                        <span class="text-[10px] text-slate-400 font-bold block">Publicaciones totales</span>
+                    </div>
+                    <div class="w-12 h-12 rounded-2xl bg-slate-50 border border-slate-100 flex items-center justify-center text-slate-700 shrink-0">
+                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"></path>
+                        </svg>
+                    </div>
                 </div>
-            </div>
 
-            <!-- Tabs -->
-            <div class="flex gap-2 mb-6">
-                <a href="#{request.contextPath}/agente/panel.xhtml?seccion=propiedades"
-                   class="px-4 py-2 rounded-lg text-sm font-medium #{agenteBean.seccion == 'propiedades' ? 'bg-gray-900 text-white' : 'bg-gray-100 text-gray-700 hover:bg-gray-200'}">#{msg['agente.mispropiedades']}</a>
-                <a href="#{request.contextPath}/agente/panel.xhtml?seccion=consultas"
-                   class="px-4 py-2 rounded-lg text-sm font-medium #{agenteBean.seccion == 'consultas' ? 'bg-gray-900 text-white' : 'bg-gray-100 text-gray-700 hover:bg-gray-200'}">#{msg['agente.consultas']}</a>
-                <a href="#{request.contextPath}/propiedades?accion=nuevo"
-                   class="px-4 py-2 rounded-lg text-sm font-medium bg-amber-500 text-white hover:bg-amber-600">+ #{msg['agente.publicar']}</a>
-            </div>
+                <!-- Card 2: Pending Queries -->
+                <div class="bg-white rounded-3xl p-6 border border-slate-200/60 shadow-sm flex items-center justify-between hover:scale-[1.01] transition-all">
+                    <div class="space-y-1">
+                        <span class="text-[9px] font-black text-slate-400 uppercase tracking-widest block">Consultas Pendientes</span>
+                        <h2 class="text-3xl font-black #{agenteBean.consultasPendientes > 0 ? 'text-amber-500' : 'text-slate-950'}">
+                            #{agenteBean.consultasPendientes}
+                        </h2>
+                        <span class="text-[10px] text-slate-400 font-bold block">Esperando respuesta</span>
+                    </div>
+                    <div class="w-12 h-12 rounded-2xl #{agenteBean.consultasPendientes > 0 ? 'bg-amber-50 border-amber-100 text-amber-500' : 'bg-slate-50 border-slate-100 text-slate-700'} flex items-center justify-center shrink-0">
+                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-5l-5 5v-5z"></path>
+                        </svg>
+                    </div>
+                </div>
 
-            <!-- Mis Propiedades -->
-            <c:if test="#{agenteBean.seccion == 'propiedades' or empty param.seccion}">
-                <div class="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
+                <!-- Card 3: WhatsApp Contacts -->
+                <div class="bg-white rounded-3xl p-6 border border-slate-200/60 shadow-sm flex items-center justify-between hover:scale-[1.01] transition-all">
+                    <div class="space-y-1">
+                        <span class="text-[9px] font-black text-slate-400 uppercase tracking-widest block">WhatsApp Semanal</span>
+                        <h2 class="text-3xl font-black text-emerald-500">#{agenteBean.whatsappSemana}</h2>
+                        <span class="text-[10px] text-slate-400 font-bold block">Clics de contacto directo</span>
+                    </div>
+                    <div class="w-12 h-12 rounded-2xl bg-emerald-50 border-emerald-100 text-emerald-500 flex items-center justify-center shrink-0">
+                        <svg class="w-6 h-6 fill-current" viewBox="0 0 24 24">
+                            <path d="M12.031 6.172c-3.181 0-5.767 2.586-5.767 5.767 0 1.012.261 2.001.763 2.87l-.811 2.96 3.028-.794c.839.457 1.776.697 2.729.697 3.181 0 5.767-2.586 5.767-5.767 0-3.181-2.586-5.767-5.767-5.767zm3.39 8.161c-.146.411-.75.763-1.037.81-.27.043-.618.069-1.01-.061a5.05 5.05 0 01-2.181-1.341 5.56 5.56 0 01-1.468-1.921 2.39 2.39 0 01-.107-.94c.101-.527.42-.77.561-.914.137-.146.3-.186.4-.186h.257c.081 0 .182-.03.284.213.102.242.348.847.379.914.03.065.051.141.01.223-.04.081-.061.131-.121.202-.06.071-.126.157-.182.213-.061.061-.126.126-.05.257.076.131.338.557.724.901.496.442.914.581 1.046.642.131.061.207.051.284-.04.076-.091.328-.385.415-.517.086-.131.171-.111.288-.065.116.046.733.348.86.411.127.065.213.096.244.152.03.056.03.324-.116.735z"></path>
+                        </svg>
+                    </div>
+                </div>
+            </h:panelGroup>
+
+            <!-- Content Area -->
+            
+            <!-- SECTION 1: PROPERTIES (GRID) -->
+            <h:panelGroup id="propiedadesTableGroup" layout="block" rendered="#{empty agenteBean.seccion or agenteBean.seccion == 'propiedades'}">
+                <!-- If No Properties -->
+                <h:panelGroup layout="block" rendered="#{empty agenteBean.misPropiedades}" 
+                              styleClass="border border-dashed border-slate-300 rounded-[2rem] p-16 text-center text-slate-500 bg-white shadow-sm max-w-2xl mx-auto">
+                    <svg class="w-12 h-12 text-slate-300 mx-auto mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"></path>
+                    </svg>
+                    <h3 class="text-base font-bold text-slate-900 mb-1">Aún no tienes propiedades publicadas</h3>
+                    <p class="text-xs text-slate-400 mb-6 max-w-sm mx-auto">Publica tu primer inmueble para empezar a recibir consultas directas y clics en WhatsApp.</p>
+                    <button type="button"
+                            onclick="document.getElementById('indicacionesModal').classList.remove('hidden');"
+                            class="inline-flex items-center justify-center bg-black hover:bg-slate-800 text-white font-bold py-3 px-6 rounded-xl text-xs uppercase tracking-wider transition-all cursor-pointer border-0">
+                        + Publicar Primer Inmueble
+                    </button>
+                </h:panelGroup>
+
+                <!-- Properties Table (Compact Data Panel) -->
+                <h:panelGroup layout="block" rendered="#{not empty agenteBean.misPropiedades}" 
+                              styleClass="bg-white rounded-3xl border border-slate-200/60 shadow-sm overflow-hidden">
                     <div class="overflow-x-auto">
-                        <table class="w-full text-sm">
-                            <thead class="bg-gray-50">
-                                <tr>
-                                    <th class="px-4 py-3 text-left font-medium text-gray-500">T\u00EDtulo</th>
-                                    <th class="px-4 py-3 text-left font-medium text-gray-500">Tipo/Operaci\u00F3n</th>
-                                    <th class="px-4 py-3 text-left font-medium text-gray-500">Precio</th>
-                                    <th class="px-4 py-3 text-left font-medium text-gray-500">Vistas</th>
-                                    <th class="px-4 py-3 text-left font-medium text-gray-500">Estado</th>
-                                    <th class="px-4 py-3 text-left font-medium text-gray-500">Acciones</th>
+                        <table class="w-full text-left text-xs border-collapse">
+                            <thead>
+                                <tr class="bg-slate-50 border-b border-slate-100">
+                                    <th class="px-6 py-4 text-[9px] font-black uppercase tracking-widest text-slate-400">Inmueble</th>
+                                    <th class="px-6 py-4 text-[9px] font-black uppercase tracking-widest text-slate-400">Ubicación</th>
+                                    <th class="px-6 py-4 text-[9px] font-black uppercase tracking-widest text-slate-400">Operación</th>
+                                    <th class="px-6 py-4 text-[9px] font-black uppercase tracking-widest text-slate-400">Precio</th>
+                                    <th class="px-6 py-4 text-[9px] font-black uppercase tracking-widest text-slate-400 text-center">Vistas</th>
+                                    <th class="px-6 py-4 text-[9px] font-black uppercase tracking-widest text-slate-400">Estado</th>
+                                    <th class="px-6 py-4 text-[9px] font-black uppercase tracking-widest text-slate-400 text-right">Acciones</th>
                                 </tr>
                             </thead>
-                            <tbody>
-                                <c:forEach items="#{agenteBean.misPropiedades}" var="p">
-                                    <tr class="border-t border-gray-50 hover:bg-gray-50">
-                                        <td class="px-4 py-3 font-medium">#{p.titulo}</td>
-                                        <td class="px-4 py-3">#{p.tipoInmueble} / #{p.operacion}</td>
-                                        <td class="px-4 py-3">$ #{p.precioUsd}</td>
-                                        <td class="px-4 py-3">#{p.numeroVistas}</td>
-                                        <td class="px-4 py-3">
-                                            <span class="px-2 py-1 text-xs rounded-full #{p.estado == 'ACTIVO' ? 'bg-green-100 text-green-700' : p.estado == 'PAUSADO' ? 'bg-amber-100 text-amber-700' : 'bg-gray-100 text-gray-600'}">#{p.estado}</span>
+                            <tbody class="divide-y divide-slate-100">
+                                <ui:repeat value="#{agenteBean.misPropiedades}" var="p">
+                                    <tr class="hover:bg-slate-50/50 transition-colors">
+                                        <!-- Inmueble Info -->
+                                        <td class="px-6 py-4">
+                                            <div class="flex items-center gap-3">
+                                                <ui:fragment rendered="#{not empty p.fotoPrincipal}">
+                                                    <img src="#{p.fotoPrincipalUrl(request.contextPath)}" alt="#{p.titulo}" class="w-10 h-10 object-cover rounded-lg border border-slate-100" />
+                                                </ui:fragment>
+                                                <ui:fragment rendered="#{empty p.fotoPrincipal}">
+                                                    <div class="w-10 h-10 bg-slate-100 rounded-lg flex items-center justify-center text-slate-300">
+                                                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"></path></svg>
+                                                    </div>
+                                                </ui:fragment>
+                                                <div>
+                                                    <span class="text-[9px] font-black text-amber-600 uppercase tracking-wider block">#{p.tipoInmueble}</span>
+                                                    <span class="font-bold text-slate-900 line-clamp-1">#{p.titulo}</span>
+                                                </div>
+                                            </div>
                                         </td>
-                                        <td class="px-4 py-3">
-                                            <div class="flex gap-2">
-                                                <a href="#{request.contextPath}/detalle_propiedad.xhtml?id=#{p.id}" class="text-xs px-2 py-1 rounded bg-blue-50 text-blue-600 hover:bg-blue-100">Ver</a>
-                                                <a href="#{request.contextPath}/analytics.xhtml?id=#{p.id}" class="text-xs px-2 py-1 rounded bg-purple-50 text-purple-600 hover:bg-purple-100">Stats</a>
+                                        <!-- Ubicación -->
+                                        <td class="px-6 py-4 text-slate-600 font-medium">
+                                            #{p.distrito}, #{p.provincia}
+                                        </td>
+                                        <!-- Operación -->
+                                        <td class="px-6 py-4">
+                                            <span class="px-2 py-0.5 text-[9px] font-black uppercase tracking-wider rounded bg-black text-white">
+                                                #{p.operacion}
+                                            </span>
+                                        </td>
+                                        <!-- Precio -->
+                                        <td class="px-6 py-4 font-bold text-slate-900">
+                                            $ <h:outputText value="#{p.precioUsd}"><f:convertNumber pattern="#,##0"/></h:outputText>
+                                        </td>
+                                        <!-- Vistas -->
+                                        <td class="px-6 py-4 text-center font-bold text-slate-500">
+                                            #{p.numeroVistas}
+                                        </td>
+                                        <!-- Estado -->
+                                        <td class="px-6 py-4">
+                                            <span class="px-2 py-0.5 text-[9px] font-black uppercase tracking-wider rounded #{p.estado == 'ACTIVO' ? 'bg-emerald-500 text-white' : p.estado == 'PAUSADO' ? 'bg-amber-500 text-white' : 'bg-slate-500 text-white'}">
+                                                #{p.estado}
+                                            </span>
+                                        </td>
+                                        <!-- Acciones -->
+                                        <td class="px-6 py-4 text-right">
+                                            <div class="flex items-center justify-end gap-1.5">
+                                                 <!-- Ver Ficha -->
+                                                 <a href="#{request.contextPath}/detalle_propiedad.xhtml?id=#{p.id}" 
+                                                    target="_blank"
+                                                    title="Ver Ficha Pública"
+                                                    class="w-7 h-7 rounded-lg bg-slate-50 border border-slate-200 text-slate-600 hover:text-black flex items-center justify-center transition-colors">
+                                                     <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/>
+                                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/>
+                                                     </svg>
+                                                 </a>
+
+                                                 <!-- Estadísticas -->
+                                                 <h:form class="m-0 p-0 inline">
+                                                     <h:commandLink action="#{agenteBean.cargarEstadisticas(p.id)}" 
+                                                                    title="Ver Estadísticas"
+                                                                    styleClass="w-7 h-7 rounded-lg bg-slate-50 border border-slate-200 text-slate-600 hover:text-black flex items-center justify-center transition-colors cursor-pointer inline-flex">
+                                                         <f:ajax render=":statsModalContent" onevent="abrirModalStats"/>
+                                                         <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v16m-6 0a2 2 0 002 2h2a2 2 0 002-2"/>
+                                                         </svg>
+                                                     </h:commandLink>
+                                                 </h:form>
+
+                                                 <!-- Editar (Link to panel.xhtml?seccion=editar) -->
+                                                 <a href="#{request.contextPath}/agente/panel.xhtml?seccion=editar&amp;id=#{p.id}"
+                                                    title="Editar Inmueble"
+                                                    class="w-7 h-7 rounded-lg bg-slate-50 border border-slate-200 text-slate-600 hover:text-black flex items-center justify-center transition-colors cursor-pointer inline-flex">
+                                                     <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/>
+                                                     </svg>
+                                                 </a>
+
+                                                 <!-- Eliminar -->
+                                                 <h:form class="m-0 p-0 inline">
+                                                     <h:commandLink action="#{agenteBean.eliminarPropiedad(p.id)}"
+                                                                    title="Eliminar Publicación"
+                                                                    onclick="return confirm('¿Estás seguro de que deseas eliminar este anuncio de forma permanente? Esta acción no se puede deshacer.');"
+                                                                    styleClass="w-7 h-7 rounded-lg bg-rose-50 border border-rose-200 text-rose-600 hover:text-rose-800 flex items-center justify-center transition-colors cursor-pointer inline-flex">
+                                                         <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/>
+                                                         </svg>
+                                                     </h:commandLink>
+                                                 </h:form>
                                             </div>
                                         </td>
                                     </tr>
-                                </c:forEach>
+                                </ui:repeat>
                             </tbody>
                         </table>
                     </div>
-                </div>
-            </c:if>
+                </h:panelGroup>
+            </h:panelGroup>
 
-            <!-- Consultas -->
-            <c:if test="#{agenteBean.seccion == 'consultas'}">
-                <div class="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
-                    <div class="overflow-x-auto">
-                        <table class="w-full text-sm">
-                            <thead class="bg-gray-50">
-                                <tr>
-                                    <th class="px-4 py-3 text-left font-medium text-gray-500">Fecha</th>
-                                    <th class="px-4 py-3 text-left font-medium text-gray-500">Propiedad</th>
-                                    <th class="px-4 py-3 text-left font-medium text-gray-500">De</th>
-                                    <th class="px-4 py-3 text-left font-medium text-gray-500">Mensaje</th>
-                                    <th class="px-4 py-3 text-left font-medium text-gray-500">Estado</th>
-                                    <th class="px-4 py-3 text-left font-medium text-gray-500">Acci\u00F3n</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                <c:forEach items="#{agenteBean.consultas}" var="c">
-                                    <tr class="border-t border-gray-50 hover:bg-gray-50">
-                                        <td class="px-4 py-3 text-xs">#{c.fecha}</td>
-                                        <td class="px-4 py-3">#{c.tituloPropiedad}</td>
-                                        <td class="px-4 py-3">#{c.nombre}<br/><span class="text-xs text-gray-400">#{c.email}</span></td>
-                                        <td class="px-4 py-3 max-w-xs truncate">#{c.mensaje}</td>
-                                        <td class="px-4 py-3">
-                                            <span class="px-2 py-1 text-xs rounded-full #{c.estado == 'PENDIENTE' ? 'bg-amber-100 text-amber-700' : 'bg-green-100 text-green-700'}">#{c.estado}</span>
-                                        </td>
-                                        <td class="px-4 py-3">
-                                            <h:form>
-                                                <h:commandButton action="#{agenteBean.cambiarEstadoConsulta(c.id, 'ATENDIDO')}" value="Atender"
-                                                    class="text-xs px-2 py-1 rounded bg-green-50 text-green-600 hover:bg-green-100"/>
-                                            </h:form>
-                                        </td>
-                                    </tr>
-                                </c:forEach>
-                            </tbody>
-                        </table>
+            <!-- SECTION 2: QUERIES (INBOX STREAM) -->
+            <h:panelGroup layout="block" rendered="#{agenteBean.seccion == 'consultas'}">
+                <!-- If No Queries -->
+                <h:panelGroup layout="block" rendered="#{empty agenteBean.consultas}" 
+                              styleClass="border border-dashed border-slate-300 rounded-[2rem] p-16 text-center text-slate-500 bg-white shadow-sm max-w-2xl mx-auto">
+                    <svg class="w-12 h-12 text-slate-300 mx-auto mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"></path>
+                    </svg>
+                    <h3 class="text-base font-bold text-slate-900 mb-1">Bandeja de Consultas limpia</h3>
+                    <p class="text-xs text-slate-400 max-w-sm mx-auto">No tienes consultas o mensajes pendientes en este momento. Las nuevas consultas que hagan sobre tus propiedades aparecerán aquí.</p>
+                </h:panelGroup>
+
+                <h:panelGroup layout="block" rendered="#{not empty agenteBean.consultas}" styleClass="space-y-6 max-w-4xl mx-auto">
+                        <ui:repeat value="#{agenteBean.consultas}" var="c">
+                        <div class="bg-white rounded-3xl p-6 border #{c.estado == 'PENDIENTE' ? 'border-amber-200/80 shadow-md shadow-amber-500/5' : 'border-slate-200/60 shadow-sm'} transition-all flex flex-col md:flex-row gap-6 items-start">
+                            
+                            <!-- Circle Initials Icon -->
+                            <div class="w-12 h-12 rounded-full shrink-0 flex items-center justify-center font-bold text-base uppercase text-slate-600 #{c.estado == 'PENDIENTE' ? 'bg-amber-100 text-amber-700' : 'bg-slate-100 text-slate-700'} select-none">
+                                #{c.nombre.substring(0,1)}#{c.nombre.contains(' ') ? c.nombre.substring(c.nombre.indexOf(' ')+1, c.nombre.indexOf(' ')+2) : ''}
+                            </div>
+
+                            <!-- Query Details -->
+                            <div class="flex-1 space-y-3.5 w-full">
+                                <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-3">
+                                    <div>
+                                        <div class="flex items-center gap-2">
+                                            <h4 class="font-bold text-slate-900 text-sm">#{c.nombre}</h4>
+                                            <span class="px-2 py-0.5 text-[9px] font-black uppercase tracking-wider rounded-full #{c.estado == 'PENDIENTE' ? 'bg-amber-100 text-amber-700 animate-pulse' : 'bg-slate-100 text-slate-500'}">
+                                                #{c.estado}
+                                            </span>
+                                        </div>
+                                        <p class="text-[10px] text-slate-400 font-bold mt-0.5 flex items-center gap-1">
+                                            <span>De: #{c.email}</span>
+                                            <ui:fragment rendered="#{not empty c.telefono}">
+                                                <span>• Tel: #{c.telefono}</span>
+                                            </ui:fragment>
+                                        </p>
+                                    </div>
+                                    <span class="text-[10px] text-slate-400 font-semibold md:text-right">
+                                        #{c.fecha}
+                                    </span>
+                                </div>
+
+                                <!-- Propiedad de Origen Link banner -->
+                                <div class="bg-slate-50 border border-slate-100 rounded-xl px-4 py-2.5 flex items-center justify-between gap-4">
+                                    <span class="text-[11px] font-bold text-slate-700 line-clamp-1">
+                                        Sobre: #{c.tituloPropiedad}
+                                    </span>
+                                    <a href="#{request.contextPath}/detalle_propiedad.xhtml?id=#{c.idPropiedad}" 
+                                       target="_blank"
+                                       class="text-[10px] font-black uppercase text-amber-600 hover:text-amber-700 shrink-0">
+                                        Ver Ficha
+                                    </a>
+                                </div>
+
+                                <!-- Inquiry Message -->
+                                <div class="bg-slate-50/50 rounded-2xl p-4 text-xs leading-relaxed text-slate-600 border border-slate-100 font-medium">
+                                    #{c.mensaje}
+                                </div>
+
+                                <!-- Action Buttons row -->
+                                <div class="flex flex-wrap items-center justify-end gap-3 pt-2">
+                                    <!-- Email Action -->
+                                    <a href="mailto:#{c.email}?subject=Consulta%20InmobiX%3A%20#{c.tituloPropiedad}" 
+                                       class="inline-flex items-center justify-center gap-1.5 bg-slate-50 border border-slate-200 hover:bg-slate-100 text-slate-700 text-xs font-bold px-4 py-2 rounded-xl transition-all">
+                                        <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/></svg>
+                                        Responder por Correo
+                                    </a>
+
+                                    <!-- WhatsApp Action (Rendered if telephone exists) -->
+                                    <ui:fragment rendered="#{not empty c.telefono}">
+                                        <a href="https://wa.me/51#{c.telefono.replaceAll('[^0-9]', '')}?text=Hola%20#{c.nombre}%2C%20soy%20#{agenteBean.agente.nombres}%20de%20InmobiX.%20Recib%C3%AD%20tu%20consulta%20por%20#{c.tituloPropiedad}..." 
+                                           target="_blank"
+                                           class="inline-flex items-center justify-center gap-1.5 bg-emerald-50 border border-emerald-100 hover:bg-emerald-100 text-emerald-700 text-xs font-bold px-4 py-2 rounded-xl transition-all">
+                                            <svg class="w-3.5 h-3.5 fill-current" viewBox="0 0 24 24"><path d="M12.031 6.172c-3.181 0-5.767 2.586-5.767 5.767 0 1.012.261 2.001.763 2.87l-.811 2.96 3.028-.794c.839.457 1.776.697 2.729.697 3.181 0 5.767-2.586 5.767-5.767 0-3.181-2.586-5.767-5.767-5.767zm3.39 8.161c-.146.411-.75.763-1.037.81-.27.043-.618.069-1.01-.061a5.05 5.05 0 01-2.181-1.341 5.56 5.56 0 01-1.468-1.921 2.39 2.39 0 01-.107-.94c.101-.527.42-.77.561-.914.137-.146.3-.186.4-.186h.257c.081 0 .182-.03.284.213.102.242.348.847.379.914.03.065.051.141.01.223-.04.081-.061.131-.121.202-.06.071-.126.157-.182.213-.061.061-.126.126-.05.257.076.131.338.557.724.901.496.442.914.581 1.046.642.131.061.207.051.284-.04.076-.091.328-.385.415-.517.086-.131.171-.111.288-.065.116.046.733.348.86.411.127.065.213.096.244.152.03.056.03.324-.116.735z"/></svg>
+                                            Chatear por WhatsApp
+                                        </a>
+                                    </ui:fragment>
+                                </div>
+                            </div>
+                        </div>
+                    </ui:repeat>
+                </h:panelGroup>
+            </h:panelGroup>
+
+            <!-- SECTION 3: AGENT PROFILE -->
+            <h:panelGroup layout="block" rendered="#{agenteBean.seccion == 'perfil'}" styleClass="max-w-3xl mx-auto space-y-6">
+                <!-- Alerts -->
+                <h:panelGroup layout="block" rendered="#{flash.perfilActualizado or agenteBean.perfilGuardadoExito}" styleClass="bg-emerald-50 border-l-4 border-emerald-500 p-4 rounded-r-xl text-xs text-emerald-800 font-bold mb-6 border border-emerald-100 flex items-center gap-2 shadow-sm shadow-emerald-500/5 animate-in fade-in slide-in-from-top-4 duration-200">
+                    <svg class="w-4 h-4 text-emerald-500 shrink-0" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"></path></svg>
+                    ¡Datos de perfil actualizados exitosamente! Los cambios han sido guardados en tu sesión y en la base de datos.
+                </h:panelGroup>
+                <h:panelGroup layout="block" rendered="#{agenteBean.errorPerfil}" styleClass="bg-red-50 border-l-4 border-red-500 p-4 rounded-r-xl text-xs text-red-800 font-bold mb-6 border border-red-100 flex items-center gap-2 shadow-sm shadow-red-500/5 animate-in fade-in duration-200">
+                    <svg class="w-4 h-4 text-red-500 shrink-0" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z" clip-rule="evenodd"></path></svg>
+                    <h:outputText value="#{agenteBean.mensajeErrorPerfil}" />
+                </h:panelGroup>
+
+                <!-- Form Card -->
+                <div class="bg-white rounded-[2rem] border border-slate-200/60 shadow-sm overflow-hidden">
+                    <!-- Profile Banner -->
+                    <div class="bg-slate-900 px-8 py-8 flex flex-col sm:flex-row items-center gap-6 text-white shrink-0">
+                        <div class="w-20 h-20 rounded-full bg-amber-500 text-slate-950 flex items-center justify-center font-bold text-2xl uppercase select-none border-4 border-white/20 shadow-md">
+                            #{agenteBean.perfil.nombres.substring(0,1)}#{agenteBean.perfil.apellidos.substring(0,1)}
+                        </div>
+                        <div class="text-center sm:text-left space-y-1">
+                            <h2 class="font-title text-xl font-bold">#{agenteBean.perfil.nombres} #{agenteBean.perfil.apellidos}</h2>
+                            <span class="px-2 py-0.5 text-[9px] font-black uppercase tracking-wider rounded-full bg-white/10 text-slate-200 border border-white/10 block w-max mx-auto sm:mx-0">
+                                #{agenteBean.perfil.rolNombre != null ? agenteBean.perfil.rolNombre : 'Agente Inmobiliario Verificado'}
+                            </span>
+                        </div>
                     </div>
+
+                    <!-- Form Fields -->
+                    <h:form id="perfilForm" prependId="false" class="m-0 p-0">
+                         <h:inputHidden id="seccion" value="#{agenteBean.seccion}" />
+                         <div class="p-8 space-y-6">
+                             <!-- Validation Messages -->
+                             <h:messages id="perfilMessages" globalOnly="false"
+                                         styleClass="bg-rose-50 border border-rose-200 rounded-2xl p-4 text-xs text-rose-700 font-semibold space-y-1 block list-none empty:hidden" />
+                             <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                                <div>
+                                    <label class="block text-[9px] font-black text-slate-400 uppercase tracking-widest mb-1 px-1">Nombres *</label>
+                                    <h:inputText id="perfilNombres" value="#{agenteBean.perfil.nombres}"
+                                                 styleClass="w-full bg-slate-50 border border-slate-200 text-slate-900 rounded-xl px-4 py-2.5 text-xs focus:outline-none focus:border-black transition-all"
+                                                 required="true" requiredMessage="El nombre es obligatorio." />
+                                </div>
+                                <div>
+                                    <label class="block text-[9px] font-black text-slate-400 uppercase tracking-widest mb-1 px-1">Apellidos *</label>
+                                    <h:inputText id="perfilApellidos" value="#{agenteBean.perfil.apellidos}"
+                                                 styleClass="w-full bg-slate-50 border border-slate-200 text-slate-900 rounded-xl px-4 py-2.5 text-xs focus:outline-none focus:border-black transition-all"
+                                                 required="true" requiredMessage="Los apellidos son obligatorios." />
+                                </div>
+                                <div class="md:col-span-2">
+                                    <label class="block text-[9px] font-black text-slate-400 uppercase tracking-widest mb-1 px-1">Correo Electrónico *</label>
+                                    <h:inputText id="perfilCorreo" value="#{agenteBean.perfil.correo}"
+                                                 styleClass="w-full bg-slate-50 border border-slate-200 text-slate-900 rounded-xl px-4 py-2.5 text-xs focus:outline-none focus:border-black transition-all"
+                                                 required="true" requiredMessage="El correo electrónico es obligatorio." />
+                                </div>
+                                <div>
+                                    <label class="block text-[9px] font-black text-slate-400 uppercase tracking-widest mb-1 px-1">Rol de Acceso</label>
+                                    <input type="text" value="#{agenteBean.perfil.rolNombre != null ? agenteBean.perfil.rolNombre : 'Agente'}"
+                                           disabled="disabled"
+                                           class="w-full bg-slate-100 border border-slate-200 text-slate-400 rounded-xl px-4 py-2.5 text-xs select-none cursor-not-allowed" />
+                                </div>
+                                <div>
+                                    <label class="block text-[9px] font-black text-slate-400 uppercase tracking-widest mb-1 px-1">Fecha de Registro</label>
+                                    <input type="text" value="#{agenteBean.perfil.fechaRegistro}"
+                                           disabled="disabled"
+                                           class="w-full bg-slate-100 border border-slate-200 text-slate-400 rounded-xl px-4 py-2.5 text-xs select-none cursor-not-allowed" />
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Footer Actions -->
+                        <div class="px-8 py-5 bg-slate-50 border-t border-slate-200/60 flex justify-end gap-3 shrink-0">
+                            <a href="#{request.contextPath}/agente/panel.xhtml?seccion=propiedades"
+                               class="bg-white border border-slate-200 hover:bg-slate-100 text-slate-700 font-bold py-3 px-6 rounded-xl text-xs transition-all no-underline cursor-pointer">
+                                Volver a Propiedades
+                            </a>
+                            <h:commandButton action="#{agenteBean.actualizarPerfil}"
+                                             value="Guardar Cambios"
+                                             styleClass="bg-black hover:bg-slate-800 text-white font-bold py-3 px-6 rounded-xl text-xs transition-all cursor-pointer border-0 shadow-md shadow-black/10" />
+                        </div>
+                    </h:form>
                 </div>
-            </c:if>
+            </h:panelGroup>
+
+            <!-- SECTION 4: EDIT PROPERTY -->
+            <h:panelGroup layout="block" rendered="#{agenteBean.seccion == 'editar'}" styleClass="max-w-5xl mx-auto space-y-6">
+                <!-- Breadcrumbs -->
+                <div class="flex items-center gap-2 text-xs font-semibold text-slate-400 select-none">
+                    <a href="#{request.contextPath}/agente/panel.xhtml?seccion=propiedades" class="hover:text-slate-900 transition-colors no-underline">Mis Propiedades</a>
+                    <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M9 5l7 7-7 7"></path>
+                    </svg>
+                    <span class="text-slate-900">Editar Propiedad</span>
+                </div>
+
+                <div class="bg-white rounded-[2rem] border border-slate-200/60 shadow-xl overflow-hidden flex flex-col">
+                    <!-- Form Header -->
+                    <div class="bg-slate-900 px-8 py-8 flex flex-col sm:flex-row items-center gap-6 text-white shrink-0">
+                        <div class="w-16 h-16 rounded-2xl bg-amber-500 text-slate-950 flex items-center justify-center font-bold text-xl uppercase select-none border-4 border-white/20 shadow-md">
+                            <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"></path>
+                            </svg>
+                        </div>
+                        <div class="text-center sm:text-left space-y-1">
+                            <h2 class="font-title text-xl font-bold">Editar Detalles de la Propiedad</h2>
+                            <p class="text-[10px] text-slate-400 font-semibold uppercase tracking-wider">Modifica la información básica, ubicación, características y fotos del anuncio.</p>
+                        </div>
+                    </div>
+
+                    <!-- Form Content -->
+                    <h:form id="editForm" prependId="false" class="m-0 p-0" onsubmit="return validateEditForm();">
+                         <h:inputHidden id="editSeccion" value="#{agenteBean.seccion}" />
+                         <h:inputHidden id="editIdEdicion" value="#{agenteBean.idEdicion}" />
+                         <h:inputHidden id="editPropiedadId" value="#{agenteBean.nuevaPropiedad.id}" />
+
+                        <div class="p-8 space-y-8">
+                            <!-- Error Panel -->
+                            <h:panelGroup layout="block" rendered="#{agenteBean.errorPublicacion}" styleClass="bg-rose-50 border border-rose-200 rounded-2xl p-4 text-xs text-rose-800 font-bold flex items-center gap-2">
+                                <svg class="w-4 h-4 text-rose-500 shrink-0" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z" clip-rule="evenodd"></path></svg>
+                                <span>#{agenteBean.mensajeError}</span>
+                            </h:panelGroup>
+
+                            <!-- Validation Messages -->
+                            <h:messages id="editMessages" globalOnly="false"
+                                        styleClass="bg-rose-50 border border-rose-200 rounded-2xl p-4 text-xs text-rose-700 font-semibold space-y-1 block list-none empty:hidden" />
+
+                            <!-- Seccion 1: Datos Generales -->
+                            <div class="space-y-4">
+                                <h3 class="text-xs font-black uppercase tracking-wider text-slate-900 border-b border-slate-100 pb-2">1. Datos Generales y Categoría</h3>
+                                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                    <div>
+                                        <label class="block text-[9px] font-black text-slate-400 uppercase tracking-widest mb-1 px-1">Tipo de Inmueble *</label>
+                                        <h:selectOneMenu id="editIdTipoInmueble" value="#{agenteBean.nuevaPropiedad.idTipoInmueble}"
+                                                         styleClass="w-full bg-slate-50 border border-slate-200 text-slate-900 rounded-xl px-4 py-2.5 text-xs focus:outline-none focus:border-black transition-all">
+                                            <f:selectItems value="#{agenteBean.listaTipos}" var="t" itemValue="#{t.id}" itemLabel="#{t.nombre}"/>
+                                        </h:selectOneMenu>
+                                    </div>
+                                    <div>
+                                        <label class="block text-[9px] font-black text-slate-400 uppercase tracking-widest mb-1 px-1">Tipo de Operación *</label>
+                                        <h:selectOneMenu id="editIdOperacion" value="#{agenteBean.nuevaPropiedad.idOperacion}"
+                                                         styleClass="w-full bg-slate-50 border border-slate-200 text-slate-900 rounded-xl px-4 py-2.5 text-xs focus:outline-none focus:border-black transition-all">
+                                            <f:selectItems value="#{agenteBean.listaOperaciones}" var="op" itemValue="#{op.id}" itemLabel="#{op.nombre}"/>
+                                        </h:selectOneMenu>
+                                    </div>
+                                    <div class="md:col-span-2">
+                                        <label class="block text-[9px] font-black text-slate-400 uppercase tracking-widest mb-1 px-1">Título de la Publicación *</label>
+                                        <h:inputText id="editTitulo" value="#{agenteBean.nuevaPropiedad.titulo}"
+                                                     styleClass="w-full bg-slate-50 border border-slate-200 text-slate-900 rounded-xl px-4 py-2.5 text-xs focus:outline-none focus:border-black transition-all"
+                                                     placeholder="Ej. Hermoso departamento frente al mar en Miraflores" />
+                                    </div>
+                                    <div class="md:col-span-2">
+                                        <label class="block text-[9px] font-black text-slate-400 uppercase tracking-widest mb-1 px-1">Descripción Detallada *</label>
+                                        <h:inputTextarea id="editDescripcion" value="#{agenteBean.nuevaPropiedad.descripcion}" rows="4"
+                                                         styleClass="w-full bg-slate-50 border border-slate-200 text-slate-900 rounded-xl px-4 py-2.5 text-xs focus:outline-none focus:border-black transition-all resize-none"
+                                                         placeholder="Describe las habitaciones, acabados, cercanía a centros comerciales y avenidas..." />
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Seccion 2: Ubicación -->
+                            <div class="space-y-4 pt-4 border-t border-slate-100">
+                                <h3 class="text-xs font-black uppercase tracking-wider text-slate-900 border-b border-slate-100 pb-2">2. Ubicación y Geolocalización</h3>
+                                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                    <div>
+                                        <label class="block text-[9px] font-black text-slate-400 uppercase tracking-widest mb-1 px-1">Distrito *</label>
+                                        <h:selectOneMenu id="editIdDistrito" value="#{agenteBean.nuevaPropiedad.idDistrito}"
+                                                         styleClass="w-full bg-slate-50 border border-slate-200 text-slate-900 rounded-xl px-4 py-2.5 text-xs focus:outline-none focus:border-black transition-all">
+                                            <f:selectItems value="#{agenteBean.listaDistritos}" var="dist" itemValue="#{dist.id}" itemLabel="#{dist.nombre}"/>
+                                        </h:selectOneMenu>
+                                    </div>
+                                    <div>
+                                        <label class="block text-[9px] font-black text-slate-400 uppercase tracking-widest mb-1 px-1">Dirección Exacta *</label>
+                                        <h:inputText id="editDireccion" value="#{agenteBean.nuevaPropiedad.direccion}" 
+                                                     styleClass="w-full bg-slate-50 border border-slate-200 text-slate-900 rounded-xl px-4 py-2.5 text-xs focus:outline-none focus:border-black transition-all"
+                                                     placeholder="Ej. Av. Larco 456" />
+                                    </div>
+                                    <div>
+                                        <label class="block text-[9px] font-black text-slate-400 uppercase tracking-widest mb-1 px-1">Partida Registral (SUNARP)</label>
+                                        <h:inputText id="editPartidaRegistral" value="#{agenteBean.nuevaPropiedad.partidaRegistral}" 
+                                                     styleClass="w-full bg-slate-50 border border-slate-200 text-slate-900 rounded-xl px-4 py-2.5 text-xs focus:outline-none focus:border-black transition-all"
+                                                     placeholder="Ej. 11029384" />
+                                    </div>
+                                    <div>
+                                        <label class="block text-[9px] font-black text-slate-400 uppercase tracking-widest mb-1 px-1">Referencia</label>
+                                        <h:inputText id="editReferencia" value="#{agenteBean.nuevaPropiedad.referencia}" 
+                                                     styleClass="w-full bg-slate-50 border border-slate-200 text-slate-900 rounded-xl px-4 py-2.5 text-xs focus:outline-none focus:border-black transition-all"
+                                                     placeholder="Ej. Altura cdra 4 de Av. Larco" />
+                                    </div>
+
+                                    <!-- Leaflet Map picker area -->
+                                    <div class="md:col-span-2 space-y-2 pt-2">
+                                        <label class="block text-[9px] font-black text-slate-400 uppercase tracking-widest mb-1 px-1">
+                                            Geolocalización en el Mapa
+                                            <span class="font-normal text-slate-400 capitalize">(Arrastra el pin o haz clic en el mapa para situar la ubicación exacta)</span>
+                                        </label>
+                                        <div id="edit-map" class="w-full h-64 rounded-2xl border border-slate-200 shadow-sm z-10"></div>
+                                        <p class="text-[10px] text-slate-400 mt-2 font-bold px-1">Coordenadas: <span id="edit-coordenadas-display" class="font-mono font-semibold text-slate-600">Ninguna</span></p>
+                                        
+                                        <h:inputHidden id="editLatitud" value="#{agenteBean.nuevaPropiedad.latitud}" />
+                                        <h:inputHidden id="editLongitud" value="#{agenteBean.nuevaPropiedad.longitud}" />
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Seccion 3: Características -->
+                            <div class="space-y-4 pt-4 border-t border-slate-100">
+                                <h3 class="text-xs font-black uppercase tracking-wider text-slate-900 border-b border-slate-100 pb-2">3. Características de la Propiedad</h3>
+                                <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+                                    <div>
+                                        <label class="block text-[9px] font-black text-slate-400 uppercase tracking-widest mb-1 px-1">Área Total (m²) *</label>
+                                        <h:inputText id="editAreaTotal" value="#{agenteBean.nuevaPropiedad.areaTotalM2}" 
+                                                     styleClass="w-full bg-slate-50 border border-slate-200 text-slate-900 rounded-xl px-4 py-2.5 text-xs focus:outline-none focus:border-black transition-all"
+                                                     placeholder="Ej. 120" />
+                                    </div>
+                                    <div>
+                                        <label class="block text-[9px] font-black text-slate-400 uppercase tracking-widest mb-1 px-1">Área Techada (m²)</label>
+                                        <h:inputText id="editAreaTechada" value="#{agenteBean.nuevaPropiedad.areaTechadaM2}" 
+                                                     styleClass="w-full bg-slate-50 border border-slate-200 text-slate-900 rounded-xl px-4 py-2.5 text-xs focus:outline-none focus:border-black transition-all"
+                                                     placeholder="Ej. 100" />
+                                    </div>
+                                    <div>
+                                        <label class="block text-[9px] font-black text-slate-400 uppercase tracking-widest mb-1 px-1">Dormitorios</label>
+                                        <h:inputText id="editNumDormitorios" value="#{agenteBean.nuevaPropiedad.numDormitorios}" 
+                                                     styleClass="w-full bg-slate-50 border border-slate-200 text-slate-900 rounded-xl px-4 py-2.5 text-xs focus:outline-none focus:border-black transition-all"
+                                                     placeholder="Ej. 3" />
+                                    </div>
+                                    <div>
+                                        <label class="block text-[9px] font-black text-slate-400 uppercase tracking-widest mb-1 px-1">Baños</label>
+                                        <h:inputText id="editNumBanos" value="#{agenteBean.nuevaPropiedad.numBanos}" 
+                                                     styleClass="w-full bg-slate-50 border border-slate-200 text-slate-900 rounded-xl px-4 py-2.5 text-xs focus:outline-none focus:border-black transition-all"
+                                                     placeholder="Ej. 2" />
+                                    </div>
+                                    <div>
+                                        <label class="block text-[9px] font-black text-slate-400 uppercase tracking-widest mb-1 px-1">Cocheras</label>
+                                        <h:inputText id="editNumCocheras" value="#{agenteBean.nuevaPropiedad.numCocheras}" 
+                                                     styleClass="w-full bg-slate-50 border border-slate-200 text-slate-900 rounded-xl px-4 py-2.5 text-xs focus:outline-none focus:border-black transition-all"
+                                                     placeholder="Ej. 1" />
+                                    </div>
+                                    <div>
+                                        <label class="block text-[9px] font-black text-slate-400 uppercase tracking-widest mb-1 px-1">Nº de Pisos</label>
+                                        <h:inputText id="editNumPisos" value="#{agenteBean.nuevaPropiedad.numPisos}" 
+                                                     styleClass="w-full bg-slate-50 border border-slate-200 text-slate-900 rounded-xl px-4 py-2.5 text-xs focus:outline-none focus:border-black transition-all"
+                                                     placeholder="Ej. 1" />
+                                    </div>
+                                    <div>
+                                        <label class="block text-[9px] font-black text-slate-400 uppercase tracking-widest mb-1 px-1">Año Construcción</label>
+                                        <h:inputText id="editAnioConstruccion" value="#{agenteBean.nuevaPropiedad.anioConstruccion}" 
+                                                     styleClass="w-full bg-slate-50 border border-slate-200 text-slate-900 rounded-xl px-4 py-2.5 text-xs focus:outline-none focus:border-black transition-all"
+                                                     placeholder="Ej. 2018" />
+                                    </div>
+                                    <div>
+                                        <label class="block text-[9px] font-black text-slate-400 uppercase tracking-widest mb-1 px-1">Tour Virtual 360°</label>
+                                        <h:inputText id="editTour360Url" value="#{agenteBean.nuevaPropiedad.tour360Url}" 
+                                                     styleClass="w-full bg-slate-50 border border-slate-200 text-slate-900 rounded-xl px-4 py-2.5 text-xs focus:outline-none focus:border-black transition-all"
+                                                     placeholder="https://my.matterport.com/show/..." />
+                                    </div>
+                                </div>
+
+                                <!-- Bonos estatales -->
+                                <div class="grid grid-cols-1 md:grid-cols-2 gap-4 pt-2">
+                                    <div class="flex items-center gap-3 bg-slate-50 border border-slate-200 rounded-2xl p-4">
+                                        <h:selectOneMenu id="editBonoMiVivienda" value="#{agenteBean.nuevaPropiedad.bonoMiVivienda}"
+                                                         styleClass="w-16 bg-white border border-slate-200 text-slate-900 rounded-lg px-2 py-1 text-xs outline-none">
+                                            <f:selectItem itemValue="0" itemLabel="No"/>
+                                            <f:selectItem itemValue="1" itemLabel="Sí"/>
+                                        </h:selectOneMenu>
+                                        <div>
+                                            <span class="text-xs font-bold text-slate-800 block">Bono MiVivienda</span>
+                                            <span class="text-[10px] text-slate-400 font-medium">Apto para financiamiento MiVivienda</span>
+                                        </div>
+                                    </div>
+                                    <div class="flex items-center gap-3 bg-emerald-50/50 border border-emerald-200/50 rounded-2xl p-4">
+                                        <h:selectOneMenu id="editBonoVerde" value="#{agenteBean.nuevaPropiedad.bonoVerde}"
+                                                         styleClass="w-16 bg-white border border-slate-200 text-slate-900 rounded-lg px-2 py-1 text-xs outline-none">
+                                            <f:selectItem itemValue="0" itemLabel="No"/>
+                                            <f:selectItem itemValue="1" itemLabel="Sí"/>
+                                        </h:selectOneMenu>
+                                        <div>
+                                            <span class="text-xs font-bold text-emerald-800 block">Bono Verde</span>
+                                            <span class="text-[10px] text-emerald-500 font-medium">Cuenta con certificación eco-amigable</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Seccion 4: Precio y Multimedia -->
+                            <div class="space-y-4 pt-4 border-t border-slate-100">
+                                <h3 class="text-xs font-black uppercase tracking-wider text-slate-900 border-b border-slate-100 pb-2">4. Precio e Imágenes</h3>
+                                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                    <div>
+                                        <label class="block text-[9px] font-black text-slate-400 uppercase tracking-widest mb-1 px-1">Moneda Base *</label>
+                                        <h:selectOneMenu id="editMonedaBase" value="#{agenteBean.nuevaPropiedad.monedaBase}"
+                                                         styleClass="w-full bg-slate-50 border border-slate-200 text-slate-900 rounded-xl px-4 py-2.5 text-xs focus:outline-none focus:border-black transition-all">
+                                            <f:selectItem itemValue="USD" itemLabel="Dólares Americanos (US$)"/>
+                                            <f:selectItem itemValue="PEN" itemLabel="Soles Peruanos (S/.)"/>
+                                        </h:selectOneMenu>
+                                    </div>
+                                    <div>
+                                        <label class="block text-[9px] font-black text-slate-400 uppercase tracking-widest mb-1 px-1">Precio *</label>
+                                        <h:inputText id="editPrecio" value="#{agenteBean.nuevaPropiedad.precio}"
+                                                     styleClass="w-full bg-slate-50 border border-slate-200 text-slate-900 rounded-xl px-4 py-2.5 text-xs focus:outline-none focus:border-black transition-all"
+                                                     placeholder="Ej. 185000.00" />
+                                    </div>
+                                    <div class="md:col-span-2">
+                                        <label class="block text-[9px] font-black text-slate-400 uppercase tracking-widest mb-1 px-1">Ruta / URL de la Foto Principal *</label>
+                                        <h:inputText id="editFotoPrincipal" value="#{agenteBean.nuevaPropiedad.fotoPrincipal}" 
+                                                     styleClass="w-full bg-slate-50 border border-slate-200 text-slate-900 rounded-xl px-4 py-2.5 text-xs focus:outline-none focus:border-black transition-all"
+                                                     placeholder="Ej. uploads/inmueble.jpg" />
+                                    </div>
+                                </div>
+
+                                <!-- Galería Dinámica -->
+                                <div class="border-t border-slate-100 pt-4">
+                                    <div class="flex justify-between items-center mb-4">
+                                        <div>
+                                            <h4 class="text-xs font-bold text-slate-800">Galería de Fotos Adicionales</h4>
+                                            <p class="text-[10px] text-slate-400 font-medium">Agrega direcciones URL de imágenes adicionales para la demanda de la propiedad.</p>
+                                        </div>
+                                        <h:commandLink action="#{agenteBean.agregarFotoGaleria}"
+                                                       styleClass="inline-flex items-center justify-center gap-1 bg-black hover:bg-slate-800 text-white text-[10px] font-bold px-3 py-1.5 rounded-lg transition-all no-underline cursor-pointer border-0">
+                                            <f:ajax render="editGaleriaGroup"/>
+                                            <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M12 4v16m8-8H4"></path>
+                                            </svg>
+                                            Agregar Foto
+                                        </h:commandLink>
+                                    </div>
+
+                                    <!-- Galería Inputs -->
+                                    <h:panelGroup id="editGaleriaGroup" layout="block" styleClass="space-y-3">
+                                        <ui:repeat value="#{agenteBean.fotosGaleria}" var="galUrl" varStatus="status">
+                                            <div class="flex gap-2 items-center bg-slate-50 border border-slate-200/60 p-3 rounded-xl">
+                                                <span class="text-xs font-black text-slate-400 min-w-[20px] text-center">#{status.index + 1}</span>
+                                                <h:inputText value="#{agenteBean.fotosGaleria[status.index]}"
+                                                             styleClass="flex-1 bg-white border border-slate-200 text-slate-900 rounded-lg px-3 py-2 text-xs focus:outline-none focus:border-black transition-all"
+                                                             placeholder="https://example.com/imagen.jpg" />
+                                                <h:commandLink action="#{agenteBean.removerFotoGaleria(status.index)}" 
+                                                               title="Quitar imagen"
+                                                               styleClass="text-rose-500 hover:text-rose-700 p-2 rounded-lg hover:bg-rose-50 transition-colors cursor-pointer">
+                                                    <f:ajax render="editForm:editGaleriaGroup"/>
+                                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/>
+                                                    </svg>
+                                                </h:commandLink>
+                                            </div>
+                                        </ui:repeat>
+                                    </h:panelGroup>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Footer Actions -->
+                        <div class="px-8 py-5 bg-slate-50 border-t border-slate-200/60 rounded-b-[2rem] flex justify-end gap-3 shrink-0">
+                            <a href="#{request.contextPath}/agente/panel.xhtml?seccion=propiedades"
+                               class="bg-white border border-slate-200 hover:bg-slate-100 text-slate-700 font-bold py-3 px-6 rounded-xl text-xs transition-all no-underline cursor-pointer">
+                                Cancelar
+                            </a>
+                            <h:commandButton action="#{agenteBean.guardarPropiedad}"
+                                             value="Guardar Cambios"
+                                             styleClass="bg-black hover:bg-slate-800 text-white font-bold py-3 px-6 rounded-xl text-xs transition-all cursor-pointer border-0 shadow-md shadow-black/10" />
+                        </div>
+                    </h:form>
+                </div>
+            </h:panelGroup>
         </div>
+
+        <!-- INDICACIONES PRE-CREACION MODAL -->
+        <div id="indicacionesModal" class="fixed inset-0 bg-slate-950/65 backdrop-blur-sm z-50 flex items-center justify-center p-4 overflow-y-auto hidden">
+            <div class="bg-white rounded-[2rem] border border-slate-200/60 shadow-2xl max-w-xl w-full flex flex-col relative animate-in fade-in zoom-in-95 duration-200 animate-duration-150">
+                
+                <!-- Header -->
+                <div class="px-8 py-5 border-b border-slate-100 flex justify-between items-center shrink-0">
+                    <div class="flex items-center gap-2.5">
+                        <div class="w-8 h-8 rounded-full bg-amber-50 border border-amber-200 flex items-center justify-center text-amber-500">
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/>
+                            </svg>
+                        </div>
+                        <div>
+                            <h2 class="font-title text-base font-bold text-slate-900">Antes de registrar tu propiedad</h2>
+                            <p class="text-[10px] text-slate-400 font-semibold mt-0.5">Ten en cuenta las siguientes directrices importantes.</p>
+                        </div>
+                    </div>
+                    <button type="button" 
+                            onclick="document.getElementById('indicacionesModal').classList.add('hidden')"
+                            class="w-8 h-8 rounded-full bg-slate-50 border border-slate-100 flex items-center justify-center text-slate-400 hover:text-slate-950 transition-all cursor-pointer">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M6 18L18 6M6 6l12 12"></path>
+                        </svg>
+                    </button>
+                </div>
+
+                <!-- Body -->
+                <div class="p-8 space-y-4 text-xs leading-relaxed text-slate-600 font-medium">
+                    <div class="p-4 bg-amber-50 border border-amber-100 rounded-2xl text-[11px] text-amber-800 flex gap-3">
+                        <svg class="w-5 h-5 shrink-0 text-amber-600 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                        </svg>
+                        <p>Para garantizar publicaciones de alta calidad y evitar suspensiones, cada propiedad pasa por una validación de reglas de negocio en el portal.</p>
+                    </div>
+
+                    <ul class="space-y-3.5 list-none pl-0">
+                        <li class="flex gap-3">
+                            <svg class="w-4 h-4 shrink-0 text-slate-400 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7"/></svg>
+                            <p><strong class="text-slate-900">Ubicación Precisa:</strong> Deberás marcar en el mapa interactivo el pin de coordenadas. Esto ayuda en búsquedas geográficas.</p>
+                        </li>
+                        <li class="flex gap-3">
+                            <svg class="w-4 h-4 shrink-0 text-slate-400 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7"/></svg>
+                            <p><strong class="text-slate-900">Precios Mínimos:</strong> La venta debe ser de al menos <strong class="text-slate-900">US$ 10,000 / S/. 10,000</strong> y el alquiler de al menos <strong class="text-slate-900">US$ 100 / S/. 100</strong>.</p>
+                        </li>
+                        <li class="flex gap-3">
+                            <svg class="w-4 h-4 shrink-0 text-slate-400 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7"/></svg>
+                            <p><strong class="text-slate-900">Documentación SUNARP:</strong> Para formalidad de la oferta, es recomendable registrar el número de Partida Registral.</p>
+                        </li>
+                        <li class="flex gap-3">
+                            <svg class="w-4 h-4 shrink-0 text-slate-400 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7"/></svg>
+                            <p><strong class="text-slate-900">Galería de Imágenes:</strong> Ten listas las URLs de las fotografías. Puedes agregar fotos dinámicas adicionales.</p>
+                        </li>
+                    </ul>
+                </div>
+
+                <!-- Footer -->
+                <div class="px-8 py-5 bg-slate-50 border-t border-slate-200/60 rounded-b-[2rem] flex justify-end gap-3 shrink-0">
+                    <button type="button" 
+                            onclick="document.getElementById('indicacionesModal').classList.add('hidden')"
+                            class="bg-white border border-slate-200 hover:bg-slate-100 text-slate-700 font-bold py-3 px-6 rounded-xl text-xs transition-all cursor-pointer">
+                        Cancelar
+                    </button>
+                    <a href="#{request.contextPath}/agente/publicar.xhtml"
+                       class="bg-black hover:bg-slate-800 text-white font-bold py-3 px-6 rounded-xl text-xs transition-all no-underline cursor-pointer border-0 shadow-md shadow-black/10 flex items-center justify-center">
+                        Entendido, Continuar al Registro
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <!-- STATISTICS MODAL DIALOG -->
+        <div id="statsModal" class="fixed inset-0 bg-slate-950/65 backdrop-blur-sm z-50 flex items-center justify-center p-4 overflow-y-auto hidden">
+            <h:panelGroup id="statsModalContent" layout="block" styleClass="bg-white rounded-[2rem] border border-slate-200/60 shadow-2xl max-w-2xl w-full flex flex-col relative animate-in fade-in zoom-in-95 duration-200">
+                
+                <!-- Modal Header -->
+                <div class="px-8 py-5 border-b border-slate-100 flex justify-between items-center shrink-0">
+                    <div>
+                        <h2 class="font-title text-base font-bold text-slate-900">Estadísticas de Rendimiento</h2>
+                        <p class="text-[10px] text-slate-400 font-semibold mt-0.5">Métricas de vistas de los últimos 30 días.</p>
+                    </div>
+                    <button type="button" 
+                            onclick="document.getElementById('statsModal').classList.add('hidden')"
+                            class="w-8 h-8 rounded-full bg-slate-50 border border-slate-100 flex items-center justify-center text-slate-400 hover:text-slate-950 transition-all cursor-pointer">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M6 18L18 6M6 6l12 12"></path>
+                        </svg>
+                    </button>
+                </div>
+                
+                <!-- Modal Body -->
+                <div class="p-8 space-y-6">
+                    <!-- Metrics Cards Grid -->
+                    <div class="grid grid-cols-3 gap-4">
+                        <div class="bg-slate-50 border border-slate-200 rounded-2xl p-4 text-center">
+                            <span class="text-[9px] font-black uppercase text-slate-400 tracking-wider block mb-1">Total Vistas</span>
+                            <span class="text-xl font-black text-slate-900">#{agenteBean.totalVistas}</span>
+                        </div>
+                        <div class="bg-slate-50 border border-slate-200 rounded-2xl p-4 text-center">
+                            <span class="text-[9px] font-black uppercase text-slate-400 tracking-wider block mb-1">Promedio Diario</span>
+                            <span class="text-xl font-black text-slate-900">
+                                <h:outputText value="#{agenteBean.promedioDiario}"><f:convertNumber pattern="0.0"/></h:outputText>
+                            </span>
+                        </div>
+                        <div class="bg-slate-50 border border-slate-200 rounded-2xl p-4 text-center">
+                            <span class="text-[9px] font-black uppercase text-slate-400 tracking-wider block mb-1">Día Pico</span>
+                            <span class="text-xs font-bold text-slate-700 block truncate" title="#{agenteBean.diaMax}">#{agenteBean.diaMax}</span>
+                            <span class="text-[9px] font-semibold text-slate-400">#{agenteBean.maxVistas} vistas</span>
+                        </div>
+                    </div>
+
+                    <!-- Canvas for Chart.js -->
+                    <div class="bg-slate-50 border border-slate-100 rounded-2xl p-4 relative h-64">
+                        <canvas id="statsChart"></canvas>
+                    </div>
+                    
+                    <!-- Hidden inputs containing JSON arrays -->
+                    <input type="hidden" id="chartLabelsInput" value="#{agenteBean.labelsJson}" />
+                    <input type="hidden" id="chartValuesInput" value="#{agenteBean.dataJson}" />
+                </div>
+                
+                <!-- Modal Footer -->
+                <div class="px-8 py-5 bg-slate-50 border-t border-slate-200/60 rounded-b-[2rem] flex justify-end shrink-0">
+                    <button type="button" 
+                            onclick="document.getElementById('statsModal').classList.add('hidden')"
+                            class="bg-black hover:bg-slate-800 text-white font-bold py-3 px-6 rounded-xl text-xs transition-all cursor-pointer border-0 shadow-md">
+                        Cerrar
+                    </button>
+                </div>
+                
+            </h:panelGroup>
+        </div>
+
+        <!-- JS for AJAX opening and map rendering -->
+        <script>
+            //<![CDATA[
+            let myChart = null;
+
+            function abrirModalStats(data) {
+                if (data.status === 'success') {
+                    const modal = document.getElementById('statsModal');
+                    if (modal) {
+                        modal.classList.remove('hidden');
+                        
+                        // Parse values from inputs
+                        const labelsDataStr = document.getElementById('chartLabelsInput').value;
+                        const valuesDataStr = document.getElementById('chartValuesInput').value;
+                        
+                        let labels = [];
+                        let values = [];
+                        try {
+                            labels = eval(labelsDataStr);
+                            values = eval(valuesDataStr);
+                        } catch(e) {
+                            console.error("Error parsing charts JSON", e);
+                        }
+                        
+                        const ctx = document.getElementById('statsChart').getContext('2d');
+                        if (myChart) {
+                            myChart.destroy();
+                        }
+                        
+                        myChart = new Chart(ctx, {
+                            type: 'line',
+                            data: {
+                                labels: labels,
+                                datasets: [{
+                                    label: 'Vistas Diarias',
+                                    data: values,
+                                    borderColor: '#f59e0b',
+                                    backgroundColor: 'rgba(245, 158, 11, 0.1)',
+                                    borderWidth: 2,
+                                    tension: 0.4,
+                                    fill: true,
+                                    pointBackgroundColor: '#f59e0b',
+                                    pointBorderColor: '#ffffff',
+                                    pointBorderWidth: 2,
+                                    pointRadius: 4,
+                                    pointHoverRadius: 6
+                                }]
+                            },
+                            options: {
+                                responsive: true,
+                                maintainAspectRatio: false,
+                                plugins: {
+                                    legend: {
+                                        display: false
+                                    }
+                                },
+                                scales: {
+                                    y: {
+                                        beginAtZero: true,
+                                        grid: {
+                                            color: 'rgba(241, 245, 249, 1)'
+                                        },
+                                        ticks: {
+                                            font: {
+                                                size: 10,
+                                                weight: 'bold'
+                                            }
+                                        }
+                                    },
+                                    x: {
+                                        grid: {
+                                            display: false
+                                        },
+                                        ticks: {
+                                            font: {
+                                                size: 10,
+                                                weight: 'bold'
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        });
+                    }
+                }
+            }
+
+            
+            function initEditMap() {
+                const mapContainer = document.getElementById('edit-map');
+                if (!mapContainer) return;
+                
+                const latInput = document.getElementById('editLatitud');
+                const lngInput = document.getElementById('editLongitud');
+                const defaultLat = -12.046374;
+                const defaultLng = -77.042793;
+
+                const savedLat = latInput ? latInput.value : '';
+                const savedLng = lngInput ? lngInput.value : '';
+
+                const initialLat = savedLat ? parseFloat(savedLat) : defaultLat;
+                const initialLng = savedLng ? parseFloat(savedLng) : defaultLng;
+                const initialZoom = savedLat ? 16 : 13;
+
+                if (window.editMapInstance) {
+                    window.editMapInstance.remove();
+                }
+
+                window.editMapInstance = L.map('edit-map').setView([initialLat, initialLng], initialZoom);
+                
+                L.tileLayer('https://api.maptiler.com/maps/streets-v2/{z}/{x}/{y}.png?key=8IyYWrIbuDLsiINCC7Du', {
+                    attribution: '&copy; MapTiler &copy; OpenStreetMap contributors'
+                }).addTo(window.editMapInstance);
+
+                let marker;
+
+                function updateCoords(lat, lng) {
+                    if (latInput) latInput.value = lat;
+                    if (lngInput) lngInput.value = lng;
+                    const display = document.getElementById('edit-coordenadas-display');
+                    if (display) display.textContent = lat.toFixed(6) + ", " + lng.toFixed(6);
+                }
+
+                if (savedLat && savedLng) {
+                    marker = L.marker([initialLat, initialLng], { draggable: true }).addTo(window.editMapInstance);
+                    const display = document.getElementById('edit-coordenadas-display');
+                    if (display) display.textContent = parseFloat(savedLat).toFixed(6) + ", " + parseFloat(savedLng).toFixed(6);
+
+                    marker.on('dragend', function () {
+                        const position = marker.getLatLng();
+                        updateCoords(position.lat, position.lng);
+                    });
+                }
+
+                window.editMapInstance.on('click', function (e) {
+                    updateCoords(e.latlng.lat, e.latlng.lng);
+
+                    if (marker) {
+                        marker.setLatLng(e.latlng);
+                    } else {
+                        marker = L.marker(e.latlng, { draggable: true }).addTo(window.editMapInstance);
+                        marker.on('dragend', function () {
+                            const position = marker.getLatLng();
+                            updateCoords(position.lat, position.lng);
+                        });
+                    }
+                });
+
+                setTimeout(function() {
+                    window.editMapInstance.invalidateSize();
+                }, 100);
+            }
+
+            function validateEditForm() {
+                const titulo = document.getElementById('editTitulo');
+                const desc = document.getElementById('editDescripcion');
+                const dir = document.getElementById('editDireccion');
+                const area = document.getElementById('editAreaTotal');
+                const precio = document.getElementById('editPrecio');
+                const foto = document.getElementById('editFotoPrincipal');
+
+                let errors = [];
+
+                if (!titulo || !titulo.value || titulo.value.trim() === '') errors.push("El título de la publicación es obligatorio.");
+                if (!desc || !desc.value || desc.value.trim() === '') errors.push("La descripción detallada es obligatoria.");
+                if (!dir || !dir.value || dir.value.trim() === '') errors.push("La dirección exacta es obligatoria.");
+                
+                if (!area || !area.value || area.value.trim() === '' || isNaN(area.value) || parseFloat(area.value) <= 0) {
+                    errors.push("El área total es obligatoria y debe ser un número mayor a cero.");
+                }
+
+                if (!precio || !precio.value || precio.value.trim() === '' || isNaN(precio.value) || parseFloat(precio.value) <= 0) {
+                    errors.push("El precio es obligatorio y debe ser un número mayor a cero.");
+                } else {
+                    const opVal = document.getElementById('editIdOperacion').value;
+                    const price = parseFloat(precio.value);
+                    if (opVal === '1' && price < 10000) {
+                        errors.push("El precio mínimo para una operación de Venta es de 10,000.");
+                    } else if (opVal === '2' && price < 100) {
+                        errors.push("El precio mínimo para una operación de Alquiler es de 100.");
+                    }
+                }
+
+                if (!foto || !foto.value || foto.value.trim() === '') errors.push("La URL de la foto principal es obligatoria.");
+
+                const msgContainer = document.getElementById('editMessages');
+                if (errors.length > 0) {
+                    if (msgContainer) {
+                        msgContainer.innerHTML = '';
+                        errors.forEach(function(err) {
+                            const li = document.createElement('li');
+                            li.textContent = err;
+                            msgContainer.appendChild(li);
+                        });
+                        msgContainer.classList.remove('empty:hidden');
+                    }
+                    window.scrollTo({ top: 0, behavior: 'smooth' });
+                    return false;
+                }
+                return true;
+            }
+            
+            document.addEventListener('DOMContentLoaded', function() {
+                const urlParams = new URLSearchParams(window.location.search);
+                if (urlParams.get('openPublishModal') === 'true') {
+                    const modal = document.getElementById('indicacionesModal');
+                    if (modal) modal.classList.remove('hidden');
+                }
+                initEditMap();
+            });
+            //]]>
+        </script>
     </ui:define>
 </ui:composition>
 </html>

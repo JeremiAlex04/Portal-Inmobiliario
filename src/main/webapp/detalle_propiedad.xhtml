@@ -319,38 +319,63 @@
                                 </div>
                             </div>
 
+                            <!-- Direct WhatsApp Contact Button -->
+                            <div class="pt-4 border-t border-slate-100 mt-4">
+                                <h:form id="wa-form">
+                                    <h:commandLink action="#{detallePropiedadBean.contactarWhatsApp}" 
+                                                   target="_blank"
+                                                   styleClass="w-full bg-emerald-500 hover:bg-emerald-600 text-white font-bold py-3 px-6 rounded-xl text-sm transition-all flex items-center justify-center gap-2 shadow-md shadow-emerald-500/10 cursor-pointer text-center no-underline border-0">
+                                        <svg class="w-4 h-4 fill-current shrink-0" viewBox="0 0 24 24">
+                                            <path d="M12.031 6.172c-3.181 0-5.767 2.586-5.767 5.767 0 1.012.261 2.001.763 2.87l-.811 2.96 3.028-.794c.839.457 1.776.697 2.729.697 3.181 0 5.767-2.586 5.767-5.767 0-3.181-2.586-5.767-5.767-5.767zm3.39 8.161c-.146.411-.75.763-1.037.81-.27.043-.618.069-1.01-.061a5.05 5.05 0 01-2.181-1.341 5.56 5.56 0 01-1.468-1.921 2.39 2.39 0 01-.107-.94c.101-.527.42-.77.561-.914.137-.146.3-.186.4-.186h.257c.081 0 .182-.03.284.213.102.242.348.847.379.914.03.065.051.141.01.223-.04.081-.061.131-.121.202-.06.071-.126.157-.182.213-.061.061-.126.126-.05.257.076.131.338.557.724.901.496.442.914.581 1.046.642.131.061.207.051.284-.04.076-.091.328-.385.415-.517.086-.131.171-.111.288-.065.116.046.733.348.86.411.127.065.213.096.244.152.03.056.03.324-.116.735z"></path>
+                                        </svg>
+                                        Contactar por WhatsApp
+                                    </h:commandLink>
+                                </h:form>
+                            </div>
+
                             <!-- Consulta Form -->
-                            <h:form class="mt-8 space-y-4">
-                                <h:inputHidden value="#{detallePropiedadBean.id}"/>
-                                <div>
-                                    <label class="block text-[10px] font-black text-slate-400 uppercase tracking-wider mb-1 px-1">Tu Nombre</label>
-                                    <h:inputText value="#{detallePropiedadBean.consultaNombre}" required="true"
-                                                 requiredMessage="Por favor, escribe tu nombre."
-                                                 styleClass="w-full bg-slate-50 border border-slate-200 text-slate-900 rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:border-black transition-all"
-                                                 placeholder="Ej. Juan Pérez" />
-                                </div>
-                                <div>
-                                    <label class="block text-[10px] font-black text-slate-400 uppercase tracking-wider mb-1 px-1">Tu Email</label>
-                                    <h:inputText value="#{detallePropiedadBean.consultaEmail}" required="true"
-                                                 requiredMessage="Por favor, escribe tu email."
-                                                 styleClass="w-full bg-slate-50 border border-slate-200 text-slate-900 rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:border-black transition-all"
-                                                 placeholder="correo@ejemplo.com" />
-                                </div>
-                                <div>
-                                    <label class="block text-[10px] font-black text-slate-400 uppercase tracking-wider mb-1 px-1">Tu Teléfono</label>
-                                    <h:inputText value="#{detallePropiedadBean.consultaTelefono}"
-                                                 styleClass="w-full bg-slate-50 border border-slate-200 text-slate-900 rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:border-black transition-all"
-                                                 placeholder="+51 987 654 321" />
-                                </div>
-                                <div>
-                                    <label class="block text-[10px] font-black text-slate-400 uppercase tracking-wider mb-1 px-1">Mensaje</label>
-                                    <h:inputTextarea value="#{detallePropiedadBean.consultaMensaje}" rows="4"
+                            <div class="mt-8">
+                                <h:panelGroup layout="block" rendered="#{flash.consultaEnviada}" styleClass="bg-emerald-50 border-l-4 border-emerald-500 p-4 rounded-r-xl text-[11px] text-emerald-800 font-bold mb-4 border border-emerald-100 flex items-center gap-2">
+                                    <svg class="w-4 h-4 text-emerald-500 shrink-0" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"></path></svg>
+                                    Consulta enviada exitosamente. El anunciante se pondrá en contacto contigo.
+                                </h:panelGroup>
+                                <h:panelGroup layout="block" rendered="#{flash.errorConsulta}" styleClass="bg-red-50 border-l-4 border-red-500 p-4 rounded-r-xl text-[11px] text-red-800 font-bold mb-4 border border-red-100 flex items-center gap-2">
+                                    <svg class="w-4 h-4 text-red-500 shrink-0" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z" clip-rule="evenodd"></path></svg>
+                                    Ocurrió un error al enviar la consulta. Inténtalo de nuevo.
+                                </h:panelGroup>
+
+                                <h:form class="space-y-4">
+                                    <h:inputHidden value="#{detallePropiedadBean.id}"/>
+                                    <div>
+                                        <label class="block text-[10px] font-black text-slate-400 uppercase tracking-wider mb-1 px-1">Tu Nombre</label>
+                                        <h:inputText value="#{detallePropiedadBean.consultaNombre}" required="true"
+                                                     requiredMessage="Por favor, escribe tu nombre."
                                                      styleClass="w-full bg-slate-50 border border-slate-200 text-slate-900 rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:border-black transition-all"
-                                                     placeholder="Hola, estoy interesado en este inmueble y deseo recibir más información..." />
-                                </div>
-                                <h:commandButton action="#{detallePropiedadBean.enviarConsulta}" value="Enviar consulta"
-                                                 styleClass="w-full bg-black hover:bg-slate-800 text-white font-bold py-3 px-6 rounded-xl text-sm transition-all hover:scale-[1.01] shadow-md shadow-black/10 cursor-pointer mt-2"/>
-                            </h:form>
+                                                     placeholder="Ej. Juan Pérez" />
+                                    </div>
+                                    <div>
+                                        <label class="block text-[10px] font-black text-slate-400 uppercase tracking-wider mb-1 px-1">Tu Email</label>
+                                        <h:inputText value="#{detallePropiedadBean.consultaEmail}" required="true"
+                                                     requiredMessage="Por favor, escribe tu email."
+                                                     styleClass="w-full bg-slate-50 border border-slate-200 text-slate-900 rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:border-black transition-all"
+                                                     placeholder="correo@ejemplo.com" />
+                                    </div>
+                                    <div>
+                                        <label class="block text-[10px] font-black text-slate-400 uppercase tracking-wider mb-1 px-1">Tu Teléfono</label>
+                                        <h:inputText value="#{detallePropiedadBean.consultaTelefono}"
+                                                     styleClass="w-full bg-slate-50 border border-slate-200 text-slate-900 rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:border-black transition-all"
+                                                     placeholder="+51 987 654 321" />
+                                    </div>
+                                    <div>
+                                        <label class="block text-[10px] font-black text-slate-400 uppercase tracking-wider mb-1 px-1">Mensaje</label>
+                                        <h:inputTextarea value="#{detallePropiedadBean.consultaMensaje}" rows="4"
+                                                         styleClass="w-full bg-slate-50 border border-slate-200 text-slate-900 rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:border-black transition-all"
+                                                         placeholder="Hola, estoy interesado en este inmueble y deseo recibir más información..." />
+                                    </div>
+                                    <h:commandButton action="#{detallePropiedadBean.enviarConsulta}" value="Enviar consulta"
+                                                     styleClass="w-full bg-black hover:bg-slate-800 text-white font-bold py-3 px-6 rounded-xl text-sm transition-all hover:scale-[1.01] shadow-md shadow-black/10 cursor-pointer mt-2"/>
+                                </h:form>
+                            </div>
 
                             <!-- Favorito Link -->
                             <h:form class="mt-3">
