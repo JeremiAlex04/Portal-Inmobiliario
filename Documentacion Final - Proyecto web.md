@@ -34,6 +34,11 @@
 - [6. Capítulo VI: Recomendaciones](#6-capítulo-vi-recomendaciones)
 - [7. Referencias Bibliográficas](#7-referencias-bibliográficas)
 - [8. Anexo](#8-anexo)
+  - [Anexo A: Estructura Completa de Directorios del Proyecto](#anexo-a-estructura-completa-de-directorios-del-proyecto)
+  - [Anexo B: Roles y Permisos del Sistema](#anexo-b-roles-y-permisos-del-sistema)
+  - [Anexo C: Instrucciones de Compilación y Despliegue](#anexo-c-instrucciones-de-compilación-y-despliegue)
+  - [Anexo D: Credenciales de Prueba](#anexo-d-credenciales-de-prueba)
+  - [Anexo E: Evidencias Visuales del Sistema (Capturas de Pantalla)](#anexo-e-evidencias-visuales-del-sistema-capturas-de-pantalla)
 
 ---
 
@@ -728,7 +733,28 @@ mysql -u root -p < inmobix_db.sql
 
 | Rol | Correo | Contraseña |
 | :--- | :--- | :--- |
-| Administrador | admin@inmobix.pe | admin123 |
-| Agente | carlos.mendoza@inmobix.pe | agente123 |
-| Comprador | maria.lopez@gmail.com | comprador123 |
+| Administrador | admin@inmobix.pe | 123456 |
+| Agente (Carlos Mendoza) | agente@inmobix.com | 123456 |
+| Agente (María Torres) | maria.torres@inmobix.com | 123456 |
+| Comprador (Pedro Ramírez) | comprador@inmobix.pe | 123456 |
+
+### Anexo E: Evidencias Visuales del Sistema (Capturas de Pantalla)
+
+A continuación se presentan las capturas de pantalla que sustentan la funcionalidad operativa del sistema:
+
+1. **Página de inicio** — Buscador inteligente con autocompletado de distritos.
+   ![Página de Inicio](./capturas_avance2/Pagina_Inicial.png)
+2. **Catálogo con filtros** — Resultados filtrados por precio, tipo y distrito.
+   ![Catálogo con Filtros](./capturas_avance2/catalogo_filtros.png)
+3. **Detalle del inmueble (Sección Superior)** — Galería de fotos, descripción y ficha técnica.
+   ![Detalle del Inmueble 1](./capturas_avance2/detalle_inmueble_1.png)
+4. **Detalle del inmueble (Mapa de Geolocalización)** — Ubicación georreferenciada del inmueble con Leaflet.js.
+   ![Detalle del Inmueble 2](./capturas_avance2/detalle_inmueble_2.png)
+5. **Comparador** — Tabla comparativa de especificaciones y precios de inmuebles seleccionados.
+   ![Comparador](./capturas_avance2/comparador.png)
+6. **Panel del Agente** — Dashboard con gráfico estadístico de visitas (Chart.js) y lista de propiedades.
+   ![Panel del Agente](./capturas_avance2/panel_agente.png)
+7. **Panel de Administración** — Dashboard del administrador con gestión de usuarios, propiedades, ubicaciones y auditoría.
+   ![Panel de Administración](./capturas_avance2/panel_admin.png)
+
 
